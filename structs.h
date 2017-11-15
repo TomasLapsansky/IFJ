@@ -16,6 +16,7 @@ typedef struct{
 }TOKEN;
 
 enum Errors{
+	E_OK = -1,
 	OK = 0,
 	LEX_A_ERROR = 1,
 	SYN_A_ERROR = 2,
