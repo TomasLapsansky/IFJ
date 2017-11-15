@@ -86,6 +86,8 @@ int KeywordCheck(char *string){
 	else if(strcasecmp("shared",string) == 0) return SHARED;
 	else if(strcasecmp("static",string) == 0) return STATIC;
 	else if(strcasecmp("true",string) == 0) return TRUE_;
+	else if(strcasecmp("eof",string) == 0) return EOF_;
+	else if(strcasecmp("eol",string) == 0) return EOL_;
 	else 
 		return 0;
 }
@@ -114,10 +116,16 @@ int Get_Token(FILE *f,TOKEN *t){
 						else if(c == '/'){
 							nextc = fgetc(f);
 							if(nextc == 39){
+								nextc = fgetc(f);
 								// odebrani komentare po konec radku nebo po EOF
-								while (nextc != EOF && nextc != '/' && c != 39){ 
+								while (nextc != EOF){ 
 									c = nextc;
-									nextc = fgetc(f);	
+									nextc = fgetc(f);
+									if(c == 39){
+										if(nextc == '/'){
+											break;
+										}
+									}
 									if(nextc == EOF){
 										return LEX_A_ERROR;
 									}
@@ -145,9 +153,6 @@ int Get_Token(FILE *f,TOKEN *t){
 						}
 						// retezec
 						else if(c == '!'){
-							if((pom = Add_Char(t,c)) == ALLOC_ERROR){
-								return ALLOC_ERROR;
-							}
 							state = ex_mark;
 						}
 						// rovno, prirovnani, tri rovnitka
@@ -276,9 +281,11 @@ int Get_Token(FILE *f,TOKEN *t){
 							ungetc(c,f);
 							if((pom = KeywordCheck(t->data)) != 0){
 								t->name = pom;
+								return OK;
 							}
 							else{
 								t->name = ID;
+								return OK;
 							}
 							state = start;
 						}break;
@@ -488,6 +495,6 @@ int Get_Token(FILE *f,TOKEN *t){
 						}break;
 		}
 	}
-	t->name = EOF;
-	return OK;
+	t->name = undef_EOF;
+	return undef_EOF;
 }
