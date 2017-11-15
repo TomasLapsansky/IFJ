@@ -17,36 +17,38 @@
 <p_type>			Double		K
 <p_type>			String		K
 
-<p_parameter>		ε)								K
-<p_parameter>		ID As <p_type>)					K
-<p_parameter>		ID As <p_type>, <p_nxparameter>	K
+<p_parameter>		ε)									K
+<p_parameter>		ID As <p_type>)						K
+<p_parameter>		ID As <p_type>, <p_nextparameter>	K
 
-<p_nxparameter>		ID As <p_type>)
-<p_nxparameter>		ID As <p_type>, <p_nxparameter>
+<p_nextparameter>	ID As <p_type>)						K
+<p_nextparameter>	ID As <p_type>, <p_nextparameter>	K
 
-<p_vparameter>		ε)
-<p_vparameter>		ID)
-<p_vparameter>		ID, <p_vparameter>
+<p_vparameter>		ε)									K
+<p_vparameter>		ID)									K
+<p_vparameter>		ID, <p_vnextparameter>				K
 
-<p_vnextparameter>	ID)
-<p_vnextparameter>	ID, <p_vnextparameter>
+<p_vnextparameter>	ID)									K
+<p_vnextparameter>	ID, <p_vnextparameter>				K
 
-<p_prikaz>			ε
-<p_prikaz>			Dim ID As <p_type>
-<p_prikaz>			ID = <p_priradenie>
-<p_prikaz>			Input ID
-<p_prikaz>			Print <p_print>
-<p_prikaz>			If (<p_vyraz>) Then EOL <p_body> Else EOL <p_body> End If
-<p_prikaz>			Do While <p_vyraz> EOL <p_body> Loop
-<p_prikaz>			Return <vyraz>
+<p_prikaz>			ε															K
+<p_prikaz>			Dim ID As <p_type>											K
+<p_prikaz>			ID = <p_priradenie>											K
+<p_prikaz>			Input ID													K
+<p_prikaz>			Print <p_print>												K
+<p_prikaz>			If (<p_vyraz>) Then EOL <p_body> Else EOL <p_body> End If	K
+<p_prikaz>			Do While (<p_vyraz>) EOL <p_body> Loop						K
+<p_prikaz>			Return <p_vyraz>											K
 
-<p_priradenie>		<p_vyraz>
-<p_priradenie>		F_ID(<p_vparameter>
+<p_priradenie>		F_ID(<p_vparameter>			K
+<p_priradenie>		<p_vyraz>					K
 
-<p_print>			<p_vyraz> <p_nextprint>
+<p_print>			String <p_nextprint>		K
+<p_print>			<p_vyraz> <p_nextprint>		K
 
-<p_nextprint>		ε
-<p_nextprint>		, <p_vyraz> <p_nextprint>
+<p_nextprint>		ε							K
+<p_nextprint>		; String <p_nextprint>		K
+<p_nextprint>		; <p_vyraz> <p_nextprint>	K
 
 
 <p_vyraz> 			TODO
