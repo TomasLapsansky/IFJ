@@ -1,0 +1,52 @@
+/**
+* @Name IFJ17 Syntakticka a sematicka analyza - gramatika
+* @author Tomas Lapsansky (xlapsa00)
+* @file gramatika
+* @date 15.11.2017
+*/
+
+<p_start>			<p_declare> <p_scope>															K
+<p_scope>			Scope <p_body> End Scope EOF													K
+<p_declare>			ε																				K
+<p_declare>			Declare Function ID (<p_parameter> As <p_type> EOL <p_declare>					K
+<p_declare>			Function ID (<p_parameter> As <p_type> EOL <p_body> End Function <p_declare>	K
+<p_body>			ε							K
+<p_body>			<p_prikaz> EOL <p_body>		K
+
+<p_type>			Integer		K
+<p_type>			Double		K
+<p_type>			String		K
+
+<p_parameter>		ε)								K
+<p_parameter>		ID As <p_type>)					K
+<p_parameter>		ID As <p_type>, <p_nxparameter>	K
+
+<p_nxparameter>		ID As <p_type>)
+<p_nxparameter>		ID As <p_type>, <p_nxparameter>
+
+<p_vparameter>		ε)
+<p_vparameter>		ID)
+<p_vparameter>		ID, <p_vparameter>
+
+<p_vnextparameter>	ID)
+<p_vnextparameter>	ID, <p_vnextparameter>
+
+<p_prikaz>			ε
+<p_prikaz>			Dim ID As <p_type>
+<p_prikaz>			ID = <p_priradenie>
+<p_prikaz>			Input ID
+<p_prikaz>			Print <p_print>
+<p_prikaz>			If (<p_vyraz>) Then EOL <p_body> Else EOL <p_body> End If
+<p_prikaz>			Do While <p_vyraz> EOL <p_body> Loop
+<p_prikaz>			Return <vyraz>
+
+<p_priradenie>		<p_vyraz>
+<p_priradenie>		F_ID(<p_vparameter>
+
+<p_print>			<p_vyraz> <p_nextprint>
+
+<p_nextprint>		ε
+<p_nextprint>		, <p_vyraz> <p_nextprint>
+
+
+<p_vyraz> 			TODO
