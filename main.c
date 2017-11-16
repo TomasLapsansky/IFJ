@@ -12,7 +12,7 @@ int main(){
         return 1;
 	}
 
-	while((pom = Get_Token(f,&t)) != undef_EOF){
+	while((pom = Get_Token(f,&t)) != EOF){
 		if(pom == LEX_A_ERROR){
 			printf("LEX_A_ERROR\n");
 			break;
