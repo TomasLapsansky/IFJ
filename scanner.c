@@ -102,6 +102,19 @@ int Get_Token(FILE *f,TOKEN *t){
 		switch(state){
 			case start: // odstrani whitespace
 						if(isspace(c)){
+							if(c == '\n'){
+							if((pom = Add_Char(t,'E')) == ALLOC_ERROR){
+								return ALLOC_ERROR;
+							}
+							if((pom = Add_Char(t,'O')) == ALLOC_ERROR){
+								return ALLOC_ERROR;
+							}
+							if((pom = Add_Char(t,'L')) == ALLOC_ERROR){
+								return ALLOC_ERROR;
+							}
+							t->name = P_EOL;
+							return OK;
+							}
 							state = start;
 						}
 						// odstrani jednoradkovy komentar

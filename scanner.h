@@ -44,6 +44,7 @@ enum Token_Name{
 
 	EOF_ = 60,
 	EOL_,
+	P_EOL,
 	undef_EOF,
 
 	AS = 70,
