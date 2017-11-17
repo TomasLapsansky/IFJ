@@ -1,5 +1,8 @@
 #include "scanner.h"
 
+static int eol;
+static int countT;
+
 enum State{
 	start = 1,
 	id,
@@ -95,21 +98,13 @@ int Get_Token(FILE *f,TOKEN *t){
 	int state = start;
 
 	Clear_Token(t);
+	countT++;
 
 	while((c = fgetc(f))){
 		switch(state){
 			case start: // odstrani whitespace
 						if(isspace(c)){
-							if(c == '\n'){
-							do{
-								nextc = fgetc(f);
-							}while(isspace(nextc));
-							if(nextc == 39 || nextc == '/' || isdigit(nextc) || isalpha(nextc)){
-								ungetc(nextc,f);
-								state = start;
-								continue;
-							}
-							ungetc(nextc,f);
+							if(c == '\n' && eol == 0 && countT != 1){
 								if((pom = Add_Char(t,'E')) == ALLOC_ERROR){
 									return ALLOC_ERROR;
 								}
@@ -120,18 +115,18 @@ int Get_Token(FILE *f,TOKEN *t){
 									return ALLOC_ERROR;
 								}
 								t->name = EOL_;
+								eol = 1;
 								return OK;
 							}
 							state = start;
 						}
+						else{ if(eol == 1) eol = 0;
 						// odstrani jednoradkovy komentar
-						else if(c == 39){
+						if(c == 39){
 							// odebrani komentaru po konec radku nebo po EOF
 							while (c != EOF && c != '\n') c=fgetc(f);
 							// vraceni nechteneho znaku
-							if(c == EOF){
-								ungetc(c,f);
-							}
+							ungetc(c,f);							
 
 							state = start;
 						}
@@ -291,6 +286,7 @@ int Get_Token(FILE *f,TOKEN *t){
 										return LEX_A_ERROR;
 										break;
 							}
+						}
 						}break;
 			// stav identifikator
 			case id: 
