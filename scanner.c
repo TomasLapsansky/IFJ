@@ -86,8 +86,6 @@ int KeywordCheck(char *string){
 	else if(strcasecmp("shared",string) == 0) return SHARED;
 	else if(strcasecmp("static",string) == 0) return STATIC;
 	else if(strcasecmp("true",string) == 0) return TRUE_;
-	else if(strcasecmp("eof",string) == 0) return EOF_;
-	else if(strcasecmp("eol",string) == 0) return EOL_;
 	else 
 		return 0;
 }
@@ -103,17 +101,17 @@ int Get_Token(FILE *f,TOKEN *t){
 			case start: // odstrani whitespace
 						if(isspace(c)){
 							if(c == '\n'){
-							if((pom = Add_Char(t,'E')) == ALLOC_ERROR){
-								return ALLOC_ERROR;
-							}
-							if((pom = Add_Char(t,'O')) == ALLOC_ERROR){
-								return ALLOC_ERROR;
-							}
-							if((pom = Add_Char(t,'L')) == ALLOC_ERROR){
-								return ALLOC_ERROR;
-							}
-							t->name = P_EOL;
-							return OK;
+								if((pom = Add_Char(t,'E')) == ALLOC_ERROR){
+									return ALLOC_ERROR;
+								}
+								if((pom = Add_Char(t,'O')) == ALLOC_ERROR){
+									return ALLOC_ERROR;
+								}
+								if((pom = Add_Char(t,'L')) == ALLOC_ERROR){
+									return ALLOC_ERROR;
+								}
+								t->name = EOL_;
+								return OK;
 							}
 							state = start;
 						}
@@ -511,7 +509,6 @@ int Get_Token(FILE *f,TOKEN *t){
 							return LEX_A_ERROR;
 						}break;
 		}
-	}
-	
+	}	
 	return EOF;
 }
