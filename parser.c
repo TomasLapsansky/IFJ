@@ -40,8 +40,8 @@ int p_start(void) {
 }//p_start
 
 //<p_declare>		ε
-//<p_declare>		Declare Function ID (<p_parameter> As <p_type> EOL <p_declare>
-//<p_declare>		Function ID (<p_parameter> As <p_type> EOL <p_body> <p_declare>
+//<p_declare>		Declare Function ID (<p_parameter> As <p_type> "EOL" <p_declare>
+//<p_declare>		Function ID (<p_parameter> As <p_type> "EOL" <p_body> <p_declare>
 int p_declare(void) {
 	
 	switch(token.name) {
@@ -138,7 +138,7 @@ int p_declare(void) {
 			if((error = Get_Token(f, &token)) != OK)
 				return error;//gettoken
 			
-			if(token.name != EOL_)			//Function ID(<p_parameter>) As <p_type> EOL
+			if(token.name != EOL_)			//Function ID(<p_parameter>) As <p_type> "EOL"
 				return SYN_A_ERROR;
 			
 			line++;	//pocitadlo riadku pre vypis pri chybe
@@ -206,9 +206,9 @@ int p_body(void) {
 //<p_type>		String
 int p_type(void) {
 	switch(token.name) {
-		case(INTEGER):
-		case(DOUBLE):
-		case(STRING):
+		case(INT_NUM):
+		case(DOUBLE_NUM):
+		case(STR):
 			return OK;
 		default:
 			return SYN_A_ERROR;
@@ -472,7 +472,7 @@ int p_prikaz(void) {
 				
 			if(token.name != ELSE)			//If (<p_vyraz>) Then EOL <p_body> Else
 				return SYN_A_ERROR;
-				
+			
 			if((error = Get_Token(f, &token)) != OK)
 				return error;	//gettoken
 			
