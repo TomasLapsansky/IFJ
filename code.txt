@@ -10,7 +10,7 @@ Else
     temp_result = factorial(decremented_n)
     result = n * temp_result
 End If
-Return result End Function
+Return result End Function EOL
 Scope 'Hlavni telo programu Dim a As Integer
 Dim vysl As Integer
 Print !"Zadejte cislo pro vypocet faktorialu"; Input a
@@ -18,4 +18,4 @@ If a < 0 Then
 Print !"\nFaktorial nelze spocitat\n"; Else
     vysl = factorial(a)
 Print !"\nVysledek je:" ; vysl ; !"\n"; End If
-End Scope
+End Scope EOF

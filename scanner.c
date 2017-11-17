@@ -98,7 +98,7 @@ int Get_Token(FILE *f,TOKEN *t){
 
 	Clear_Token(t);
 
-	while((c = fgetc(f)) != EOF){
+	while((c = fgetc(f))){
 		switch(state){
 			case start: // odstrani whitespace
 						if(isspace(c)){
@@ -271,21 +271,25 @@ int Get_Token(FILE *f,TOKEN *t){
 						}break;
 			// stav identifikator
 			case id: 
-						if(isdigit(c) || isalpha(c) || c == '_'){
+						if((isdigit(c) || isalpha(c) || c == '_') && c != EOF){
 							if((pom = Add_Char(t,c)) == ALLOC_ERROR){
 									return ALLOC_ERROR;
 								}
 								state = id;
 						}
 						else{
+							if(c != EOF){
 							ungetc(c,f);
+							}
 							if((pom = KeywordCheck(t->data)) != 0){
 								t->name = pom;
+								if(c == EOF) return EOF;
 								return OK;
 							}
 							else{
 								t->name = ID;
-								return OK;
+								if(c == EOF) return EOF;
+								else return OK;
 							}
 							state = start;
 						}break;
@@ -495,6 +499,6 @@ int Get_Token(FILE *f,TOKEN *t){
 						}break;
 		}
 	}
-	t->name = undef_EOF;
-	return undef_EOF;
+	
+	return EOF;
 }
