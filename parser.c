@@ -5,21 +5,24 @@
  * @date 15.11.2017
  */
 
+#include "parser.h"
 #include "scanner.h"
 #include "structs.h"
-#include "parser.h"
 
+extern FILE* f;
 TOKEN token;
 int error;			//error code
 int line = 1;		//line number
 
 //spracovanie ID		TODO
 int id(void) {
-	
+	return OK;
 }
 
 //main
-int parse(void) {
+int parser(void) {
+	Init_Token(&token);
+	
 	return p_start();
 }
 
@@ -44,14 +47,14 @@ int p_start(void) {
 //<p_declare>		Function ID (<p_parameter> As <p_type> EOL <p_body> <p_declare>
 int p_declare(void) {
 	
-	switch(token->name) {
+	switch(token.name) {
 		
 		case(DECLARE):						//Declare
 			
 			if((error = Get_Token(f, &token)) != OK)
 				return error;//gettoken
 			
-			if(token->name != FUNCTION)		//Declare Function
+			if(token.name != FUNCTION)		//Declare Function
 				return SYN_A_ERROR;
 			
 			if((error = Get_Token(f, &token)) != OK)
@@ -63,7 +66,7 @@ int p_declare(void) {
 			if((error = Get_Token(f, &token)) != OK)
 				return error;//gettoken
 			
-			if(token->name != LEFTPAREN)	//Declare Function ID(
+			if(token.name != LEFTPAREN)	//Declare Function ID(
 				return SYN_A_ERROR;
 			
 			if((error = Get_Token(f, &token)) != OK)
@@ -76,7 +79,7 @@ int p_declare(void) {
 			if((error = Get_Token(f, &token)) != OK)
 				return error;//gettoken
 			
-			if(token->name != AS)			//Declare Function ID(<p_parameter>) As
+			if(token.name != AS)			//Declare Function ID(<p_parameter>) As
 				return SYN_A_ERROR;
 			
 			if((error = Get_Token(f, &token)) != OK)
@@ -89,7 +92,7 @@ int p_declare(void) {
 			if((error = Get_Token(f, &token)) != OK)
 				return error;//gettoken
 			
-			if(token->name != EOL)			//Declare Function ID(<p_parameter>) As <p_type> EOL
+			if(token.name != EOL_)			//Declare Function ID(<p_parameter>) As <p_type> EOL
 				return SYN_A_ERROR;
 			
 			line++;	//pocitadlo riadku pre vypis pri chybe
@@ -112,7 +115,7 @@ int p_declare(void) {
 			if((error = Get_Token(f, &token)) != OK)
 				return error;//gettoken
 			
-			if(token->name != LEFTPAREN)	//Function ID(
+			if(token.name != LEFTPAREN)	//Function ID(
 				return SYN_A_ERROR;
 			
 			if((error = Get_Token(f, &token)) != OK)
@@ -125,7 +128,7 @@ int p_declare(void) {
 			if((error = Get_Token(f, &token)) != OK)
 				return error;//gettoken
 			
-			if(token->name != AS)			//Function ID(<p_parameter>) As
+			if(token.name != AS)			//Function ID(<p_parameter>) As
 				return SYN_A_ERROR;
 			
 			if((error = Get_Token(f, &token)) != OK)
@@ -138,7 +141,7 @@ int p_declare(void) {
 			if((error = Get_Token(f, &token)) != OK)
 				return error;//gettoken
 			
-			if(token->name != EOL)			//Function ID(<p_parameter>) As <p_type> EOL
+			if(token.name != EOL_)			//Function ID(<p_parameter>) As <p_type> EOL
 				return SYN_A_ERROR;
 			
 			line++;	//pocitadlo riadku pre vypis pri chybe
@@ -150,13 +153,13 @@ int p_declare(void) {
 				return error;
 			}
 			
-			if(token->name != END)			//Function ID(<p_parameter>) As <p_type> EOL <p_body> End
+			if(token.name != END)			//Function ID(<p_parameter>) As <p_type> EOL <p_body> End
 				return SYN_A_ERROR;
 			
 			if((error = Get_Token(f, &token)) != OK)
 				return error;//gettoken
 			
-			if(token->name != FUNCTION)		//Function ID(<p_parameter>) As <p_type> EOL <p_body> End Function
+			if(token.name != FUNCTION)		//Function ID(<p_parameter>) As <p_type> EOL <p_body> End Function
 				return SYN_A_ERROR;
 			
 			if((error = Get_Token(f, &token)) != OK)
@@ -189,7 +192,7 @@ int p_body(void) {
 	if((error = Get_Token(f, &token)) != OK)
 		return error;	//gettoken
 	
-	if(token->name != EOL)
+	if(token.name != EOL_)
 		return SYN_A_ERROR;
 	
 	line++;	//pocitadlo riadku pre vypis pri chybe
@@ -205,7 +208,7 @@ int p_body(void) {
 //<p_type>		Double
 //<p_type>		String
 int p_type(void) {
-	switch(token->name) {
+	switch(token.name) {
 		case(INTEGER):
 		case(DOUBLE):
 		case(STRING):
@@ -217,7 +220,7 @@ int p_type(void) {
 
 //<p_scope>		Scope <p_body> End Scope EOF
 int p_scope(void) {
-	if(token->name != SCOPE)	//Scope
+	if(token.name != SCOPE)	//Scope
 		return SYN_A_ERROR;
 	
 	if((error = Get_Token(f, &token)) != OK)
@@ -230,19 +233,19 @@ int p_scope(void) {
 	if((error = Get_Token(f, &token)) != OK)
 		return error;	//gettoken
 	
-	if(token->name != END)		//Scope <p_body> End
+	if(token.name != END)		//Scope <p_body> End
 		return SYN_A_ERROR;
 	
 	if((error = Get_Token(f, &token)) != OK)
 		return error;	//gettoken
 	
-	if(token->name != SCOPE)		//Scope <p_body> End Scope
+	if(token.name != SCOPE)		//Scope <p_body> End Scope
 		return SYN_A_ERROR;
 	
 	if((error = Get_Token(f, &token)) != OK)
 		return error;	//gettoken
 	
-	if(token->name != EOF)		//Scope <p_body> End Scope EOF
+	if(token.name != EOF)		//Scope <p_body> End Scope EOF
 		return SYN_A_ERROR;
 	
 	return OK;
@@ -253,7 +256,7 @@ int p_scope(void) {
 //<p_parameter>	ID As <p_type>, <p_nextparameter>
 int p_parameter(void) {
 	
-	if(token->name == RIGHTPAREN)	//ε)
+	if(token.name == RIGHTPAREN)	//ε)
 		return OK;
 	
 	if((error = id()) != OK) {		//ID
@@ -263,19 +266,19 @@ int p_parameter(void) {
 	if((error = Get_Token(f, &token)) != OK)
 		return error;	//gettoken
 	
-	if(token->name != AS)			//ID As
+	if(token.name != AS)			//ID As
 		return SYN_A_ERROR;
 	
 	if((error = Get_Token(f, &token)) != OK)
 		return error;	//gettoken
 	
-	if((error = p_type() != OK)		//ID As <p_type>
+	if((error = p_type() != OK))	//ID As <p_type>
 		return error;
 	   
 	if((error = Get_Token(f, &token)) != OK)
 	   return error;	//gettoken
 	   
-	switch(token->name) {
+	switch(token.name) {
 		case(RIGHTPAREN):			//ID As <p_type>)
 			return OK;
 		case(COMMA):				//ID As <p_type>, <p_nextparameter>
@@ -300,19 +303,19 @@ int p_nextparameter(void) {
 	if((error = Get_Token(f, &token)) != OK)
 		return error;	//gettoken
 	
-	if(token->name != AS)			//ID As
+	if(token.name != AS)			//ID As
 		return SYN_A_ERROR;
 	
 	if((error = Get_Token(f, &token)) != OK)
 		return error;	//gettoken
 	
-	if((error = p_type() != OK)		//ID As <p_type>
+	if((error = p_type() != OK))	//ID As <p_type>
 	   return error;
 	   
 	   if((error = Get_Token(f, &token)) != OK)
 	   return error;	//gettoken
 	   
-	switch(token->name) {
+	switch(token.name) {
 		case(RIGHTPAREN):			//ID As <p_type>)
 			return OK;
 		case(COMMA):				//ID As <p_type>, <p_nextparameter>
@@ -331,7 +334,7 @@ int p_nextparameter(void) {
 //<p_vparameter>	ID, <p_vnextparameter>
 int p_vparameter(void) {
 	
-	if(token->name == RIGHTPAREN)	//ε)
+	if(token.name == RIGHTPAREN)	//ε)
 		return OK;
 	
 	if((error = id()) != OK) {		//ID
@@ -341,7 +344,7 @@ int p_vparameter(void) {
 	if((error = Get_Token(f, &token)) != OK)
 		return error;	//gettoken
 	
-	switch(token->name) {
+	switch(token.name) {
 		case(RIGHTPAREN):			//ID)
 			return OK;
 		case(COMMA):				//ID, <p_nextparameter>
@@ -366,7 +369,7 @@ int p_vnextparameter(void) {
 	if((error = Get_Token(f, &token)) != OK)
 		return error;	//gettoken
 	
-	switch(token->name) {
+	switch(token.name) {
 		case(RIGHTPAREN):			//ID)
 			return OK;
 		case(COMMA):				//ID, <p_nextparameter>
@@ -390,7 +393,7 @@ int p_vnextparameter(void) {
 //<p_prikaz>			Return <vyraz>
 int p_prikaz(void) {
 	
-	switch(token->name) {
+	switch(token.name) {
 		case(DIM):							//Dim
 			
 			if((error = Get_Token(f, &token)) != OK)
@@ -402,7 +405,7 @@ int p_prikaz(void) {
 			if((error = Get_Token(f, &token)) != OK)
 				return error;	//gettoken
 			
-			if(token->name != AS)			//Dim ID As
+			if(token.name != AS)			//Dim ID As
 				return SYN_A_ERROR;
 			
 			if((error = Get_Token(f, &token)) != OK)
@@ -437,7 +440,7 @@ int p_prikaz(void) {
 			if((error = Get_Token(f, &token)) != OK)
 				return error;	//gettoken
 			
-			if(token->name != LEFTPAREN)	//If (
+			if(token.name != LEFTPAREN)	//If (
 				return SYN_A_ERROR;
 			
 			if((error = Get_Token(f, &token)) != OK)
@@ -446,19 +449,19 @@ int p_prikaz(void) {
 			if((error = p_vyraz()) != OK)	//If (<p_vyraz>
 				return error;
 			
-			if(token->name != RIGHTPAREN)	//If (<p_vyraz>)
+			if(token.name != RIGHTPAREN)	//If (<p_vyraz>)
 				return SYN_A_ERROR;
 			
 			if((error = Get_Token(f, &token)) != OK)
 				return error;	//gettoken
 			
-			if(token->name != THEN)			//If (<p_vyraz>) Then
+			if(token.name != THEN)			//If (<p_vyraz>) Then
 				return SYN_A_ERROR;
 			
 			if((error = Get_Token(f, &token)) != OK)
 				return error;	//gettoken
 			
-			if(token->name != EOL)			//If (<p_vyraz>) Then EOL
+			if(token.name != EOL_)			//If (<p_vyraz>) Then EOL
 				return SYN_A_ERROR;
 			
 			line++; //pocitadlo riadku pre vypis pri chybe
@@ -470,13 +473,13 @@ int p_prikaz(void) {
 				return error;
 			}
 				
-			if(token->name != ELSE)			//If (<p_vyraz>) Then EOL <p_body> Else
+			if(token.name != ELSE)			//If (<p_vyraz>) Then EOL <p_body> Else
 				return SYN_A_ERROR;
 				
 			if((error = Get_Token(f, &token)) != OK)
 				return error;	//gettoken
 			
-			if(token->name != EOL)			//If (<p_vyraz>) Then EOL <p_body> Else EOL
+			if(token.name != EOL_)			//If (<p_vyraz>) Then EOL <p_body> Else EOL
 				return SYN_A_ERROR;
 			
 			line++; //pocitadlo riadku pre vypis pri chybe
@@ -488,13 +491,13 @@ int p_prikaz(void) {
 				return error;
 			}
 			
-			if(token->name != END)			//If (<p_vyraz>) Then EOL <p_body> Else EOL <p_body> End
+			if(token.name != END)			//If (<p_vyraz>) Then EOL <p_body> Else EOL <p_body> End
 				return SYN_A_ERROR;
 			
 			if((error = Get_Token(f, &token)) != OK)
 				return error;	//gettoken
 			
-			if(token->name != IF)			//If (<p_vyraz>) Then EOL <p_body> Else EOL <p_body> End If
+			if(token.name != IF)			//If (<p_vyraz>) Then EOL <p_body> Else EOL <p_body> End If
 				return SYN_A_ERROR;
 			
 			return OK;
@@ -505,13 +508,13 @@ int p_prikaz(void) {
 			if((error = Get_Token(f, &token)) != OK)
 				return error;	//gettoken
 			
-			if(token->name != WHILE)		//Do While
+			if(token.name != WHILE)		//Do While
 				return SYN_A_ERROR;
 			
 			if((error = Get_Token(f, &token)) != OK)
 				return error;	//gettoken
 			
-			if(token->name != LEFTPAREN)	//Do While (
+			if(token.name != LEFTPAREN)	//Do While (
 				return SYN_A_ERROR;
 			
 			if((error = Get_Token(f, &token)) != OK)
@@ -520,13 +523,13 @@ int p_prikaz(void) {
 			if((error = p_vyraz()) != OK)	//Do While (<p_vyraz>
 				return error;
 			
-			if(token->name != RIGHTPAREN)	//Do While (<p_vyraz>)
+			if(token.name != RIGHTPAREN)	//Do While (<p_vyraz>)
 				return SYN_A_ERROR;
 			
 			if((error = Get_Token(f, &token)) != OK)
 				return error;	//gettoken
 			
-			if(token->name != EOL)			//Do While (<p_vyraz>) EOL
+			if(token.name != EOL_)			//Do While (<p_vyraz>) EOL
 				return SYN_A_ERROR;
 			
 			line++; //pocitadlo riadku pre vypis pri chybe
@@ -538,7 +541,7 @@ int p_prikaz(void) {
 				return error;
 			}
 				
-			if(token->name != Loop)
+			if(token.name != LOOP)
 				return SYN_A_ERROR;
 			
 			return OK;
@@ -563,7 +566,7 @@ int p_prikaz(void) {
 			if((error = Get_Token(f, &token)) != OK)
 				return error;	//gettoken
 			
-			if(token->name != EQUAL)			//ID =
+			if(token.name != EQUAL)			//ID =
 				return SYN_A_ERROR;
 			
 			if((error = Get_Token(f, &token)) != OK)
@@ -591,7 +594,7 @@ int p_priradenie(void) {
 	if((error = Get_Token(f, &token)) != OK)
 		return error;	//gettoken
 	
-	if(token->name != LEFTPAREN)			//F_ID(
+	if(token.name != LEFTPAREN)			//F_ID(
 		return SYN_A_ERROR;
 	
 	if((error = Get_Token(f, &token)) != OK)
@@ -605,7 +608,7 @@ int p_priradenie(void) {
 //<p_print>			<p_string> <p_nextprint>
 int p_print(void) {
 	
-	if(token->name != STRING) {			//String
+	if(token.name != STRING) {			//String
 		if((error = p_vyraz()) != OK)	//<p_vyraz>
 			return error;
 		
@@ -619,13 +622,13 @@ int p_print(void) {
 //<p_nextprint>		; <p_string> <p_nextprint>
 int p_nextprint(void) {
 	
-	if(token->name != SEMICOLON)		//ε
+	if(token.name != SEMICOLON)		//ε
 		return E_OK;
 	
 	if((error = Get_Token(f, &token)) != OK)
 		return error;	//gettoken
 	
-	if(token->name != STRING) {			//; String
+	if(token.name != STRING) {			//; String
 		if((error = p_vyraz()) != OK)	//; <p_vyraz>
 			return error;
 	}
@@ -645,4 +648,5 @@ int p_vyraz(void) {
 			return error;	//gettoken
 	}
 	
+	return OK;
 }
