@@ -101,6 +101,15 @@ int Get_Token(FILE *f,TOKEN *t){
 			case start: // odstrani whitespace
 						if(isspace(c)){
 							if(c == '\n'){
+							do{
+								nextc = fgetc(f);
+							}while(isspace(nextc));
+							if(nextc == 39 || nextc == '/' || isdigit(nextc) || isalpha(nextc)){
+								ungetc(nextc,f);
+								state = start;
+								continue;
+							}
+							ungetc(nextc,f);
 								if((pom = Add_Char(t,'E')) == ALLOC_ERROR){
 									return ALLOC_ERROR;
 								}
@@ -120,7 +129,10 @@ int Get_Token(FILE *f,TOKEN *t){
 							// odebrani komentaru po konec radku nebo po EOF
 							while (c != EOF && c != '\n') c=fgetc(f);
 							// vraceni nechteneho znaku
-							ungetc(c,f);
+							if(c == EOF){
+								ungetc(c,f);
+							}
+
 							state = start;
 						}
 						// odstraneni slozeneho komentare
