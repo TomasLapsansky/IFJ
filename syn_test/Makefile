@@ -2,7 +2,7 @@ CC=gcc
 CFLAGS=-std=c99 -Wall -W -Wextra -pedantic
 RM=rm -f
 
-test: main.o scanner.o parser.o
+test_syn: main.o scanner.o parser.o
 	$(CC) $(CFLAGS) scanner.o main.o parser.o -o $@
 
 main.o: main.c

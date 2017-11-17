@@ -10,7 +10,7 @@
 #include "structs.h"
 
 extern FILE* f;
-TOKEN token;
+extern TOKEN token;
 int error;			//error code
 int line = 1;		//line number
 
@@ -21,8 +21,6 @@ int id(void) {
 
 //main
 int parser(void) {
-	Init_Token(&token);
-	
 	return p_start();
 }
 

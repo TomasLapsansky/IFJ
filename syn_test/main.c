@@ -1,8 +1,11 @@
 #include "../scanner.h"
 #include "../parser.h"
 
+FILE *f;
+TOKEN token;
+
 int main(void) {
-	FILE *f;
+	Init_Token(&token);
 	
 	f = fopen("../code.txt","r");
 	if (f == NULL){
@@ -14,5 +17,6 @@ int main(void) {
 	
 	printf("%d\n", finish);
 	
+	Clear_Token(&token);
 	return 0;
 }
