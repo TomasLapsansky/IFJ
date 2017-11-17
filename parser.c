@@ -6,13 +6,6 @@
  */
 
 #include "parser.h"
-#include "scanner.h"
-#include "structs.h"
-
-extern FILE* f;
-extern TOKEN token;
-int error;			//error code
-int line = 1;		//line number
 
 //spracovanie ID		TODO
 int id(void) {

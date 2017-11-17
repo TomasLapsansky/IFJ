@@ -15,7 +15,15 @@ int main(void) {
 	
 	int finish = parser();
 	
-	printf("%d\n", finish);
+	if(finish == OK) {
+		printf("OK line = %d\n", lines);
+	} else if(finish == E_OK) {
+		printf("E_OK line = %d\n", lines);
+	} else if(finish == SYN_A_ERROR) {
+		printf("SYN_A_ERROR line = %d\n", lines);
+	} else if(finish == LEX_A_ERROR) {
+		printf("LEX_A_ERROR line = %d\n", lines);
+	}
 	
 	Clear_Token(&token);
 	return 0;
