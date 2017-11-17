@@ -7,6 +7,11 @@
 
 #include "parser.h"
 
+extern FILE* f;
+extern TOKEN token;
+extern int error;			//error code
+extern int line;		//line number
+
 //spracovanie ID		TODO
 int id(void) {
 	return OK;
@@ -14,6 +19,7 @@ int id(void) {
 
 //main
 int parser(void) {
+	line = 1;
 	return p_start();
 }
 

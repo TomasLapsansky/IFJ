@@ -8,11 +8,6 @@
 #include "scanner.h"
 #include "structs.h"
 
-extern FILE* f;
-extern TOKEN token;
-int error;			//error code
-int line = 1;		//line number
-
 //KA pre syntakticku analyzu
 int parser(void);
 

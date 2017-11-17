@@ -1,8 +1,11 @@
 #include "../scanner.h"
 #include "../parser.h"
 
-FILE *f;
+
+FILE* f;
 TOKEN token;
+int error;		//error code
+int line;		//line number
 
 int main(void) {
 	Init_Token(&token);
@@ -16,13 +19,13 @@ int main(void) {
 	int finish = parser();
 	
 	if(finish == OK) {
-		printf("OK line = %d\n", lines);
+		printf("OK line = %d token = %d\n", line, token.name);
 	} else if(finish == E_OK) {
-		printf("E_OK line = %d\n", lines);
+		printf("E_OK line = %d token = %d\n", line, token.name);
 	} else if(finish == SYN_A_ERROR) {
-		printf("SYN_A_ERROR line = %d\n", lines);
+		printf("SYN_A_ERROR line = %d token = %d\n", line, token.name);
 	} else if(finish == LEX_A_ERROR) {
-		printf("LEX_A_ERROR line = %d\n", lines);
+		printf("LEX_A_ERROR line = %d token = %d\n", line, token.name);
 	}
 	
 	Clear_Token(&token);
