@@ -12,9 +12,14 @@ extern TOKEN token;
 extern int error;			//error code
 extern int line;		//line number
 
+bool loaded_token = false;
+
 //spracovanie ID		TODO
 int id(void) {
-	return OK;
+	if(token.name != ID)
+		return 0;		//NOK
+	else
+		return OK;
 }
 
 //main
@@ -45,7 +50,7 @@ int p_start(void) {
 int p_declare(void) {
 	
 	switch(token.name) {
-		
+			
 		case(DECLARE):						//Declare
 			
 			if((error = Get_Token(f, &token)) != OK)
@@ -138,7 +143,7 @@ int p_declare(void) {
 			if((error = Get_Token(f, &token)) != OK)
 				return error;//gettoken
 			
-			if(token.name != EOL_)			//Function ID(<p_parameter>) As <p_type> "EOL"
+			if(token.name != EOL_)			//Function ID(<p_parameter>) As <p_type> EOL
 				return SYN_A_ERROR;
 			
 			line++;	//pocitadlo riadku pre vypis pri chybe
@@ -169,7 +174,7 @@ int p_declare(void) {
 		case(SCOPE):					//ε
 			
 			return OK;
-		
+			
 		default:						//ERROR
 			return SYN_A_ERROR;
 	}//switch
@@ -186,8 +191,12 @@ int p_body(void) {
 		return error;
 	}
 	
-	if((error = Get_Token(f, &token)) != OK)
-		return error;	//gettoken
+	if(!loaded_token) {		//vola sa, ak prikaz nebol vyrazom, teda nie je nacitany novy token
+		if((error = Get_Token(f, &token)) != OK)
+			return error;	//gettoken
+	}
+	
+	loaded_token = false;
 	
 	if(token.name != EOL_)
 		return SYN_A_ERROR;
@@ -206,9 +215,9 @@ int p_body(void) {
 //<p_type>		String
 int p_type(void) {
 	switch(token.name) {
-		case(INT_NUM):
-		case(DOUBLE_NUM):
-		case(STR):
+		case(INTEGER):
+		case(DOUBLE):
+		case(STRING):
 			return OK;
 		default:
 			return SYN_A_ERROR;
@@ -271,10 +280,10 @@ int p_parameter(void) {
 	
 	if((error = p_type() != OK))	//ID As <p_type>
 		return error;
-	   
+	
 	if((error = Get_Token(f, &token)) != OK)
-	   return error;	//gettoken
-	   
+		return error;	//gettoken
+	
 	switch(token.name) {
 		case(RIGHTPAREN):			//ID As <p_type>)
 			return OK;
@@ -307,16 +316,16 @@ int p_nextparameter(void) {
 		return error;	//gettoken
 	
 	if((error = p_type() != OK))	//ID As <p_type>
-	   return error;
-	   
-	   if((error = Get_Token(f, &token)) != OK)
-	   return error;	//gettoken
-	   
+		return error;
+	
+	if((error = Get_Token(f, &token)) != OK)
+		return error;	//gettoken
+	
 	switch(token.name) {
 		case(RIGHTPAREN):			//ID As <p_type>)
 			return OK;
 		case(COMMA):				//ID As <p_type>, <p_nextparameter>
-			   
+			
 			if((error = Get_Token(f, &token)) != OK)
 				return error;	//gettoken
 			
@@ -437,28 +446,15 @@ int p_prikaz(void) {
 			if((error = Get_Token(f, &token)) != OK)
 				return error;	//gettoken
 			
-			if(token.name != LEFTPAREN)	//If (
+			if((error = p_vyraz()) != OK)	//If <p_vyraz>
+			
+			if(token.name != THEN)			//If <p_vyraz> Then
 				return SYN_A_ERROR;
 			
 			if((error = Get_Token(f, &token)) != OK)
 				return error;	//gettoken
 			
-			if((error = p_vyraz()) != OK)	//If (<p_vyraz>
-				return error;
-			
-			if(token.name != RIGHTPAREN)	//If (<p_vyraz>)
-				return SYN_A_ERROR;
-			
-			if((error = Get_Token(f, &token)) != OK)
-				return error;	//gettoken
-			
-			if(token.name != THEN)			//If (<p_vyraz>) Then
-				return SYN_A_ERROR;
-			
-			if((error = Get_Token(f, &token)) != OK)
-				return error;	//gettoken
-			
-			if(token.name != EOL_)			//If (<p_vyraz>) Then EOL
+			if(token.name != EOL_)			//If <p_vyraz> Then EOL
 				return SYN_A_ERROR;
 			
 			line++; //pocitadlo riadku pre vypis pri chybe
@@ -466,17 +462,17 @@ int p_prikaz(void) {
 			if((error = Get_Token(f, &token)) != OK)
 				return error;	//gettoken
 			
-			if((error = p_body()) != OK) {	//If (<p_vyraz>) Then EOL <p_body>
+			if((error = p_body()) != OK) {	//If <p_vyraz> Then EOL <p_body>
 				return error;
 			}
-				
-			if(token.name != ELSE)			//If (<p_vyraz>) Then EOL <p_body> Else
+			
+			if(token.name != ELSE)			//If <p_vyraz> Then EOL <p_body> Else
 				return SYN_A_ERROR;
 			
 			if((error = Get_Token(f, &token)) != OK)
 				return error;	//gettoken
 			
-			if(token.name != EOL_)			//If (<p_vyraz>) Then EOL <p_body> Else EOL
+			if(token.name != EOL_)			//If <p_vyraz> Then EOL <p_body> Else EOL
 				return SYN_A_ERROR;
 			
 			line++; //pocitadlo riadku pre vypis pri chybe
@@ -484,17 +480,17 @@ int p_prikaz(void) {
 			if((error = Get_Token(f, &token)) != OK)
 				return error;	//gettoken
 			
-			if((error = p_body()) != OK) {	//If (<p_vyraz>) Then EOL <p_body> Else EOL <p_body>
+			if((error = p_body()) != OK) {	//If <p_vyraz> Then EOL <p_body> Else EOL <p_body>
 				return error;
 			}
 			
-			if(token.name != END)			//If (<p_vyraz>) Then EOL <p_body> Else EOL <p_body> End
+			if(token.name != END)			//If <p_vyraz> Then EOL <p_body> Else EOL <p_body> End
 				return SYN_A_ERROR;
 			
 			if((error = Get_Token(f, &token)) != OK)
 				return error;	//gettoken
 			
-			if(token.name != IF)			//If (<p_vyraz>) Then EOL <p_body> Else EOL <p_body> End If
+			if(token.name != IF)			//If <p_vyraz> Then EOL <p_body> Else EOL <p_body> End If
 				return SYN_A_ERROR;
 			
 			return OK;
@@ -511,22 +507,10 @@ int p_prikaz(void) {
 			if((error = Get_Token(f, &token)) != OK)
 				return error;	//gettoken
 			
-			if(token.name != LEFTPAREN)	//Do While (
-				return SYN_A_ERROR;
-			
-			if((error = Get_Token(f, &token)) != OK)
-				return error;	//gettoken
-			
-			if((error = p_vyraz()) != OK)	//Do While (<p_vyraz>
+			if((error = p_vyraz()) != OK)	//Do While <p_vyraz>
 				return error;
 			
-			if(token.name != RIGHTPAREN)	//Do While (<p_vyraz>)
-				return SYN_A_ERROR;
-			
-			if((error = Get_Token(f, &token)) != OK)
-				return error;	//gettoken
-			
-			if(token.name != EOL_)			//Do While (<p_vyraz>) EOL
+			if(token.name != EOL_)			//Do While <p_vyraz> EOL
 				return SYN_A_ERROR;
 			
 			line++; //pocitadlo riadku pre vypis pri chybe
@@ -534,22 +518,22 @@ int p_prikaz(void) {
 			if((error = Get_Token(f, &token)) != OK)
 				return error;	//gettoken
 			
-			if((error = p_body()) != OK) {	//Do While (<p_vyraz>) EOL <p_body>
+			if((error = p_body()) != OK) {	//Do While <p_vyraz> EOL <p_body>
 				return error;
 			}
-				
+			
 			if(token.name != LOOP)
 				return SYN_A_ERROR;
 			
 			return OK;
-				
+			
 			break;
 		case(RETURN):					//Return
 			
 			if((error = Get_Token(f, &token)) != OK)
 				return error;	//gettoken
 			
-			if((error = p_vyraz()) != OK)	//Do While (<p_vyraz>
+			if((error = p_vyraz()) != OK)	//Return <p_vyraz>
 				return error;
 			
 			return OK;
@@ -582,11 +566,13 @@ int p_prikaz(void) {
 //<p_priradenie>		<p_vyraz>
 int p_priradenie(void) {
 	
-	if((error = id()) != OK) {				//F_ID
+	if(true) {//if((error = id()) != OK) {				//je potreba rozhodnut, ci sa jedna o F_ID alebo nie, treba dokoncit id(void)
 		if((error = p_vyraz()) != OK) {		//<p_vyraz>
 			return error;
 		}
-	}
+		
+		return OK;
+	}										//F_ID
 	
 	if((error = Get_Token(f, &token)) != OK)
 		return error;	//gettoken
@@ -640,10 +626,13 @@ int p_nextprint(void) {
 int p_vyraz(void) {
 	
 	//pre testovanie vyrazov, bude nasledovat uprava
-	while((error = p_type()) == OK) {
+	while(token.name != THEN && token.name != EOL_) {
 		if((error = Get_Token(f, &token)) != OK)
-			return error;	//gettoken
+			return error;
 	}
+	
+	loaded_token = true;
 	
 	return OK;
 }
+

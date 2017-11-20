@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-std=c99 -Wall -W -Wextra -pedantic
+CFLAGS=-std=c99 -Wall -W -Wextra -pedantic -ggdb
 RM=rm -f
 
 test_syn: main.o scanner.o parser.o
