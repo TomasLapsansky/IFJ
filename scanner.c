@@ -2,6 +2,7 @@
 
 static int eol;
 static int countT;
+extern int line;
 
 enum State{
 	start = 1,

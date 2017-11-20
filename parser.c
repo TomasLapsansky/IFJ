@@ -10,7 +10,7 @@
 extern FILE* f;
 extern TOKEN token;
 extern int error;			//error code
-extern int line;		//line number
+extern int line;			//line number
 
 bool loaded_token = false;
 
@@ -97,7 +97,7 @@ int p_declare(void) {
 			if(token.name != EOL_)			//Declare Function ID(<p_parameter>) As <p_type> EOL
 				return SYN_A_ERROR;
 			
-			line++;	//pocitadlo riadku pre vypis pri chybe
+			//line++;	//pocitadlo riadku pre vypis pri chybe
 			
 			if((error = Get_Token(f, &token)) != OK)
 				return error;//gettoken
@@ -146,7 +146,7 @@ int p_declare(void) {
 			if(token.name != EOL_)			//Function ID(<p_parameter>) As <p_type> EOL
 				return SYN_A_ERROR;
 			
-			line++;	//pocitadlo riadku pre vypis pri chybe
+			//line++;	//pocitadlo riadku pre vypis pri chybe
 			
 			if((error = Get_Token(f, &token)) != OK)
 				return error;//gettoken
@@ -201,7 +201,7 @@ int p_body(void) {
 	if(token.name != EOL_)
 		return SYN_A_ERROR;
 	
-	line++;	//pocitadlo riadku pre vypis pri chybe
+	//line++;	//pocitadlo riadku pre vypis pri chybe
 	
 	if((error = Get_Token(f, &token)) != OK)
 		return error;	//gettoken
@@ -457,7 +457,7 @@ int p_prikaz(void) {
 			if(token.name != EOL_)			//If <p_vyraz> Then EOL
 				return SYN_A_ERROR;
 			
-			line++; //pocitadlo riadku pre vypis pri chybe
+			//line++; //pocitadlo riadku pre vypis pri chybe
 			
 			if((error = Get_Token(f, &token)) != OK)
 				return error;	//gettoken
@@ -475,7 +475,7 @@ int p_prikaz(void) {
 			if(token.name != EOL_)			//If <p_vyraz> Then EOL <p_body> Else EOL
 				return SYN_A_ERROR;
 			
-			line++; //pocitadlo riadku pre vypis pri chybe
+			//line++; //pocitadlo riadku pre vypis pri chybe
 			
 			if((error = Get_Token(f, &token)) != OK)
 				return error;	//gettoken
@@ -513,7 +513,7 @@ int p_prikaz(void) {
 			if(token.name != EOL_)			//Do While <p_vyraz> EOL
 				return SYN_A_ERROR;
 			
-			line++; //pocitadlo riadku pre vypis pri chybe
+			//line++; //pocitadlo riadku pre vypis pri chybe
 			
 			if((error = Get_Token(f, &token)) != OK)
 				return error;	//gettoken
@@ -623,7 +623,7 @@ int p_nextprint(void) {
 //------------------------------TODO------------------------------
 //
 //<p_vyraz>
-int p_vyraz(void) {
+int p_vyraz(int type) {
 	
 	//pre testovanie vyrazov, bude nasledovat uprava
 	while(token.name != THEN && token.name != EOL_) {

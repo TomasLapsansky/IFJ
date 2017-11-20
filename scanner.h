@@ -18,6 +18,7 @@ enum Token_Name{
 	INT_NUM,
 	DOUBLE_NUM,
 	STR,
+	BL,
 
 	PLUS = 20,
 	MINUS,

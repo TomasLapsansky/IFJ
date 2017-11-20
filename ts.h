@@ -21,7 +21,7 @@ typedef enum
 
 
 typedef struct par {
-    dattyp typ;	//typ parametru
+    int type;	//typ parametru ENUM INT_NUM DOUBLE_NUM STR
     char nazev[50];	//omezeni puvodniho identifikatoru na 50 znaku
     int poradi;
     struct par * next;
@@ -36,17 +36,63 @@ typedef struct tlist //ADT seznam
 
 /* obsah datove casti */
 typedef struct tData{
-dattyp navrat_typ;	//prom dat typ, fce navratovy dat typ
-char navesti[50];	//prom \0
-bool definice;
-Seznam_parametru seznam;
+    int type;	//typ parametru/return ENUM INT_NUM DOUBLE_NUM STR
+	bool funkcia;
+	int pocet_parametrov;
+	char *navesti;	//prom NULL
+	//bool definice;
+	Seznam_parametru seznam;
 }tData;
 
+/* obsah datove casti */
+typedef struct tRetData{
+	int type;	//typ parametru/return ENUM INT_NUM DOUBLE_NUM STR
+	bool funkcia;
+	int pocet_parametrov;
+	char *navesti;	//prom NULL
+	//bool definice;
+	int *type;		//ENUM
+	char **nazov;	//NAZVY
+}tRetData;
 
+
+//stdout=out.IFJcode17
+/*
+ 	htItem ptrht;
+ 	htInit(ptrht);
+ 
+ 	HASH TABLE
+ 	INSERT_DIM(int type, str (key) nazov_dim, ptrht)
+ 
+ 	INSERT_F(int type, str (key) nazov_f, ptrht)
+ 	INSERT_PAR(int type, str (key) nazov_par, str (key) nazov_f, ptrht)
+ 
+ 	*tRetData SEARCH(str (key) nazov, ptrht)
+ 	for//for me
+ 
+ 	*htItem FunctionTable(str (key) nazov_f, ptrht)		//+ init etc.
+ */
+
+/*
+Dim
+tdata kokot
+	type -> p_type
+ 	funkcia -> false
+	navesti -> nazov premennej
+ 	Seznam_parametru ->NULL
+ -----------------------------
+ 
+ Declare
+ tdata kokot
+ 	type -> p_type
+ 	funkcia -> true
+ 	navesti -> F_ID //nazov funkcie
+ 
+ */
 
 /*Datová položka TRP s explicitně řetězenými synonymy*/
  typedef struct tHTItem{
-	char* key;				/* klíč = identifikator */
+	char* key;				/* klíč = identifikator*/
 	tData data;				/* obsah */
 	struct tHTItem* ptrnext;	/* ukazatel na další synonymum */
 	void* lcht;	//ukazatel na vnocene tabulky
