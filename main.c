@@ -1,4 +1,5 @@
 #include "scanner.h"
+int line = 1;
 
 int main(){
 	FILE *f;

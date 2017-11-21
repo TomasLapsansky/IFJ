@@ -2,6 +2,7 @@
 
 static int eol;
 static int countT;
+static int next_line;
 extern int line;
 
 enum State{
@@ -103,8 +104,18 @@ int Get_Token(FILE *f,TOKEN *t){
 
 	while((c = fgetc(f))){
 		switch(state){
-			case start: // odstrani whitespace
+			case start: // radkovani
+						if(next_line == 1){
+							next_line = 0;
+							line++;
+							//printf("line: %d\n",line);
+						}
+						// odstrani whitespace
 						if(isspace(c)){
+							// pomocny after EOL
+							if(c == '\n'){
+								next_line = 1;
+							}
 							if(c == '\n' && eol == 0 && countT != 1){
 								if((pom = Add_Char(t,'E')) == ALLOC_ERROR){
 									return ALLOC_ERROR;
