@@ -1,6 +1,4 @@
-
 /' Program 2: Vypocet faktorialu (rekurzivne) '/
-
 
 Declare Function factorial (n As Integer) As Integer
 Function factorial (n As Integer) As Integer
@@ -10,17 +8,17 @@ Function factorial (n As Integer) As Integer
 	If n < 2 Then
 		result = 1
 	Else
-    		decremented_n = n - 1
-    		temp_result = factorial(decremented_n)
-    		result = n * temp_result
+		decremented_n = n - 1
+		temp_result = factorial(decremented_n)
+		result = n * temp_result
 	End If
+
 	Return result
 End Function
 
-Scope 'Hlavni telo programu
-	Dim a As Integer
-	Dim vysl As Integer
+Scope 'Hlavni telo programu Dim a As Integer
 
+	Dim vysl As Integer
 	Print !"Zadejte cislo pro vypocet faktorialu";
 	Input a
 	If a < 0 Then
@@ -29,4 +27,5 @@ Scope 'Hlavni telo programu
 		vysl = factorial(a)
 		Print !"\nVysledek je:" ; vysl ; !"\n";
 	End If
+
 End Scope

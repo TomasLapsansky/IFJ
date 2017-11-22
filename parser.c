@@ -167,6 +167,12 @@ int p_declare(void) {
 			if((error = Get_Token(f, &token)) != OK)
 				return error;//gettoken
 			
+			if(token.name != EOL_)		//Function ID(<p_parameter>) As <p_type> EOL <p_body> End Function EOL
+				return SYN_A_ERROR;
+			
+			if((error = Get_Token(f, &token)) != OK)
+				return error;//gettoken
+			
 			return p_declare();				//prechod do potencialneho dalsieho stavu
 			
 			break;
@@ -224,9 +230,15 @@ int p_type(void) {
 	}
 }
 
-//<p_scope>		Scope <p_body> End Scope EOF
+//<p_scope>		Scope EOL <p_body> End Scope EOF
 int p_scope(void) {
 	if(token.name != SCOPE)	//Scope
+		return SYN_A_ERROR;
+	
+	if((error = Get_Token(f, &token)) != OK)
+		return error;	//gettoken
+	
+	if(token.name != EOL_)		//Scope <p_body> End
 		return SYN_A_ERROR;
 	
 	if((error = Get_Token(f, &token)) != OK)
@@ -447,6 +459,9 @@ int p_prikaz(void) {
 				return error;	//gettoken
 			
 			if((error = p_vyraz()) != OK)	//If <p_vyraz>
+				return error;
+			
+			loaded_token = false;
 			
 			if(token.name != THEN)			//If <p_vyraz> Then
 				return SYN_A_ERROR;
@@ -509,6 +524,8 @@ int p_prikaz(void) {
 			
 			if((error = p_vyraz()) != OK)	//Do While <p_vyraz>
 				return error;
+			
+			loaded_token = false;
 			
 			if(token.name != EOL_)			//Do While <p_vyraz> EOL
 				return SYN_A_ERROR;
@@ -587,34 +604,55 @@ int p_priradenie(void) {
 	
 }
 
-//<p_print>			<p_vyraz> <p_nextprint>
-//<p_print>			<p_string> <p_nextprint>
+//<p_print>			<p_vyraz>; <p_nextprint>
+//<p_print>			<p_string>; <p_nextprint>
 int p_print(void) {
 	
-	if(token.name != STRING) {			//String
+	if(token.name != STR) {			//String
 		if((error = p_vyraz()) != OK)	//<p_vyraz>
 			return error;
-		
 	}
+	
+	if(!loaded_token) {		//vola sa, ak prikaz nebol vyrazom, teda nie je nacitany novy token
+		if((error = Get_Token(f, &token)) != OK)
+			return error;	//gettoken
+	}
+	
+	loaded_token = false;
+	
+	if(token.name != SEMICOLON)
+		return SYN_A_ERROR;
 	
 	return p_nextprint();				//String/<p_vyraz> <p_nextprint>
 }
 
 //<p_nextprint>		ε
-//<p_nextprint>		; <p_vyraz> <p_nextprint>
-//<p_nextprint>		; <p_string> <p_nextprint>
+//<p_nextprint>		<p_vyraz>; <p_nextprint>
+//<p_nextprint>		<p_string>; <p_nextprint>
 int p_nextprint(void) {
-	
-	if(token.name != SEMICOLON)		//ε
-		return E_OK;
 	
 	if((error = Get_Token(f, &token)) != OK)
 		return error;	//gettoken
 	
-	if(token.name != STRING) {			//; String
-		if((error = p_vyraz()) != OK)	//; <p_vyraz>
+	if(token.name == EOL_) {		//ε
+		loaded_token = true;
+		return OK;
+	}
+		
+	if(token.name != STRING) {			//String
+		if((error = p_vyraz()) != OK)	//<p_vyraz>
 			return error;
 	}
+	
+	if(!loaded_token) {		//vola sa, ak prikaz nebol vyrazom, teda nie je nacitany novy token
+		if((error = Get_Token(f, &token)) != OK)
+			return error;	//gettoken
+	}
+	
+	loaded_token = false;
+	
+	if(token.name != SEMICOLON)
+		return SYN_A_ERROR;
 	
 	return p_nextprint();				//; String/<p_vyraz> <p_nextprint>
 }
@@ -623,10 +661,10 @@ int p_nextprint(void) {
 //------------------------------TODO------------------------------
 //
 //<p_vyraz>
-int p_vyraz(int type) {
+int p_vyraz() {
 	
 	//pre testovanie vyrazov, bude nasledovat uprava
-	while(token.name != THEN && token.name != EOL_) {
+	while(token.name != THEN && token.name != EOL_ && token.name != SEMICOLON) {
 		if((error = Get_Token(f, &token)) != OK)
 			return error;
 	}
