@@ -29,7 +29,7 @@ int main(){
 		}
 		Clear_Token(&t);
 	}
-
+ 	
 	fclose(f);
 
 	return 0;

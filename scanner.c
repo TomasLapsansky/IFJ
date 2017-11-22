@@ -2,6 +2,7 @@
 
 static int eol;
 static int countT;
+static int eof_t;
 static int next_line;
 extern int line;
 
@@ -99,10 +100,18 @@ int Get_Token(FILE *f,TOKEN *t){
 	int c,nextc,pom,next_num = false,int_exp = false,count = 0;
 	int state = start;
 
+	if(eof_t == 1) return EOF;
+
 	Clear_Token(t);
 	countT++;
 
 	while((c = fgetc(f))){
+		if(c == EOF){
+			eof_t = 1;
+			t->name = EOF_;
+			return OK;
+		}
+
 		switch(state){
 			case start: // radkovani
 						if(next_line == 1){
@@ -132,7 +141,9 @@ int Get_Token(FILE *f,TOKEN *t){
 							}
 							state = start;
 						}
-						else{ if(eol == 1) eol = 0;
+						else{ 
+						// pokud po EOLu neni dalsi EOL, vynuluju pom promenou, ze uz lze vypsat dalsi EOL na vystup
+						if(eol == 1) eol = 0;
 						// odstrani jednoradkovy komentar
 						if(c == 39){
 							// odebrani komentaru po konec radku nebo po EOF
@@ -292,7 +303,6 @@ int Get_Token(FILE *f,TOKEN *t){
 											t->name = COMMA;
 											return OK;
 											break;
-
 								default: 
 										t->name = INVALIDCHAR;
 										return LEX_A_ERROR;
@@ -302,7 +312,7 @@ int Get_Token(FILE *f,TOKEN *t){
 						}break;
 			// stav identifikator
 			case id: 
-						if((isdigit(c) || isalpha(c) || c == '_') && c != EOF){
+						if((isdigit(c) || isalpha(c) || c == '_')){
 							if((pom = Add_Char(t,c)) == ALLOC_ERROR){
 									return ALLOC_ERROR;
 								}
@@ -314,13 +324,11 @@ int Get_Token(FILE *f,TOKEN *t){
 							}
 							if((pom = KeywordCheck(t->data)) != 0){
 								t->name = pom;
-								if(c == EOF) return EOF;
 								return OK;
 							}
 							else{
 								t->name = ID;
-								if(c == EOF) return EOF;
-								else return OK;
+								return OK;
 							}
 							state = start;
 						}break;
@@ -529,6 +537,6 @@ int Get_Token(FILE *f,TOKEN *t){
 							return LEX_A_ERROR;
 						}break;
 		}
-	}	
+	}
 	return EOF;
 }
