@@ -248,9 +248,6 @@ int p_scope(void) {
 		return error;
 	}
 	
-	if((error = Get_Token(f, &token)) != OK)
-		return error;	//gettoken
-	
 	if(token.name != END)		//Scope <p_body> End
 		return SYN_A_ERROR;
 	
@@ -263,7 +260,13 @@ int p_scope(void) {
 	if((error = Get_Token(f, &token)) != OK)
 		return error;	//gettoken
 	
-	if(token.name != EOF)		//Scope <p_body> End Scope EOF
+	if(token.name != EOL_)		//Scope <p_body> End Scope EOF
+		return SYN_A_ERROR;
+	
+	if((error = Get_Token(f, &token)) != OK)
+		return error;	//gettoken
+	
+	if(token.name != EOF_)		//Scope <p_body> End Scope EOF
 		return SYN_A_ERROR;
 	
 	return OK;

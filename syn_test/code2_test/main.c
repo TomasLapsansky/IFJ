@@ -19,7 +19,7 @@ int main(void) {
 	int finish = parser();
 	
 	if(finish == OK) {
-		printf("CODE2: OK line = %d token = %d\n", line, token.name);
+		printf("CODE2: OK\n");
 	} else if(finish == SYN_A_ERROR) {
 		printf("CODE2: SYN_A_ERROR line = %d token = %d\n", line, token.name);
 	} else if(finish == LEX_A_ERROR) {
