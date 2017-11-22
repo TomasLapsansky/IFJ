@@ -97,19 +97,36 @@ int KeywordCheck(char *string){
 }
 
 int Get_Token(FILE *f,TOKEN *t){
-	int c,nextc,pom,next_num = false,int_exp = false,count = 0;
+	int c,nextc,pom,next_d = false,int_exp = false,count = 0;
 	int state = start;
 
+	// Pomocna podminka, aby se vratila hodnota EOF a ukoncila tak nacitani dalsich tokenu
 	if(eof_t == 1) return EOF;
 
 	Clear_Token(t);
 	countT++;
 
 	while((c = fgetc(f))){
-		if(c == EOF){
+		// Kontrola EOF 
+		if((c == EOF) && (state == start)){
+			if((pom = Add_Char(t,'E')) == ALLOC_ERROR){
+				return ALLOC_ERROR;
+			}
+			if((pom = Add_Char(t,'O')) == ALLOC_ERROR){
+				return ALLOC_ERROR;
+			}
+			if((pom = Add_Char(t,'F')) == ALLOC_ERROR){
+				return ALLOC_ERROR;
+			}
+			
+			// pomocna promena pro info zda uz byl EOF token sebran
 			eof_t = 1;
 			t->name = EOF_;
 			return OK;
+		}
+
+		if((c == EOF) && (state == string)){
+			return LEX_A_ERROR;
 		}
 
 		switch(state){
@@ -121,7 +138,7 @@ int Get_Token(FILE *f,TOKEN *t){
 						}
 						// odstrani whitespace
 						if(isspace(c)){
-							// pomocny after EOL
+							// pomocny after EOL pro spravne radkovani debugu
 							if(c == '\n'){
 								next_line = 1;
 							}
@@ -196,7 +213,7 @@ int Get_Token(FILE *f,TOKEN *t){
 						else if(c == '!'){
 							state = ex_mark;
 						}
-						// rovno, prirovnani, tri rovnitka
+						// rovnoitko
 						else if(c == '='){
 							if((pom = Add_Char(t,c)) == ALLOC_ERROR){
 								return ALLOC_ERROR;
@@ -312,7 +329,7 @@ int Get_Token(FILE *f,TOKEN *t){
 						}break;
 			// stav identifikator
 			case id: 
-						if((isdigit(c) || isalpha(c) || c == '_')){
+						if((isdigit(c) || isalpha(c) || c == '_') && c != EOF){
 							if((pom = Add_Char(t,c)) == ALLOC_ERROR){
 									return ALLOC_ERROR;
 								}
@@ -334,12 +351,12 @@ int Get_Token(FILE *f,TOKEN *t){
 						}break;
 			// stav int
 			case int_:
-						if(next_num){
+						if(next_d){
 								if(isdigit(c)){
 									if((pom = Add_Char(t,c)) == ALLOC_ERROR){
 											return ALLOC_ERROR;
 										}
-									next_num = false;
+									next_d = false;
 								}
 								else{
 									ungetc(c,f);
@@ -357,7 +374,7 @@ int Get_Token(FILE *f,TOKEN *t){
 										return ALLOC_ERROR;
 									}
 								state = double_;
-								next_num = true;
+								next_d = true;
 							}
 							else if(c == 'E' || c == 'e'){
 								int_exp = true;
@@ -370,7 +387,7 @@ int Get_Token(FILE *f,TOKEN *t){
 										return ALLOC_ERROR;
 									}
 									if(c == '+' || c == '-'){
-										next_num = true;
+										next_d = true;
 									}
 									state = int_exp;
 								}
@@ -387,12 +404,12 @@ int Get_Token(FILE *f,TOKEN *t){
 						}break;
 			// stav double
 			case double_:
-						if(next_num){
+						if(next_d){
 							if(isdigit(c)){
 								if((pom = Add_Char(t,c)) == ALLOC_ERROR){
 										return ALLOC_ERROR;
 									}
-								next_num = false;
+								next_d = false;
 							}
 							else{
 								ungetc(c,f);
@@ -415,7 +432,7 @@ int Get_Token(FILE *f,TOKEN *t){
 										return ALLOC_ERROR;
 									}
 									if(c == '+' || c == '-'){
-										next_num = true;
+										next_d = true;
 									}
 								}
 								else{
@@ -480,14 +497,15 @@ int Get_Token(FILE *f,TOKEN *t){
 							return OK;
 						}
 						else{
-							if(c > 31){
+							if(c == '\\'){
+								state = escape_seq;
+							}
+							else if((c > 31)&&(c < 255)){
 								if((pom = Add_Char(t,c)) == ALLOC_ERROR){
 									return ALLOC_ERROR;
 								}
 							}
-							else if(c == '\\'){
-								state = escape_seq;
-							}
+							
 						}break;
 
 			case escape_seq:
