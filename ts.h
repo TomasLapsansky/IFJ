@@ -14,85 +14,28 @@ prepracvany projekt c016 z predmetu IAL
 
 #define HTSIZE 19	//velikost tabulky musi byt prvocislo pro funkcnost hashcode()
 
-typedef enum
-{
-	inte=0,doub=1,stri=2
-}dattyp;
-
-
 typedef struct par {
-    int type;	//typ parametru ENUM INT_NUM DOUBLE_NUM STR
-    char nazev[50];	//omezeni puvodniho identifikatoru na 50 znaku
+    int type;	//typ parametru
+    char* nazev;	//omezeni puvodniho identifikatoru na 50 znaku
     int poradi;
     struct par * next;
 } parametry;
 
 
-typedef struct tlist //ADT seznam
-{
-	parametry *first;	//ukazatelnaprvní prvek seznamu
-}Seznam_parametru;
-
-
 /* obsah datove casti */
 typedef struct tData{
-    int type;	//typ parametru/return ENUM INT_NUM DOUBLE_NUM STR
-	bool funkcia;
-	int pocet_parametrov;
-	char *navesti;	//prom NULL
-	//bool definice;
-	Seznam_parametru seznam;
+int type;	//prom dat typ, fce navratovy dat typ
+char* navesti;	//
+bool funkce;
+int pocet_par;
+parametry *first;
 }tData;
 
-/* obsah datove casti */
-typedef struct tRetData{
-	int type;	//typ parametru/return ENUM INT_NUM DOUBLE_NUM STR
-	bool funkcia;
-	int pocet_parametrov;
-	char *navesti;	//prom NULL
-	//bool definice;
-	int *type;		//ENUM
-	char **nazov;	//NAZVY
-}tRetData;
 
-
-//stdout=out.IFJcode17
-/*
- 	htItem ptrht;
- 	htInit(ptrht);
- 
- 	HASH TABLE
- 	INSERT_DIM(int type, str (key) nazov_dim, ptrht)
- 
- 	INSERT_F(int type, str (key) nazov_f, ptrht)
- 	INSERT_PAR(int type, str (key) nazov_par, str (key) nazov_f, ptrht)
- 
- 	*tRetData SEARCH(str (key) nazov, ptrht)
- 	for//for me
- 
- 	*htItem FunctionTable(str (key) nazov_f, ptrht)		//+ init etc.
- */
-
-/*
-Dim
-tdata kokot
-	type -> p_type
- 	funkcia -> false
-	navesti -> nazov premennej
- 	Seznam_parametru ->NULL
- -----------------------------
- 
- Declare
- tdata kokot
- 	type -> p_type
- 	funkcia -> true
- 	navesti -> F_ID //nazov funkcie
- 
- */
 
 /*Datová položka TRP s explicitně řetězenými synonymy*/
  typedef struct tHTItem{
-	char* key;				/* klíč = identifikator*/
+	char* key;				/* klíč = identifikator */
 	tData data;				/* obsah */
 	struct tHTItem* ptrnext;	/* ukazatel na další synonymum */
 	void* lcht;	//ukazatel na vnocene tabulky
@@ -100,6 +43,17 @@ tdata kokot
 
 /* TRP s explicitně zřetězenými synonymy. */
 typedef tHTItem* tHTable[HTSIZE];
+
+/* obsah datove casti */
+typedef struct tRetData{
+	int type;	//typ parametru/return ENUM INT_NUM DOUBLE_NUM STR
+	bool funkce;
+	int pocet_parametru;
+	char *navesti;	//prom NULL
+	int *typy;		//ENUM pole parametru typu
+	char **nazvy;	//NAZVY	polse parametru nazvu
+}tRetData;
+
 
 /* funkce nad tabulkou */
 
@@ -120,17 +74,21 @@ void htClearAll ( tHTable* ptrht );
 
 /* funkce pro Linearni seznam parametru fukci*/
 
-bool Searchparametr(Seznam_parametru *seznam,dattyp typ,char* nazev,int poradi);
+bool Searchparametr(tHTItem* ptrht,int typ,char* nazev,int poradi);
 
-bool InsertParametr(Seznam_parametru* seznam,dattyp typ,char* nazev);
+bool InsertParametr(tHTItem* ptrht,int typ,char* nazev);
 
-void Initseznam (Seznam_parametru* seznam);
-
-void Uvolnitparametry(Seznam_parametru *seznam);
+void Uvolnitparametry(tHTItem* ptrht);
 
 /*Funkce pomocne*/
 
-void Vlozdata(tData *cil,dattyp typ,char* navesti,bool definice);
+void Vlozdata(tData *cil,int typ,char* navesti,bool definice);
 
+/*InterFace TS*/
+
+void INSERT_DIM(int type,char* nazov_dim,tHTable* tabulka);
+void INSERT_F(int type, char* nazov_f,tHTable* tabulka);
+bool INSERT_PAR(int type,char* nazev_par, char* nazov_f,tHTable* tabulka);
+tRetData* SEARCH(char* nazov,tHTable* tabulka);
 
 #endif

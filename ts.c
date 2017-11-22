@@ -193,13 +193,13 @@ void htClearAll ( tHTable* ptrht ) {
 
 /*Funkce pro Lin seznam pro pramametrz funkci*/
 
-bool Searchparametr(Seznam_parametru *seznam,dattyp typ,char* nazev,int poradi)
+bool Searchparametr(tHTItem* ptrht,int typ,char* nazev,int poradi)
 {
 	parametry *tmp;
-	tmp=seznam->first;
+	tmp=ptrht->data.first;
 	while(tmp!=NULL)
 	{
-		if((tmp->poradi==poradi)&&(strcmp(tmp->nazev,nazev)==0)&&(tmp->typ==typ))
+		if((tmp->poradi==poradi)&&(strcmp(tmp->nazev,nazev)==0)&&(tmp->type==typ))
 		{
 			return true;
 		}
@@ -211,21 +211,22 @@ bool Searchparametr(Seznam_parametru *seznam,dattyp typ,char* nazev,int poradi)
 	return false;
 }
 
-bool InsertParametr(Seznam_parametru* seznam,dattyp typ,char* nazev)
+bool InsertParametr(tHTItem* ptrht,int typ,char* nazev)
 {
 	parametry * tmp;
 	tmp=(parametry*)malloc(sizeof(parametry));
 	if(tmp==NULL)	return false;
-	strcpy(tmp->nazev,nazev);
-	tmp->typ=typ;
-	if(seznam->first==NULL)
+	tmp->nazev=nazev;
+	tmp->type=typ;
+	if(ptrht->data.first==NULL)
 	{
 		tmp->poradi=0;
-		seznam->first=tmp;
+		ptrht->data.pocet_par=1;
+		ptrht->data.first=tmp;
 	}
 	else
 	{
-		parametry* help=seznam->first;
+		parametry* help=ptrht->data.first;
 		int poradi=1;
 		while(help->next!=NULL)
 		{
@@ -234,21 +235,18 @@ bool InsertParametr(Seznam_parametru* seznam,dattyp typ,char* nazev)
 		}
 			tmp->poradi=poradi;
 			help->next=tmp;
+			ptrht->data.pocet_par++;
 	}
 	return true;
 }
 
-void Initseznam (Seznam_parametru* seznam)
-{
-	seznam->first=NULL;
-}
 
-void Uvolnitparametry(Seznam_parametru *seznam)
+void Uvolnitparametry(tHTItem* ptrht)
 {
 	parametry* tmp;
-	while (seznam->first != NULL){	//projde cely seznam a od zacatku ho zacne odalokovávat
-	tmp = seznam->first;
-	seznam->first = seznam->first->next;	//posun o jeden prvek niz v seznamu
+	while (ptrht->data.first != NULL){	//projde cely seznam a od zacatku ho zacne odalokovávat
+	tmp = ptrht->data.first;
+	ptrht->data.first = ptrht->data.first->next;	//posun o jeden prvek niz v seznamu
 	free(tmp);
 	}
 }
@@ -256,10 +254,88 @@ void Uvolnitparametry(Seznam_parametru *seznam)
 
 /*Pomocne funkce*/
 
-void Vlozdata(tData *cil,dattyp typ,char* navesti,bool definice)
+void Vlozdata(tData *cil,int typ,char* navesti,bool funkce)
 {
-	cil->definice=definice;
-	cil->navrat_typ=typ;
-	strcpy(cil->navesti,navesti); //pozor na delky
-	Initseznam(&cil->seznam);
+	cil->funkce=funkce;
+	cil->type=typ;
+	cil->navesti=navesti; //pozor na delky
+	cil->first=NULL;
+	cil->pocet_par=0;
+}
+
+/*InterFace TS*/
+
+void INSERT_DIM(int type,char* nazov_dim,tHTable* tabulka)
+{
+	tData dato;
+	dato.first=NULL;
+	dato.funkce=false;
+	dato.navesti=NULL;
+	dato.pocet_par=0;
+	dato.type=type;
+	htInsert (tabulka,nazov_dim,dato);
+
+}
+
+void INSERT_F(int type, char* nazov_f,tHTable* tabulka)
+{
+	tData dato;
+	dato.first=NULL;
+	dato.funkce=true;
+	dato.navesti=nazov_f;
+	dato.pocet_par=0;
+	dato.type=type;
+	htInsert (tabulka,nazov_f,dato);
+}
+
+bool INSERT_PAR(int type,char* nazev_par, char* nazov_f,tHTable* tabulka)
+{
+	tHTItem* tmp;
+	tmp=htSearch(tabulka,nazov_f);
+	if(tmp==NULL)	return false;
+	InsertParametr(tmp,type,nazev_par);
+	if(tmp->lcht==NULL)
+	{
+		tmp->lcht = (tHTable*) malloc ( sizeof(tHTable) );
+		if(tmp->lcht==NULL)	return false;
+		htInit(tmp->lcht);
+	}
+	INSERT_DIM(type,nazev_par,tmp->lcht);
+	return true;
+}
+
+tRetData* SEARCH(char* nazov,tHTable* tabulka)
+{
+	tRetData* help;
+	help=(tRetData*)malloc(sizeof(tRetData));
+	tHTItem* tmp;
+	tmp=htSearch(tabulka,nazov);
+	if(tmp==NULL)	return NULL;
+	help->funkce=tmp->data.funkce;
+	help->navesti=tmp->data.navesti;
+	help->type=tmp->data.type;
+	help->pocet_parametru=tmp->data.pocet_par;
+	int *pole_i;
+	pole_i=(int*)malloc(sizeof(int)*help->pocet_parametru);
+	if(pole_i==NULL)	return NULL;
+	parametry *pomoc;
+	pomoc=tmp->data.first;
+	for (int i=0;i<help->pocet_parametru;i++)
+	{
+		pole_i[i]=pomoc->type;
+		pomoc=pomoc->next;
+	}
+	help->typy=pole_i;
+
+	char **pole_char;
+	pole_char=(char**)malloc(sizeof(char*)*help->pocet_parametru);
+	if(*pole_char==NULL)	return NULL;
+	pomoc=tmp->data.first;
+	for (int i=0;i<help->pocet_parametru;i++)
+	{
+		pole_char[i]=pomoc->nazev;
+		pomoc=pomoc->next;
+	}
+	help->nazvy=pole_char;
+	return help;
 }
