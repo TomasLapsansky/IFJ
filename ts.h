@@ -12,47 +12,115 @@ prepracvany projekt c016 z predmetu IAL
 #include <string.h>
 #include <stdbool.h>
 
-#define HTSIZE 19	//velikost tabulky musi byt prvocislo pro funkcnost hashcode()
 
+/*
+velikost tabulky musi byt prvocislo pro funkcnost hashcode()
+male bude tvorit dlouhe seznamy = dlouhy pristup k prvku
+velke bude alokovat prazdne bloky = zbytecne zabirana pamet
+NUTNO OPTIMALIZOVAT
+*/
+#define HTSIZE 19
+
+/*
+struktura popisujici jeden parametr v linearnim seznamu
+*/
 typedef struct par {
     int type;	//typ parametru
-    char* nazev;	//omezeni puvodniho identifikatoru na 50 znaku
-    int poradi;
-    struct par * next;
+    char* nazev;	//ukazatel na id
+		int poradi;		//poradi parametru
+    struct par * next;	//dalsi parametr
 } parametry;
 
 
-/* obsah datove casti */
+/*
+obsah datove casti tHTItem
+data v jednotlive polozce hash table
+
+*/
 typedef struct tData{
 int type;	//prom dat typ, fce navratovy dat typ
-char* navesti;	//
-bool funkce;
+char* navesti;	//pomocny retezec pro tvoru 3ad kodu, je stejne jako key
+bool funkce;	//pokud je to funkce=true
 int pocet_par;
-parametry *first;
+parametry *first;	//hlavicka lin seznamu parametru
 }tData;
 
 
 
-/*Datová položka TRP s explicitně řetězenými synonymy*/
+/*
+Datová položka TRP s explicitně řetězenými synonymy
+polozka v hash table
+*/
  typedef struct tHTItem{
-	char* key;				/* klíč = identifikator */
+	char* key;				/* klíč = id*/
 	tData data;				/* obsah */
 	struct tHTItem* ptrnext;	/* ukazatel na další synonymum */
-	void* lcht;	//ukazatel na vnocene tabulky
+	void* lcht;		//ukazatel na vnocene tabulky
 } tHTItem;
 
-/* TRP s explicitně zřetězenými synonymy. */
+/*
+TRP s explicitně zretezenymi synonymy.
+hash tabulka
+*/
 typedef tHTItem* tHTable[HTSIZE];
 
-/* obsah datove casti */
+/*
+struktura pro vystupni komunikaci (interface)
+*/
 typedef struct tRetData{
-	int type;	//typ parametru/return ENUM INT_NUM DOUBLE_NUM STR
-	bool funkce;
+	int type;									//typ parametru
+	bool funkce;							//pokud je to funkce=true prom=false
 	int pocet_parametru;
-	char *navesti;	//prom NULL
-	int *typy;		//ENUM pole parametru typu
-	char **nazvy;	//NAZVY	polse parametru nazvu
+	char *navesti;						//fce=id  prom=NULL	slouzi pro generator
+	int *typy;								//pole typu paramtru
+	char **nazvy;							//pole id paramatru
 }tRetData;
+
+/*InterFace TS*/
+
+/*
+do tabulky vlozi promenou daneho typu a id
+POZOR pokud v dane tabulce uz existuje neco se stejnym nazvem prepisuje!!!
+pred pouzitim volej SEARCH() !!!
+ALLOC_ERROR / OK
+*/
+enum Errors INSERT_DIM(int type,char* nazov_dim,tHTable* tabulka);
+
+/*
+stejne jako INSERT_DIM
+do tabulky vlozi funkci daneho typu a id
+POZOR pokud v dane tabulce uz existuje neco se stejnym nazvem prepisuje!!!
+pred pouzitim volej SEARCH() !!!
+ALLOC_ERROR / OK
+*/
+enum Errors INSERT_F(int type, char* nazov_f,tHTable* tabulka);
+
+/*
+v tabulce najde funkci do ni prida parametr a vlozi ho taky do jeji localni tabulky symbolu
+true -> vse se povedlo
+flase -> funkce neni v TS,chyba alokace
+ALLOC_ERROR / OK / SEM_TYPE_ERROR pokud se pokusite zadat podruhe stejny parametr
+*/
+enum Errors INSERT_PAR(int type,char* nazev_par, char* nazov_f,tHTable* tabulka);
+
+/*
+hleda polozku v tabulce a vraci tretdata
+NULL pri nenalezeni i chybe malloc
+POZOR nutno odlaokovat!!!
+po každém zavolani nutvo volat
+*/
+tRetData* SEARCH(char* nazov,tHTable* tabulka);
+
+/*
+korekne uvolni data cele struktury
+*/
+void DELETE_SEARCH(tRetData* retdato);
+
+/*
+korekne uvolni celou tabulku symbolu
+*/
+void DELETE_TS(tHTable* global_tabulka);
+
 
 
 /* funkce nad tabulkou */
@@ -63,32 +131,15 @@ void htInit ( tHTable* ptrht );
 
 tHTItem* htSearch ( tHTable* ptrht, char* key );
 
-void htInsert ( tHTable* ptrht, char* key, tData data );
-
-tData* htRead ( tHTable* ptrht, char* key );
-
-void htDelete ( tHTable* ptrht, char* key );
-
-void htClearAll ( tHTable* ptrht );
+bool htInsert ( tHTable* ptrht, char* key, tData data );
 
 
 /* funkce pro Linearni seznam parametru fukci*/
 
-bool Searchparametr(tHTItem* ptrht,int typ,char* nazev,int poradi);
+bool Searchparametr(tHTItem* ptrht,char* nazev);
 
 bool InsertParametr(tHTItem* ptrht,int typ,char* nazev);
 
 void Uvolnitparametry(tHTItem* ptrht);
-
-/*Funkce pomocne*/
-
-void Vlozdata(tData *cil,int typ,char* navesti,bool definice);
-
-/*InterFace TS*/
-
-void INSERT_DIM(int type,char* nazov_dim,tHTable* tabulka);
-void INSERT_F(int type, char* nazov_f,tHTable* tabulka);
-bool INSERT_PAR(int type,char* nazev_par, char* nazov_f,tHTable* tabulka);
-tRetData* SEARCH(char* nazov,tHTable* tabulka);
 
 #endif

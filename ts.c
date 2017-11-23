@@ -78,8 +78,8 @@ tHTItem* htSearch ( tHTable* ptrht, char* key ) {
 
 /* TODO problem s prepsanim jiz existujici polozky v seznamu*/
 
-void htInsert ( tHTable* ptrht, char* key, tData data ) {
-	if(ptrht==NULL)	return ;	//oevereni platnosti ukazatele
+bool htInsert ( tHTable* ptrht, char* key, tData data ) {
+	if(ptrht==NULL)	return false;	//oevereni platnosti ukazatele
 	tHTItem *tmp;
 	tmp=htSearch(ptrht,key);
 	if(tmp!=NULL)	//prvek jiz existuje, aktualizace zaznamu
@@ -92,114 +92,33 @@ void htInsert ( tHTable* ptrht, char* key, tData data ) {
 		index=hashCode(key);	//nelezeni indexu pole
 
 		tmp=(tHTItem*) malloc(sizeof(tHTItem));
-		if(tmp==NULL)	return;	//chyba alokace
+		if(tmp==NULL)	return false;	//chyba alokace
 		tmp->ptrnext=(*ptrht)[index];	//posun dozadu
 		tmp->key=key;	//prekopirovani klice a dat
 		tmp->data=data;
 		tmp->lcht=NULL;
 		(*ptrht)[index]=tmp;	//nasataveni noveho prvku
 	}
-
+	return true;
 }
 
-/*
-** TRP s explicitně zřetězenými synonymy.
-** Tato funkce zjišťuje hodnotu datové části položky zadané klíčem.
-** Pokud je položka nalezena, vrací funkce ukazatel na položku
-** Pokud položka nalezena nebyla, vrací se funkční hodnota NULL
-**
-** Využijte dříve vytvořenou funkci HTSearch.
-*/
-
-tData* htRead ( tHTable* ptrht, char* key ) {
-	if(ptrht==NULL)	return NULL;	//oevereni platnosti ukazatele
-	tHTItem *tmp;
-	tmp=htSearch(ptrht,key);
-	if(tmp==NULL)	return NULL;	//polozka se nenasla
-	else
-	{
-		return &tmp->data;
-	}
-
-
-}
-
-/*
-** TRP s explicitně zřetězenými synonymy.
-** Tato procedura vyjme položku s klíčem key z tabulky
-** ptrht.  Uvolněnou položku korektně zrušte.  Pokud položka s uvedeným
-** klíčem neexistuje, dělejte, jako kdyby se nic nestalo (tj. nedělejte
-** nic).
-**
-** V tomto případě NEVYUŽÍVEJTE dříve vytvořenou funkci HTSearch.
-*/
-
-void htDelete ( tHTable* ptrht, char* key ) {
-	if(ptrht==NULL)	return ;	//oevereni platnosti ukazatele
-	int index;
-	index=hashCode(key);	//nelezeni indexu pole
-	tHTItem *tmp,*prev=NULL;
-	tmp=(*ptrht)[index];	//pomocny aktualni a predesly prvek
-	while(tmp!=NULL)
-	{
-		if(strcmp(key,tmp->key)==0)	//nalezl
-		{
-			if(prev==NULL)	//je prvni, pouze posun druheho na prvni misto
-			{
-			(*ptrht)[index]=(*ptrht)[index]->ptrnext;
-			free(tmp);
-			tmp=NULL;
-			}
-			else	//nebyl prvni, mazany se preskoci
-			{
-			prev->ptrnext=tmp->ptrnext;
-			free(tmp);
-			tmp=NULL;
-			}
-		}
-		else	//nenalezl, posun na dalsi prvek
-		{
-		prev=tmp;
-		tmp=tmp->ptrnext;
-		}
-	}
-
-}
 
 /* TRP s explicitně zřetězenými synonymy.
 ** Tato procedura zruší všechny položky tabulky, korektně uvolní prostor,
 ** který tyto položky zabíraly, a uvede tabulku do počátečního stavu.
 */
 
-void htClearAll ( tHTable* ptrht ) {
-	if(ptrht==NULL)	return ;	//oevereni platnosti ukazatele
-	int i=0;
-	tHTItem *tmp,*prev;
-	while(i<HTSIZE)	//projde vsechny polozky pole
-	{
-		prev=(*ptrht)[i];
-		while(prev!=NULL)	//projde cely radek
-		{
-			tmp=prev;
-			prev=prev->ptrnext;	//posun a mazani
-			free(tmp);
 
-		}
-		(*ptrht)[i]=NULL;	//ukotveni
-		i++;
-	}
-
-}
 
 /*Funkce pro Lin seznam pro pramametrz funkci*/
 
-bool Searchparametr(tHTItem* ptrht,int typ,char* nazev,int poradi)
+bool Searchparametr(tHTItem* ptrht,char* nazev)
 {
 	parametry *tmp;
 	tmp=ptrht->data.first;
 	while(tmp!=NULL)
 	{
-		if((tmp->poradi==poradi)&&(strcmp(tmp->nazev,nazev)==0)&&(tmp->type==typ))
+		if(tmp->nazev==nazev)
 		{
 			return true;
 		}
@@ -248,24 +167,14 @@ void Uvolnitparametry(tHTItem* ptrht)
 	tmp = ptrht->data.first;
 	ptrht->data.first = ptrht->data.first->next;	//posun o jeden prvek niz v seznamu
 	free(tmp);
+	printf("seznam:");
+
 	}
-}
-
-
-/*Pomocne funkce*/
-
-void Vlozdata(tData *cil,int typ,char* navesti,bool funkce)
-{
-	cil->funkce=funkce;
-	cil->type=typ;
-	cil->navesti=navesti; //pozor na delky
-	cil->first=NULL;
-	cil->pocet_par=0;
 }
 
 /*InterFace TS*/
 
-void INSERT_DIM(int type,char* nazov_dim,tHTable* tabulka)
+enum Errors INSERT_DIM(int type,char* nazov_dim,tHTable* tabulka)
 {
 	tData dato;
 	dato.first=NULL;
@@ -273,11 +182,11 @@ void INSERT_DIM(int type,char* nazov_dim,tHTable* tabulka)
 	dato.navesti=NULL;
 	dato.pocet_par=0;
 	dato.type=type;
-	htInsert (tabulka,nazov_dim,dato);
-
+	if(htInsert (tabulka,nazov_dim,dato)==false)	return ALLOC_ERROR;
+	return OK;
 }
 
-void INSERT_F(int type, char* nazov_f,tHTable* tabulka)
+enum Errors INSERT_F(int type, char* nazov_f,tHTable* tabulka)
 {
 	tData dato;
 	dato.first=NULL;
@@ -285,29 +194,31 @@ void INSERT_F(int type, char* nazov_f,tHTable* tabulka)
 	dato.navesti=nazov_f;
 	dato.pocet_par=0;
 	dato.type=type;
-	htInsert (tabulka,nazov_f,dato);
+	if(htInsert (tabulka,nazov_f,dato)==false)	return ALLOC_ERROR;
+	return OK;
 }
 
-bool INSERT_PAR(int type,char* nazev_par, char* nazov_f,tHTable* tabulka)
+enum Errors INSERT_PAR(int type,char* nazev_par, char* nazov_f,tHTable* tabulka)
 {
 	tHTItem* tmp;
 	tmp=htSearch(tabulka,nazov_f);
-	if(tmp==NULL)	return false;
-	InsertParametr(tmp,type,nazev_par);
+	if(Searchparametr(tmp,nazev_par)==true)	return SEM_TYPE_ERROR;
+	if(InsertParametr(tmp,type,nazev_par)==false)	return ALLOC_ERROR;
 	if(tmp->lcht==NULL)
 	{
 		tmp->lcht = (tHTable*) malloc ( sizeof(tHTable) );
-		if(tmp->lcht==NULL)	return false;
+		if(tmp->lcht==NULL)	return ALLOC_ERROR;
 		htInit(tmp->lcht);
 	}
 	INSERT_DIM(type,nazev_par,tmp->lcht);
-	return true;
+	return OK;
 }
 
 tRetData* SEARCH(char* nazov,tHTable* tabulka)
 {
 	tRetData* help;
 	help=(tRetData*)malloc(sizeof(tRetData));
+	if(help==NULL)	return NULL;
 	tHTItem* tmp;
 	tmp=htSearch(tabulka,nazov);
 	if(tmp==NULL)	return NULL;
@@ -338,4 +249,58 @@ tRetData* SEARCH(char* nazov,tHTable* tabulka)
 	}
 	help->nazvy=pole_char;
 	return help;
+}
+
+void DELETE_SEARCH(tRetData* retdato)
+{
+	free(retdato->typy);
+	free(retdato->nazvy);
+	free(retdato);
+	retdato=NULL;
+}
+
+void DELETE_TS(tHTable* ptrht)
+{
+
+	if(ptrht==NULL)	return ;	//oevereni platnosti ukazatele
+	int i=0;
+	tHTItem *tmp,*prev;
+printf("Prosel som 1");
+	while(i<HTSIZE)	//projde vsechny polozky pole
+	{
+		prev=(*ptrht)[i];
+
+		while(prev!=NULL)	//projde cely radek
+		{
+			DELETE_TS(prev->lcht);
+			prev=prev->ptrnext;	//posun
+		}
+		i++;
+	}
+
+	i=0;
+	while(i<HTSIZE)	//projde vsechny polozky pole
+	{
+
+		prev=(*ptrht)[i];	//smaze lin seznamy
+		while(prev!=NULL)	//projde cely radek
+		{
+			Uvolnitparametry(prev);
+			prev=prev->ptrnext;	//posun
+		}
+
+		prev=(*ptrht)[i];	//skok zpet na zacatek radku
+
+		while(prev!=NULL)	//projde cely radek
+		{
+			printf("polozka\n");
+
+			tmp=prev;
+			prev=prev->ptrnext;	//posun a mazani
+			free(tmp);
+
+		}
+		(*ptrht)[i]=NULL;	//ukotveni
+		i++;
+	}
 }

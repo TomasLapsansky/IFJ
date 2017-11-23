@@ -35,7 +35,7 @@ void htPrintTable( tHTable* ptrht ) {
 		int cnt = 0;
 		tHTItem* ptr = (*ptrht)[i];
 		while ( ptr != NULL ) {
-			printf (" [%s,data:%d,%s,%d,pocet=%d]",ptr->key,ptr->data.type,ptr->data.navesti,ptr->data.funkce,ptr->data.pocet_par);
+			printf (" [%s,data:%d,%s,%d,pocet=%d,lc=%s]",ptr->key,ptr->data.type,ptr->data.navesti,ptr->data.funkce,ptr->data.pocet_par,ptr->lcht);
 				cnt++;
 			ptr = ptr->ptrnext;
 		}
@@ -62,6 +62,16 @@ void testprintfparam(parametry *seznam)
 	}
 }
 
+/*Pomocne funkce*/
+
+void Vlozdata(tData *cil,int typ,char* navesti,bool funkce)
+{
+	cil->funkce=funkce;
+	cil->type=typ;
+	cil->navesti=navesti; //pozor na delky
+	cil->first=NULL;
+	cil->pocet_par=0;
+}
 
 
 /* Hlavni funkce pro testovani */
@@ -114,7 +124,9 @@ int main( ) {
 	Vlozdata(&dato,1,"navessssssi",false);
 	htInsert ( ptrht, "kofola", dato);
 
-	htPrintTable(ptrht);
+		htPrintTable(ptrht);
+
+
 
 	printf ("\n[TEST05] tabulka v tabulce \n");
 
@@ -145,9 +157,10 @@ int main( ) {
 
 	htPrintTable(itemptr->lcht);
 
+
 	printf("\n[TEST08] vytvoreni ln seznamu parametru fuknci v s2 kofola\n");
 	tHTItem* itemptr2;
-	itemptr2=htSearch (itemptr->lcht,"kofola s2");
+	itemptr2=htSearch (itemptr->lcht,"kelt s2");
 	if(itemptr2==NULL)
 	{
 		printf("\nnenasel");
@@ -189,9 +202,15 @@ int main( ) {
 	testprintfparam(itemptr2->data.first);
 
 	htPrintTable(itemptr->lcht);
+	printf("\n[TEST10] delete TS\n");
 
-	free(itemptr->lcht);
-	free ( ptrht );
+	printf("jdu na delete");
+
+	DELETE_TS(ptrht);
+
+	DELETE_TS(ptrht);
+
+	printf("-----------------------------------------------------------------");
 
 	printf("TEST A InseretDim\n");
 
@@ -209,9 +228,9 @@ int main( ) {
 
 	printf("TEST C InseretParam\n");
 
-	if(INSERT_PAR(0,"paramert1","funkce",helping)==false)	printf("problem");
-	if(INSERT_PAR(2,"paramert2","funkce",helping)==false)	printf("problem");
-	if(INSERT_PAR(1,"paramert3","funkce",helping)==false)	printf("problem");
+	if(INSERT_PAR(0,"paramert1","funkce",helping)!=7)	printf("problem");
+	if(INSERT_PAR(2,"paramert2","funkce",helping)!=7)	printf("problem");
+	if(INSERT_PAR(1,"paramert3","funkce",helping)!=7)	printf("problem");
 	htPrintTable(helping);
 	tHTItem* itemptr3;
 	itemptr3=htSearch (helping,"funkce");
@@ -231,5 +250,11 @@ int main( ) {
 		printf("nazvy:%s\n",helpdata->nazvy[i]);
 
 	}
+	DELETE_SEARCH(helpdata);
+	printf("TEST D vlozit 2x stejny parametr\n");
+	if(INSERT_PAR(1,"paramert3","funkce",helping)==4)	printf("vracen SEM_TYPE_ERROR\ntest ok\n");
+
+
+	free(helping);
 	return 0;
 }
