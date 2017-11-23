@@ -167,8 +167,6 @@ void Uvolnitparametry(tHTItem* ptrht)
 	tmp = ptrht->data.first;
 	ptrht->data.first = ptrht->data.first->next;	//posun o jeden prvek niz v seznamu
 	free(tmp);
-	printf("seznam:");
-
 	}
 }
 
@@ -265,7 +263,7 @@ void DELETE_TS(tHTable* ptrht)
 	if(ptrht==NULL)	return ;	//oevereni platnosti ukazatele
 	int i=0;
 	tHTItem *tmp,*prev;
-printf("Prosel som 1");
+
 	while(i<HTSIZE)	//projde vsechny polozky pole
 	{
 		prev=(*ptrht)[i];
@@ -293,7 +291,7 @@ printf("Prosel som 1");
 
 		while(prev!=NULL)	//projde cely radek
 		{
-			printf("polozka\n");
+
 
 			tmp=prev;
 			prev=prev->ptrnext;	//posun a mazani
