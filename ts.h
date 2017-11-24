@@ -8,7 +8,7 @@ prepracvany projekt c016 z predmetu IAL
 #ifndef _HASHTABLE_H_
 #define _HASHTABLE_H_
 
-#include "structs.h"
+
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>

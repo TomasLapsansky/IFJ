@@ -193,6 +193,16 @@ enum Errors INSERT_F(char* nazov_f,tHTable* tabulka)
 	dato.pocet_par=0;
 	dato.type=-1;
 	if(htInsert (tabulka,nazov_f,dato)==false)	return ALLOC_ERROR;
+
+
+	tHTItem* tmp;
+	tmp=htSearch(tabulka,nazov_f);
+	if(tmp==NULL)	return ALLOC_ERROR;
+	tmp->lcht = (tHTable*) malloc ( sizeof(tHTable) );
+	if(tmp->lcht==NULL)	return ALLOC_ERROR;
+	htInit(tmp->lcht);
+
+
 	return OK;
 }
 
@@ -217,18 +227,17 @@ enum Errors INSERT_PAR(int type,char* nazev_par, char* nazov_f,tHTable* tabulka)
 	tmp=htSearch(tabulka,nazov_f);
 	if(Searchparametr(tmp,nazev_par)==true)	return SEM_TYPE_ERROR;
 	if(InsertParametr(tmp,type,nazev_par)==false)	return ALLOC_ERROR;
-	if(tmp->lcht==NULL)
-	{
-		tmp->lcht = (tHTable*) malloc ( sizeof(tHTable) );
-		if(tmp->lcht==NULL)	return ALLOC_ERROR;
-		htInit(tmp->lcht);
-	}
 	INSERT_DIM(type,nazev_par,tmp->lcht);
 	return OK;
 }
 
 tRetData* SEARCH(char* nazov,tHTable* tabulka)
 {
+	tHTItem* tmp;
+	tmp=htSearch(tabulka,nazov);
+	if(tmp==NULL)	return NULL;
+
+
 	tRetData* help;
 	help=(tRetData*)malloc(sizeof(tRetData));
 	if(help==NULL)
@@ -236,18 +245,15 @@ tRetData* SEARCH(char* nazov,tHTable* tabulka)
 		printf("chyba malloc");
 		return NULL;
 	}
-	tHTItem* tmp;
-	tmp=htSearch(tabulka,nazov);
-	if(tmp==NULL)	return NULL;
 	help->funkce=tmp->data.funkce;
 	help->navesti=tmp->data.navesti;
 	help->type=tmp->data.type;
 	help->pocet_parametru=tmp->data.pocet_par;
 	help->LocalTS=tmp->lcht;
 	int *pole_i;
-	pole_i=(int*)malloc(sizeof(int)*help->pocet_parametru);
+	pole_i=(int*)calloc(help->pocet_parametru,sizeof(int));
 	if(pole_i==NULL)		{
-		printf("chyba malloc");
+		printf("chyba calloc");
 		return NULL;
 	}
 	parametry *pomoc;
@@ -260,9 +266,10 @@ tRetData* SEARCH(char* nazov,tHTable* tabulka)
 	help->typy=pole_i;
 
 	char **pole_char;
-	pole_char=(char**)malloc(sizeof(char*)*(help->pocet_parametru));//TODO
-	if(*pole_char==NULL)		{
-		printf("chyba malloc char\n");
+	pole_char=(char**)calloc((help->pocet_parametru),sizeof(char*));
+
+	if(pole_char==NULL)		{
+		printf("chyba calloc char SEARCH\n");
 		return NULL;
 	}
 	pomoc=tmp->data.first;
@@ -277,10 +284,16 @@ tRetData* SEARCH(char* nazov,tHTable* tabulka)
 
 void DELETE_SEARCH(tRetData* retdato)
 {
+	if(retdato!=NULL)
+	{
 	free(retdato->typy);
+	retdato->typy=NULL;
 	free(retdato->nazvy);
+	retdato->nazvy=NULL;
 	free(retdato);
 	retdato=NULL;
+	}
+
 }
 
 void DELETE_TS(tHTable* ptrht)

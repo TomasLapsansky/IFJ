@@ -19,7 +19,7 @@ void htPrintTable( tHTable* ptrht ) {
 		int cnt = 0;
 		tHTItem* ptr = (*ptrht)[i];
 		while ( ptr != NULL ) {
-			printf (" [%s,data:%d,%s,%d,pocet=%d]",ptr->key,ptr->data.type,ptr->data.navesti,ptr->data.funkce,ptr->data.pocet_par);
+			printf (" [%s,data:%d,%s,%d,pocet=%d,pointer=%p]",ptr->key,ptr->data.type,ptr->data.navesti,ptr->data.funkce,ptr->data.pocet_par,ptr->lcht);
 				cnt++;
 			ptr = ptr->ptrnext;
 		}
@@ -141,6 +141,54 @@ if(INSERT_PAR(0,"parametr a","funkce ahoj",ptrht)!=OK)
 		tHTItem *itemptr;
 		itemptr=htSearch (ptrht,"funkce ahoj");
 		testprintfparam(itemptr->data.first);
+
+		printf("TEST 04 - SEARCH,DELETE_SEARCH\n");
+
+		tRetData *help;
+		help=SEARCH("asddg",ptrht);
+		if(help==NULL)
+		{
+			printf("Nedansel jsem neco co tam neni");
+		}
+		DELETE_SEARCH(help);
+
+		help=SEARCH("funkce ahoj",ptrht);
+		if(help==NULL)
+		{
+			printf("Nedansel jsem neco co tam je\n");
+			return 1;
+		}
+		printf("vypis:\nnavesti:%s\nje to funkce:%d\npocet param:%d\nnavrat typ:%d\n",help->navesti,help->funkce,help->pocet_parametru,help->type);
+		printf("local TS pointer:%p\n", (void *)help->LocalTS);
+
+		for (int i=0;i<help->pocet_parametru;i++)
+		{
+			printf("typ:%d\n",help->typy[i]);
+
+		}
+		for (int i=0;i<help->pocet_parametru;i++)
+		{
+			printf("nazvy:%s\n",help->nazvy[i]);
+
+		}
+
+	DELETE_SEARCH(help);
+
+	printf("TEST 05 - INSERT do LC TS\n");
+
+
+	tHTable *pomocptr;
+	help=SEARCH("funkce ahoj",ptrht);
+	pomocptr=help->LocalTS;
+	DELETE_SEARCH(help);
+
+		if(INSERT_DIM(2,"promena abc",pomocptr)!=OK)
+	{
+		printf("\nInsert neni ok\n");
+		return 1;
+	}
+	htPrintTable(pomocptr);
+
 
 	DELETE_TS(ptrht);
 
