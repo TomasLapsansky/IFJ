@@ -184,16 +184,31 @@ enum Errors INSERT_DIM(int type,char* nazov_dim,tHTable* tabulka)
 	return OK;
 }
 
-enum Errors INSERT_F(int type, char* nazov_f,tHTable* tabulka)
+enum Errors INSERT_F(char* nazov_f,tHTable* tabulka)
 {
 	tData dato;
 	dato.first=NULL;
 	dato.funkce=true;
 	dato.navesti=nazov_f;
 	dato.pocet_par=0;
-	dato.type=type;
+	dato.type=-1;
 	if(htInsert (tabulka,nazov_f,dato)==false)	return ALLOC_ERROR;
 	return OK;
+}
+
+bool INSERT_F_TYPE(int type,char* nazov_f,tHTable* tabulka)
+{
+	tHTItem *tmp;
+	tmp=htSearch(tabulka,nazov_f);
+	if(tmp==NULL)
+	{
+		return false;
+	}
+	else
+	{
+		tmp->data.type=type;
+		return true;
+	}
 }
 
 enum Errors INSERT_PAR(int type,char* nazev_par, char* nazov_f,tHTable* tabulka)
@@ -216,7 +231,11 @@ tRetData* SEARCH(char* nazov,tHTable* tabulka)
 {
 	tRetData* help;
 	help=(tRetData*)malloc(sizeof(tRetData));
-	if(help==NULL)	return NULL;
+	if(help==NULL)
+	{
+		printf("chyba malloc");
+		return NULL;
+	}
 	tHTItem* tmp;
 	tmp=htSearch(tabulka,nazov);
 	if(tmp==NULL)	return NULL;
@@ -224,9 +243,13 @@ tRetData* SEARCH(char* nazov,tHTable* tabulka)
 	help->navesti=tmp->data.navesti;
 	help->type=tmp->data.type;
 	help->pocet_parametru=tmp->data.pocet_par;
+	help->LocalTS=tmp->lcht;
 	int *pole_i;
 	pole_i=(int*)malloc(sizeof(int)*help->pocet_parametru);
-	if(pole_i==NULL)	return NULL;
+	if(pole_i==NULL)		{
+		printf("chyba malloc");
+		return NULL;
+	}
 	parametry *pomoc;
 	pomoc=tmp->data.first;
 	for (int i=0;i<help->pocet_parametru;i++)
@@ -237,8 +260,11 @@ tRetData* SEARCH(char* nazov,tHTable* tabulka)
 	help->typy=pole_i;
 
 	char **pole_char;
-	pole_char=(char**)malloc(sizeof(char*)*help->pocet_parametru);
-	if(*pole_char==NULL)	return NULL;
+	pole_char=(char**)malloc(sizeof(char*)*(help->pocet_parametru));//TODO
+	if(*pole_char==NULL)		{
+		printf("chyba malloc char\n");
+		return NULL;
+	}
 	pomoc=tmp->data.first;
 	for (int i=0;i<help->pocet_parametru;i++)
 	{
@@ -301,4 +327,7 @@ void DELETE_TS(tHTable* ptrht)
 		(*ptrht)[i]=NULL;	//ukotveni
 		i++;
 	}
+
+	free(ptrht);
+	ptrht=NULL;
 }

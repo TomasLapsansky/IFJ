@@ -8,6 +8,7 @@ prepracvany projekt c016 z predmetu IAL
 #ifndef _HASHTABLE_H_
 #define _HASHTABLE_H_
 
+#include "structs.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
@@ -74,6 +75,7 @@ typedef struct tRetData{
 	char *navesti;						//fce=id  prom=NULL	slouzi pro generator
 	int *typy;								//pole typu paramtru
 	char **nazvy;							//pole id paramatru
+	tHTable *LocalTS;
 }tRetData;
 
 /*InterFace TS*/
@@ -88,12 +90,15 @@ enum Errors INSERT_DIM(int type,char* nazov_dim,tHTable* tabulka);
 
 /*
 stejne jako INSERT_DIM
-do tabulky vlozi funkci daneho typu a id
+do tabulky vlozi funkci podle id
+vklada navratovy typ -1 !
 POZOR pokud v dane tabulce uz existuje neco se stejnym nazvem prepisuje!!!
 pred pouzitim volej SEARCH() !!!
 ALLOC_ERROR / OK
 */
-enum Errors INSERT_F(int type, char* nazov_f,tHTable* tabulka);
+enum Errors INSERT_F(char* nazov_f,tHTable* tabulka);
+
+bool INSERT_F_TYPE(int type,char* nazov_f,tHTable* tabulka);
 
 /*
 v tabulce najde funkci do ni prida parametr a vlozi ho taky do jeji localni tabulky symbolu
@@ -120,8 +125,6 @@ void DELETE_SEARCH(tRetData* retdato);
 korekne uvolni celou tabulku symbolu
 */
 void DELETE_TS(tHTable* global_tabulka);
-
-
 
 /* funkce nad tabulkou */
 

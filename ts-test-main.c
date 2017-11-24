@@ -8,22 +8,6 @@
 
 
 
-/* tiskne tData ze struktury */
-void htPrintData ( tData* ptrdata ) {
-	if ( ptrdata )
-		printf ("%.2f\n", *ptrdata );
-	else
-		printf ("NULL\n");
-}
-
-/* tiskne tItem ze struktury */
-void htPrintItem ( tHTItem* ptritem ) {
-	if ( ptritem )
-		printf ("%s - %.2f\n", ptritem->key, ptritem->data );
-	else
-		printf ("NULL\n");
-}
-
 /* tiskne celou tabulku */
 void htPrintTable( tHTable* ptrht ) {
 	int maxlen = 0;
@@ -35,7 +19,7 @@ void htPrintTable( tHTable* ptrht ) {
 		int cnt = 0;
 		tHTItem* ptr = (*ptrht)[i];
 		while ( ptr != NULL ) {
-			printf (" [%s,data:%d,%s,%d,pocet=%d,lc=%s]",ptr->key,ptr->data.type,ptr->data.navesti,ptr->data.funkce,ptr->data.pocet_par,ptr->lcht);
+			printf (" [%s,data:%d,%s,%d,pocet=%d]",ptr->key,ptr->data.type,ptr->data.navesti,ptr->data.funkce,ptr->data.pocet_par);
 				cnt++;
 			ptr = ptr->ptrnext;
 		}
@@ -83,6 +67,86 @@ int main( ) {
 	printf ("---------------------------\n");
 	printf ("\nLet's set HTSIZE to 19 ( must be prvocislo )\n");
 
+
+	tHTable* ptrht;
+	ptrht = (tHTable*) malloc ( sizeof(tHTable) );
+	htInit ( ptrht );
+
+	printf("TEST 01 - INIT\n");
+
+	htPrintTable(ptrht);
+
+	printf("TEST 02 - INSERT_DIM 3X\n");
+	if(INSERT_DIM(1,"promena a",ptrht)!=OK)
+	{
+		printf("\nInsert neni ok\n");
+		return 1;
+	}
+	if(INSERT_DIM(0,"promena b",ptrht)!=OK)
+	{
+		printf("\nInsert neni ok\n");
+		return 1;
+	}
+		if(INSERT_DIM(2,"promena c",ptrht)!=OK)
+	{
+		printf("\nInsert neni ok\n");
+		return 1;
+	}
+	htPrintTable(ptrht);
+
+		printf("TEST 02 - INSERT_F 3X\n");
+	if(INSERT_F("funkce ahoj",ptrht)!=OK)
+	{
+		printf("\nInsert neni ok\n");
+		return 1;
+	}
+
+	if(INSERT_F("funkce blb",ptrht)!=OK)
+	{
+		printf("\nInsert neni ok\n");
+		return 1;
+	}
+		if(INSERT_F("funkce cauky",ptrht)!=OK)
+	{
+		printf("\nInsert neni ok\n");
+		return 1;
+	}
+	htPrintTable(ptrht);
+
+		printf("TEST 03 - INSERT_parametr 3X + nastaveni navratovych typu\n");
+
+if(INSERT_PAR(0,"parametr a","funkce ahoj",ptrht)!=OK)
+	{
+		printf("\nInsert neni ok\n");
+		return 1;
+	}
+	if(INSERT_PAR(3,"parametr b","funkce ahoj",ptrht)!=OK)
+	{
+		printf("\nInsert neni ok\n");
+		return 1;
+	}
+	if(INSERT_PAR(2,"parametr c","funkce ahoj",ptrht)!=OK)
+	{
+		printf("\nInsert neni ok\n");
+		return 1;
+	}
+
+		if(INSERT_F_TYPE(2,"funkce ahoj",ptrht)!=true)
+	{
+		printf("\nInsert typ neni ok\n");
+		return 1;
+	}
+		htPrintTable(ptrht);
+
+		tHTItem *itemptr;
+		itemptr=htSearch (ptrht,"funkce ahoj");
+		testprintfparam(itemptr->data.first);
+
+	DELETE_TS(ptrht);
+
+
+
+/*
 	tHTable* ptrht;
 	ptrht = (tHTable*) malloc ( sizeof(tHTable) );
 	tHTItem* itemptr;
@@ -160,7 +224,7 @@ int main( ) {
 
 	printf("\n[TEST08] vytvoreni ln seznamu parametru fuknci v s2 kofola\n");
 	tHTItem* itemptr2;
-	itemptr2=htSearch (itemptr->lcht,"kelt s2");
+	itemptr2=htSearch(itemptr->lcht,"kelt s2");
 	if(itemptr2==NULL)
 	{
 		printf("\nnenasel");
@@ -208,8 +272,10 @@ int main( ) {
 
 	DELETE_TS(ptrht);
 
-	DELETE_TS(ptrht);
 
+*/
+
+/*
 	printf("-----------------------------------------------------------------");
 
 	printf("TEST A InseretDim\n");
@@ -226,11 +292,18 @@ int main( ) {
 	INSERT_F(2,"funkce",helping);
 	htPrintTable(helping);
 
-	printf("TEST C InseretParam\n");
+	printf("TEST C InseretParametry\n");
+	printf("jdu vkladat");
 
-	if(INSERT_PAR(0,"paramert1","funkce",helping)!=7)	printf("problem");
-	if(INSERT_PAR(2,"paramert2","funkce",helping)!=7)	printf("problem");
-	if(INSERT_PAR(1,"paramert3","funkce",helping)!=7)	printf("problem");
+	if(INSERT_PAR(0,"paramert1","funkce",helping)!=OK)	printf("problem");
+
+
+	if(INSERT_PAR(2,"paramert2","funkce",helping)!=OK)	printf("problem");
+
+
+	if(INSERT_PAR(1,"paramert3","funkce",helping)!=OK)	printf("problem");
+
+
 	htPrintTable(helping);
 	tHTItem* itemptr3;
 	itemptr3=htSearch (helping,"funkce");
@@ -239,6 +312,7 @@ int main( ) {
 	printf("TEST D search\n");
 	tRetData *helpdata;
 	helpdata=SEARCH("funkce",helping);
+	if(helpdata==NULL)	return 1;
 	printf("vypis:\nnavesti:%s\nje to funkce:%d\npocet param:%d\nnavrat typ:%d\n",helpdata->navesti,helpdata->funkce,helpdata->pocet_parametru,helpdata->type);
 	for (int i=0;i<helpdata->pocet_parametru;i++)
 	{
@@ -255,6 +329,8 @@ int main( ) {
 	if(INSERT_PAR(1,"paramert3","funkce",helping)==4)	printf("vracen SEM_TYPE_ERROR\ntest ok\n");
 
 
-	free(helping);
+	DELETE_TS(helping);
 	return 0;
+
+	*/
 }
