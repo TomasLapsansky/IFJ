@@ -13,6 +13,7 @@
 #define _STACK_H_
 
 #include <stdio.h>
+#include "ts.h"
 
 #define MAX_STACK 20
 extern int STACK_SIZE; 
@@ -35,7 +36,7 @@ extern int err_flag;                   /* Indikuje, zda operace volala chybu. */
 
                              /* ADT zásobník implementovaný ve statickém poli */
 typedef struct {
-	tHTable arr[MAX_STACK];                             /* pole pro uložení hodnot */
+	tHTable *arr[MAX_STACK];                             /* pole pro uložení hodnot */
 	int top;                                /* index prvku na vrcholu zásobníku */
 } tStack;
 

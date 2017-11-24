@@ -32,8 +32,9 @@
 **
 **/
 
-//#include "tstack.h"
-#include "parser.h
+#include "tstack.h"
+#include "parser.h"
+#include "ts.h"
 
 int STACK_SIZE = MAX_STACK;
 int solved;
@@ -48,7 +49,7 @@ void stackError ( int error_code ){
 	if ( error_code <= 0 || error_code > MAX_SERR )
 		error_code = 0;
 	printf ( "%s\n", SERR_STRINGS[error_code] );
-	err_flag = 1;
+	//err_flag = 1;
 }
 
 void stackInit ( tStack* s ) {
@@ -113,7 +114,7 @@ void stackTop ( const tStack* s, tHTable *c ) {
 		  return;
 	  }
 	
-	*c = s->arr[s->top];
+	c = s->arr[s->top];
 }
 
 
@@ -134,7 +135,7 @@ void stackPop ( tStack* s ) {
 		return;
 	}
 	
-	s->arr[s->top] = '\0';
+	s->arr[s->top] = NULL;
 	s->top--;
 }
 
@@ -155,7 +156,7 @@ void stackPush ( tStack* s, tHTable c ) {
 	}
 	
 	s->top++;
-	s->arr[s->top] = c;
+	s->arr[s->top] = *c;
 }
 
 /* Konec c202.c */

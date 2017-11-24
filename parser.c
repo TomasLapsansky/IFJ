@@ -21,14 +21,14 @@ extern int line;			//line number
 bool loaded_token = false;
 
 extern tStack s;
-extern tHTable ptrht;
+extern tHTable *ptrht;
 //extern tRetData retData;
 int parameter_index = 0;
 
 //spracovanie ID		TODO
 int id(tRetData *retData) {
 	if(token.name == ID) {
-		if((retData = SEARCH(token.data, &ptrht)) == NULL)
+		if((retData = SEARCH(token.data, ptrht)) == NULL)
 			return SEM_ERROR;
 		
 		if(retData->funkce)
@@ -86,7 +86,7 @@ int p_declare(void) {
 			if((error = id(NULL)) != SEM_ERROR)		//Declare Function ID
 				return SEM_ERROR;
 			
-			INSERT_F(token.data, &ptrht);
+			INSERT_F(token.data, ptrht);
 			
 			TOKEN idToken;
 			Init_Token(&idToken);
@@ -132,7 +132,7 @@ int p_declare(void) {
 				return error;
 			}
 			
-			INSERT_F_TYPE(token.name, idToken.data, &ptrht);
+			INSERT_F_TYPE(token.name, idToken.data, ptrht);
 			Clear_Token(&idToken);
 			
 			if((error = Get_Token(f, &token)) != OK)
@@ -231,7 +231,7 @@ int p_declare(void) {
 			
 			
 			//////////////////////PRIDAT STACK//////////////////
-			stackPush(&s, ptrht);
+			//stackPush(&s, ptrht);
 			//ptrht = fIdData.
 			
 			DELETE_SEARCH(&fIdData);
@@ -471,7 +471,7 @@ int p_declareparameter(char *fID) {
 		return error;
 	}
 	
-	INSERT_PAR(token.name, idToken.data, fID, &ptrht);
+	INSERT_PAR(token.name, idToken.data, fID, ptrht);
 	Clear_Token(&idToken);
 	
 	if((error = Get_Token(f, &token)) != OK)
@@ -539,7 +539,7 @@ int p_vparameter(tRetData *fIdData) {
 	//Semantika na overenie parametrov
 	tRetData *vpar;
 	
-	if((vpar = SEARCH(token.data, &ptrht)) == NULL) {
+	if((vpar = SEARCH(token.data, ptrht)) == NULL) {
 		DELETE_SEARCH(vpar);
 		return SEM_ERROR;
 	}
@@ -577,7 +577,7 @@ int p_vnextparameter(tRetData *fIdData) {
 	//Sematika na overenie parametrov
 	tRetData *vpar;
 	
-	if((vpar = SEARCH(token.data, &ptrht)) == NULL) {
+	if((vpar = SEARCH(token.data, ptrht)) == NULL) {
 		DELETE_SEARCH(vpar);
 		return SEM_ERROR;
 	}
@@ -653,7 +653,7 @@ int p_prikaz(void) {
 				return error;
 			}
 			
-			INSERT_DIM(token.name, idToken.data, &ptrht);	//DIMINSERT
+			INSERT_DIM(token.name, idToken.data, ptrht);	//DIMINSERT
 			Clear_Token(&idToken);
 			
 			return OK;
