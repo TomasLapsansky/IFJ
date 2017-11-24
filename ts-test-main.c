@@ -58,6 +58,10 @@ void Vlozdata(tData *cil,int typ,char* navesti,bool funkce)
 }
 
 
+
+
+tHTable* ptrht;
+
 /* Hlavni funkce pro testovani */
 int main( ) {
 
@@ -67,8 +71,8 @@ int main( ) {
 	printf ("---------------------------\n");
 	printf ("\nLet's set HTSIZE to 19 ( must be prvocislo )\n");
 
-/*
-	tHTable* ptrht;
+
+
 	ptrht = (tHTable*) malloc ( sizeof(tHTable) );
 	htInit ( ptrht );
 
@@ -77,17 +81,17 @@ int main( ) {
 	htPrintTable(ptrht);
 
 	printf("TEST 02 - INSERT_DIM 3X\n");
-	if(INSERT_DIM(1,"promena a",ptrht)!=OK)
+	if(INSERT_DIM(1,"promena A",ptrht)!=OK)
 	{
 		printf("\nInsert neni ok\n");
 		return 1;
 	}
-	if(INSERT_DIM(0,"promena b",ptrht)!=OK)
+	if(INSERT_DIM(0,"proMena b",ptrht)!=OK)
 	{
 		printf("\nInsert neni ok\n");
 		return 1;
 	}
-		if(INSERT_DIM(2,"promena c",ptrht)!=OK)
+		if(INSERT_DIM(2,"proASna c",ptrht)!=OK)
 	{
 		printf("\nInsert neni ok\n");
 		return 1;
@@ -115,12 +119,12 @@ int main( ) {
 
 		printf("TEST 03 - INSERT_parametr 3X + nastaveni navratovych typu\n");
 
-if(INSERT_PAR(0,"parametr a","funkce ahoj",ptrht)!=OK)
+if(INSERT_PAR(0,"paraAAAetr a","funkce ahoj",ptrht)!=OK)
 	{
 		printf("\nInsert neni ok\n");
 		return 1;
 	}
-	if(INSERT_PAR(3,"parametr b","funkce ahoj",ptrht)!=OK)
+	if(INSERT_PAR(3,"parametR b","funkce ahoj",ptrht)!=OK)
 	{
 		printf("\nInsert neni ok\n");
 		return 1;
@@ -145,14 +149,14 @@ if(INSERT_PAR(0,"parametr a","funkce ahoj",ptrht)!=OK)
 		printf("TEST 04 - SEARCH,DELETE_SEARCH\n");
 
 		tRetData *help;
-		help=SEARCH("asddg",ptrht);
+		help=SEARCH("asSDdg",ptrht);
 		if(help==NULL)
 		{
 			printf("Nedansel jsem neco co tam neni");
 		}
 		DELETE_SEARCH(help);
 
-		help=SEARCH("funkce ahoj",ptrht);
+		help=SEARCH("funkce AHOJ",ptrht);
 		if(help==NULL)
 		{
 			printf("Nedansel jsem neco co tam je\n");
@@ -182,7 +186,17 @@ if(INSERT_PAR(0,"parametr a","funkce ahoj",ptrht)!=OK)
 	pomocptr=help->LocalTS;
 	DELETE_SEARCH(help);
 
-		if(INSERT_DIM(2,"promena abc",pomocptr)!=OK)
+		if(INSERT_DIM(2,"promENA aBC",pomocptr)!=OK)
+	{
+		printf("\nInsert neni ok\n");
+		return 1;
+	}
+			if(INSERT_DIM(2,"promena Abc",pomocptr)!=OK)
+	{
+		printf("\nInsert neni ok\n");
+		return 1;
+	}
+			if(INSERT_DIM(0,"promena ABC",pomocptr)!=OK)
 	{
 		printf("\nInsert neni ok\n");
 		return 1;
@@ -192,7 +206,6 @@ if(INSERT_PAR(0,"parametr a","funkce ahoj",ptrht)!=OK)
 
 	DELETE_TS(ptrht);
 
-*/
 
 /*
 	tHTable* ptrht;
@@ -323,7 +336,7 @@ if(INSERT_PAR(0,"parametr a","funkce ahoj",ptrht)!=OK)
 
 */
 
-
+/*
 	printf("-----------------------------------------------------------------");
 
 	printf("TEST A InseretDim\n");
@@ -379,6 +392,6 @@ if(INSERT_PAR(0,"parametr a","funkce ahoj",ptrht)!=OK)
 
 	DELETE_TS(helping);
 	return 0;
-
+*/
 
 }

@@ -115,7 +115,7 @@ enum Errors INSERT_PAR(int type,char* nazev_par, char* nazov_f,tHTable* tabulka)
 hleda polozku v tabulce a vraci tretdata
 NULL pri nenalezeni i chybe malloc
 POZOR nutno odlaokovat!!!
-po každém zavolani nutvo volat
+po každém zavolani nutvo volat DELETE_SEARCH
 */
 tRetData* SEARCH(char* nazov,tHTable* tabulka);
 
@@ -147,5 +147,8 @@ bool Searchparametr(tHTItem* ptrht,char* nazev);
 bool InsertParametr(tHTItem* ptrht,int typ,char* nazev);
 
 void Uvolnitparametry(tHTItem* ptrht);
+
+char* low(char *sring);
+
 
 #endif
