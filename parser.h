@@ -17,7 +17,7 @@ int p_body(void);
 
 int p_type(void);
 
-int p_parameter(tRetData fIdData);
+int p_parameter(tRetData *fIdData);
 int p_nextparameter(void);
 
 int p_declareparameter(char *fID);

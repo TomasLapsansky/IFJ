@@ -3,8 +3,6 @@
 
 #include "ts.h"
 
-
-
 /*          -------
 ** Rozptylovací funkce - jejím úkolem je zpracovat zadaný klíč a přidělit
 ** mu index v rozmezí 0..HTSize-1.  V ideálním případě by mělo dojít

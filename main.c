@@ -17,7 +17,7 @@ int main(void) {
 	stackInit(&s);
 	
 	ptrht = (tHTable*) malloc ( sizeof(tHTable) );
-	htInit(&ptrht);
+	htInit(ptrht);
 	
 	f = fopen("code.txt","r");
 	if (f == NULL){
@@ -41,7 +41,7 @@ int main(void) {
 	
 	fclose(f);
 	Clear_Token(&token);
-	DELETE_TS(&ptrht);
+	DELETE_TS(ptrht);
 	return 0;
 }
 
