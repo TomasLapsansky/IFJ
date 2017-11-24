@@ -8,7 +8,7 @@
 <p_start>		<p_declare> <p_scope>
 <p_scope>		Scope <p_body> End Scope EOF
 <p_declare>		ε
-<p_declare>		Declare Function ID (<p_parameter> As <p_type> EOL <p_declare>
+<p_declare>		Declare Function ID (<p_declareparameter> As <p_type> EOL <p_declare>
 <p_declare>		Function ID (<p_parameter> As <p_type> EOL <p_body> End Function <p_declare>
 <p_body>		ε
 <p_body>		<p_prikaz> EOL <p_body>
@@ -23,6 +23,13 @@
 
 <p_nextparameter>	ID As <p_type>)
 <p_nextparameter>	ID As <p_type>, <p_nextparameter>
+
+<p_declareparameter>	ε)
+<p_declareparameter>	ID As <p_type>)
+<p_declareparameter>	ID As <p_type>, <p_decnextparameter>
+
+<p_decnextparameter>	ID As <p_type>)
+<p_decnextparameter>	ID As <p_type>, <p_decnextparameter>
 
 <p_vparameter>		ε)
 <p_vparameter>		ID)

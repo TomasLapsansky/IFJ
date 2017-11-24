@@ -18,6 +18,7 @@ typedef struct{
 enum Errors{
 	E_OK = -1,
 	OK = 7,
+	F_OK = 8,
 	LEX_A_ERROR = 1,
 	SYN_A_ERROR = 2,
 	SEM_ERROR = 3,
