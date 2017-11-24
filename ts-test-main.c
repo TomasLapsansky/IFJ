@@ -67,7 +67,7 @@ int main( ) {
 	printf ("---------------------------\n");
 	printf ("\nLet's set HTSIZE to 19 ( must be prvocislo )\n");
 
-
+/*
 	tHTable* ptrht;
 	ptrht = (tHTable*) malloc ( sizeof(tHTable) );
 	htInit ( ptrht );
@@ -192,7 +192,7 @@ if(INSERT_PAR(0,"parametr a","funkce ahoj",ptrht)!=OK)
 
 	DELETE_TS(ptrht);
 
-
+*/
 
 /*
 	tHTable* ptrht;
@@ -323,7 +323,7 @@ if(INSERT_PAR(0,"parametr a","funkce ahoj",ptrht)!=OK)
 
 */
 
-/*
+
 	printf("-----------------------------------------------------------------");
 
 	printf("TEST A InseretDim\n");
@@ -337,7 +337,7 @@ if(INSERT_PAR(0,"parametr a","funkce ahoj",ptrht)!=OK)
 
 	printf("TEST B InseretFunce\n");
 
-	INSERT_F(2,"funkce",helping);
+	INSERT_F("funkce",helping);
 	htPrintTable(helping);
 
 	printf("TEST C InseretParametry\n");
@@ -380,5 +380,5 @@ if(INSERT_PAR(0,"parametr a","funkce ahoj",ptrht)!=OK)
 	DELETE_TS(helping);
 	return 0;
 
-	*/
+
 }

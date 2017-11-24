@@ -242,7 +242,7 @@ tRetData* SEARCH(char* nazov,tHTable* tabulka)
 	help=(tRetData*)malloc(sizeof(tRetData));
 	if(help==NULL)
 	{
-		printf("chyba malloc");
+		//printf("chyba malloc");
 		return NULL;
 	}
 	help->funkce=tmp->data.funkce;
@@ -253,7 +253,7 @@ tRetData* SEARCH(char* nazov,tHTable* tabulka)
 	int *pole_i;
 	pole_i=(int*)calloc(help->pocet_parametru,sizeof(int));
 	if(pole_i==NULL)		{
-		printf("chyba calloc");
+		//printf("chyba calloc");
 		return NULL;
 	}
 	parametry *pomoc;
@@ -269,7 +269,7 @@ tRetData* SEARCH(char* nazov,tHTable* tabulka)
 	pole_char=(char**)calloc((help->pocet_parametru),sizeof(char*));
 
 	if(pole_char==NULL)		{
-		printf("chyba calloc char SEARCH\n");
+		//printf("chyba calloc char SEARCH\n");
 		return NULL;
 	}
 	pomoc=tmp->data.first;
