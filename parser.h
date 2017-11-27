@@ -7,6 +7,7 @@
 
 #include "scanner.h"
 #include "structs.h"
+#include "ts.h"
 
 //KA pre syntakticku analyzu
 int parser(void);
@@ -18,8 +19,12 @@ int p_body(void);
 
 int p_type(void);
 
-int p_parameter(void);
-int p_nextparameter(void);
+int p_parameter(tRetData *funcData, int *pocet_parametrov);
+int p_nextparameter(tRetData *funcData, int *pocet_parametrov);
+
+int p_declare_parameter(char* funcName);
+int p_declare_nextparameter(char* funcName);
+
 int p_vparameter(void);
 int p_vnextparameter(void);
 

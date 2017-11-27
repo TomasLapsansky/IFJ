@@ -30,6 +30,7 @@ enum ID_values{
 	F_ID = 1,
 	DIM_ID,
 	UNEXIST,
+	NON_ID,
 };
 
 #endif
