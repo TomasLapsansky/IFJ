@@ -28,4 +28,4 @@ int p_priradenie(void);
 int p_print(void);
 int p_nextprint(void);
 
-int p_vyraz(void);		//TODO	->type = ENUM
+int p_vyraz(int type);		//TODO	->type = ENUM

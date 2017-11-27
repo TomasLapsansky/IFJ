@@ -673,7 +673,7 @@ int p_nextprint(void) {
 //------------------------------TODO------------------------------
 //
 //<p_vyraz>
-int p_vyraz() {
+int p_vyraz(int type) {
 	
 	//pre testovanie vyrazov, bude nasledovat uprava
 	while(token.name != THEN && token.name != EOL_ && token.name != SEMICOLON) {
