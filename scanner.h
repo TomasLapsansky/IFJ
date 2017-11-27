@@ -6,10 +6,9 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <stdbool.h>
+#include <strings.h>
 
 #include "structs.h"
-
-extern FILE* f;
 
 #define INC_SIZE 8
 
@@ -89,5 +88,5 @@ int Init_Token(TOKEN *t);
 int Add_Char(TOKEN *t, char c);
 void Clear_Token(TOKEN *t);
 int KeywordCheck(char *string);
-int Get_Token(FILE *f,TOKEN *t);
+int Get_Token(TOKEN *t);
 #endif

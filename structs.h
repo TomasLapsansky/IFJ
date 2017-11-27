@@ -18,13 +18,18 @@ typedef struct{
 enum Errors{
 	E_OK = -1,
 	OK = 7,
-	F_OK = 8,
 	LEX_A_ERROR = 1,
 	SYN_A_ERROR = 2,
 	SEM_ERROR = 3,
 	SEM_TYPE_ERROR = 4,
 	OTHER_SEM_ERROR = 6,
 	ALLOC_ERROR = 99,
+};
+
+enum ID_values{
+	F_ID = 1,
+	DIM_ID,
+	UNEXIST,
 };
 
 #endif

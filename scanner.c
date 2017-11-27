@@ -96,7 +96,7 @@ int KeywordCheck(char *string){
 		return 0;
 }
 
-int Get_Token(FILE *f,TOKEN *t){
+int Get_Token(TOKEN *t){
 	int c,nextc,pom,next_d = false,int_exp = false,count = 0;
 	int state = start;
 
@@ -106,7 +106,7 @@ int Get_Token(FILE *f,TOKEN *t){
 	Clear_Token(t);
 	countT++;
 
-	while((c = fgetc(f))){
+	while((c = fgetc(stdin))){
 		// Kontrola EOF 
 		if((c == EOF) && (state == start)){
 			if((pom = Add_Char(t,'E')) == ALLOC_ERROR){
@@ -164,21 +164,21 @@ int Get_Token(FILE *f,TOKEN *t){
 						// odstrani jednoradkovy komentar
 						if(c == 39){
 							// odebrani komentaru po konec radku nebo po EOF
-							while (c != EOF && c != '\n') c=fgetc(f);
+							while (c != EOF && c != '\n') c=fgetc(stdin);
 							// vraceni nechteneho znaku
-							ungetc(c,f);							
+							ungetc(c,stdin);
 
 							state = start;
 						}
 						// odstraneni slozeneho komentare
 						else if(c == '/'){
-							nextc = fgetc(f);
+							nextc = fgetc(stdin);
 							if(nextc == 39){
-								nextc = fgetc(f);
+								nextc = fgetc(stdin);
 								// odebrani komentare po konec radku nebo po EOF
 								while (nextc != EOF){ 
 									c = nextc;
-									nextc = fgetc(f);
+									nextc = fgetc(stdin);
 									if(c == 39){
 										if(nextc == '/'){
 											break;
@@ -191,7 +191,7 @@ int Get_Token(FILE *f,TOKEN *t){
 							}
 							else{
 								// vraceni nechteneho znaku
-								ungetc(nextc,f);
+								ungetc(nextc,stdin);
 							}
 
 						}
@@ -337,7 +337,7 @@ int Get_Token(FILE *f,TOKEN *t){
 						}
 						else{
 							if(c != EOF){
-							ungetc(c,f);
+							ungetc(c,stdin);
 							}
 							if((pom = KeywordCheck(t->data)) != 0){
 								t->name = pom;
@@ -359,7 +359,7 @@ int Get_Token(FILE *f,TOKEN *t){
 									next_d = false;
 								}
 								else{
-									ungetc(c,f);
+									ungetc(c,stdin);
 									return LEX_A_ERROR;
 								}
 						}
@@ -381,7 +381,7 @@ int Get_Token(FILE *f,TOKEN *t){
 								if((pom = Add_Char(t,c)) == ALLOC_ERROR){
 										return ALLOC_ERROR;
 									}
-								c = fgetc(f);
+								c = fgetc(stdin);
 								if(c == '+' || c == '-' || isdigit(c)){
 									if((pom = Add_Char(t,c)) == ALLOC_ERROR){
 										return ALLOC_ERROR;
@@ -392,12 +392,12 @@ int Get_Token(FILE *f,TOKEN *t){
 									state = int_exp;
 								}
 								else{
-									ungetc(c,f);
+									ungetc(c,stdin);
 									return LEX_A_ERROR;
 								}
 							}
 							else{
-								ungetc(c,f);
+								ungetc(c,stdin);
 								t->name = INT_NUM;
 								return OK;
 							}
@@ -412,7 +412,7 @@ int Get_Token(FILE *f,TOKEN *t){
 								next_d = false;
 							}
 							else{
-								ungetc(c,f);
+								ungetc(c,stdin);
 								return LEX_A_ERROR;
 							}
 						}
@@ -426,7 +426,7 @@ int Get_Token(FILE *f,TOKEN *t){
 								if((pom = Add_Char(t,c)) == ALLOC_ERROR){
 										return ALLOC_ERROR;
 									}
-								c = fgetc(f);
+								c = fgetc(stdin);
 								if(c == '+' || c == '-' || isdigit(c)){
 									if((pom = Add_Char(t,c)) == ALLOC_ERROR){
 										return ALLOC_ERROR;
@@ -436,12 +436,12 @@ int Get_Token(FILE *f,TOKEN *t){
 									}
 								}
 								else{
-									ungetc(c,f);
+									ungetc(c,stdin);
 									return LEX_A_ERROR;
 								}
 							}
 							else{
-								ungetc(c,f);
+								ungetc(c,stdin);
 								t->name = DOUBLE_NUM;
 								return OK;
 							}
@@ -463,7 +463,7 @@ int Get_Token(FILE *f,TOKEN *t){
 							return OK;
 						}
 						else{
-							ungetc(c,f); 
+							ungetc(c,stdin);
 							t->name = LESSER;
 							return OK;
 						}break;
@@ -477,7 +477,7 @@ int Get_Token(FILE *f,TOKEN *t){
 							return OK;
 						}
 						else{
-							ungetc(c,f); 
+							ungetc(c,stdin);
 							t->name = GREATER;
 							return OK;
 						}break;
@@ -487,7 +487,7 @@ int Get_Token(FILE *f,TOKEN *t){
 							state = string;
 						}
 						else{
-							ungetc(c,f);
+							ungetc(c,stdin);
 							return LEX_A_ERROR;
 						}break;
 
@@ -551,7 +551,7 @@ int Get_Token(FILE *f,TOKEN *t){
 							}
 						}
 						else{
-							ungetc(c,f);
+							ungetc(c,stdin);
 							return LEX_A_ERROR;
 						}break;
 		}
