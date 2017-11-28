@@ -1031,20 +1031,4 @@ int p_nextprint(void) {
 	return p_nextprint();				//; String/<p_vyraz> <p_nextprint>
 }
 
-//
-//------------------------------TODO------------------------------
-//
-//<p_vyraz>
-int p_vyraz(int type) {
-	
-	//pre testovanie vyrazov, bude nasledovat uprava
-	while(token.name != THEN && token.name != EOL_ && token.name != SEMICOLON) {
-		if((error = Get_Token(&token)) != OK)
-			return error;
-	}
-	
-	loaded_token = true;
-	
-	return OK;
-}
 

@@ -8,7 +8,9 @@
 #include "scanner.h"
 #include "structs.h"
 #include "ts.h"
+#include "psa.h" 
 #include "tstack.h"
+
 
 //KA pre syntakticku analyzu
 int parser(void);
@@ -33,5 +35,3 @@ int p_prikaz(void);
 int p_priradenie(int type);
 int p_print(void);
 int p_nextprint(void);
-
-int p_vyraz(int type);		//TODO	->type = ENUM
