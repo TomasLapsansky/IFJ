@@ -148,7 +148,4 @@ bool InsertParametr(tHTItem* ptrht,int typ,char* nazev);
 
 void Uvolnitparametry(tHTItem* ptrht);
 
-char* low(char *sring);
-
-
 #endif

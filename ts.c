@@ -3,6 +3,8 @@
 
 #include "ts.h"
 
+
+
 /*          -------
 ** Rozptylovací funkce - jejím úkolem je zpracovat zadaný klíč a přidělit
 ** mu index v rozmezí 0..HTSize-1.  V ideálním případě by mělo dojít
@@ -82,7 +84,8 @@ bool htInsert ( tHTable* ptrht, char* key, tData data ) {
 	tmp=htSearch(ptrht,key);
 	if(tmp!=NULL)	//prvek jiz existuje, aktualizace zaznamu
 	{
-		tmp->data=data;
+		free(tmp->key);	//NEFUNGUJE TADY SE NIKDY NEMA DOSTAT
+		tmp->data=data;	//AKTUALIYUJE ALE NECHA PO SOBE PAMET
 	}
 	else
 	{
@@ -164,6 +167,7 @@ void Uvolnitparametry(tHTItem* ptrht)
 	while (ptrht->data.first != NULL){	//projde cely seznam a od zacatku ho zacne odalokovávat
 	tmp = ptrht->data.first;
 	ptrht->data.first = ptrht->data.first->next;	//posun o jeden prvek niz v seznamu
+	free(tmp->nazev);
 	free(tmp);
 	}
 }
@@ -172,13 +176,22 @@ void Uvolnitparametry(tHTItem* ptrht)
 
 enum Errors INSERT_DIM(int type,char* nazov_dim,tHTable* tabulka)
 {
+	char * pamet;
+	pamet=(char*)malloc(sizeof(char)*(strlen(nazov_dim)+1));
+	if(pamet==NULL)	return ALLOC_ERROR;
+	for (unsigned int i=0;i<=(strlen(nazov_dim));i++)
+	{
+		pamet[i]=tolower(nazov_dim[i]);
+	}
+	pamet[strlen(nazov_dim)]='\0';
+
 	tData dato;
 	dato.first=NULL;
 	dato.funkce=false;
 	dato.navesti=NULL;
 	dato.pocet_par=0;
 	dato.type=type;
-	if(htInsert (tabulka,low(nazov_dim),dato)==false)
+	if(htInsert (tabulka,pamet,dato)==false)
 	{
 
 		return ALLOC_ERROR;
@@ -189,17 +202,26 @@ enum Errors INSERT_DIM(int type,char* nazov_dim,tHTable* tabulka)
 
 enum Errors INSERT_F(char* nazov_f,tHTable* tabulka)
 {
+	char * pamet;
+	pamet=(char*)malloc(sizeof(char)*(strlen(nazov_f)+1));
+	if(pamet==NULL)	return ALLOC_ERROR;
+	for (unsigned int i=0;i<=(strlen(nazov_f));i++)
+	{
+		pamet[i]=tolower(nazov_f[i]);
+	}
+	pamet[strlen(nazov_f)]='\0';
+
 	tData dato;
 	dato.first=NULL;
 	dato.funkce=true;
-	dato.navesti=low(nazov_f);
+	dato.navesti=pamet;
 	dato.pocet_par=0;
 	dato.type=-1;
-	if(htInsert (tabulka,low(nazov_f),dato)==false)	return ALLOC_ERROR;
+	if(htInsert (tabulka,pamet,dato)==false)	return ALLOC_ERROR;
 
 
 	tHTItem* tmp;
-	tmp=htSearch(tabulka,low(nazov_f));
+	tmp=htSearch(tabulka,pamet);
 	if(tmp==NULL)	return ALLOC_ERROR;
 	tmp->lcht = (tHTable*) malloc ( sizeof(tHTable) );
 	if(tmp->lcht==NULL)	return ALLOC_ERROR;
@@ -211,8 +233,18 @@ enum Errors INSERT_F(char* nazov_f,tHTable* tabulka)
 
 bool INSERT_F_TYPE(int type,char* nazov_f,tHTable* tabulka)
 {
+	char * pamet;
+	pamet=(char*)malloc(sizeof(char)*(strlen(nazov_f)+1));
+	if(pamet==NULL)	return ALLOC_ERROR;
+	for (unsigned int i=0;i<=(strlen(nazov_f));i++)
+	{
+		pamet[i]=tolower(nazov_f[i]);
+	}
+	pamet[strlen(nazov_f)]='\0';
+
 	tHTItem *tmp;
-	tmp=htSearch(tabulka,low(nazov_f));
+	tmp=htSearch(tabulka,pamet);
+	free(pamet);
 	if(tmp==NULL)
 	{
 		return false;
@@ -226,18 +258,50 @@ bool INSERT_F_TYPE(int type,char* nazov_f,tHTable* tabulka)
 
 enum Errors INSERT_PAR(int type,char* nazev_par, char* nazov_f,tHTable* tabulka)
 {
+	char * pamet;
+	pamet=(char*)malloc(sizeof(char)*(strlen(nazov_f)+1));
+	if(pamet==NULL)	return ALLOC_ERROR;
+	for (unsigned int i=0;i<=(strlen(nazov_f));i++)
+	{
+		pamet[i]=tolower(nazov_f[i]);
+	}
+	pamet[strlen(nazov_f)]='\0';
+
+
 	tHTItem* tmp;
-	tmp=htSearch(tabulka,low(nazov_f));
-	if(Searchparametr(tmp,low(nazev_par))==true)	return SEM_TYPE_ERROR;
-	if(InsertParametr(tmp,type,low(nazev_par))==false)	return ALLOC_ERROR;
-	INSERT_DIM(type,low(nazev_par),tmp->lcht);
+	tmp=htSearch(tabulka,pamet);
+	free(pamet);
+
+	pamet=(char*)malloc(sizeof(char)*(strlen(nazev_par)+1));
+	if(pamet==NULL)	return ALLOC_ERROR;
+	for (unsigned int i=0;i<=(strlen(nazev_par));i++)
+	{
+		pamet[i]=tolower(nazev_par[i]);
+	}
+	pamet[strlen(nazev_par)]='\0';
+
+
+
+	if(Searchparametr(tmp,pamet)==true)	return SEM_TYPE_ERROR;
+	if(InsertParametr(tmp,type,pamet)==false)	return ALLOC_ERROR;
+	INSERT_DIM(type,pamet,tmp->lcht);
 	return OK;
 }
 
 tRetData* SEARCH(char* nazov,tHTable* tabulka)
 {
+	char * pamet;
+	pamet=(char*)malloc(sizeof(char)*(strlen(nazov)+1));
+	if(pamet==NULL)	return NULL;
+	for (unsigned int i=0;i<=(strlen(nazov));i++)
+	{
+		pamet[i]=tolower(nazov[i]);
+	}
+	pamet[strlen(nazov)]='\0';
+
 	tHTItem* tmp;
-	tmp=htSearch(tabulka,low(nazov));
+	tmp=htSearch(tabulka,pamet);
+	free(pamet);
 	if(tmp==NULL)	return NULL;
 
 
@@ -337,6 +401,7 @@ void DELETE_TS(tHTable* ptrht)
 
 			tmp=prev;
 			prev=prev->ptrnext;	//posun a mazani
+			free(tmp->key);
 			free(tmp);
 
 		}
@@ -348,15 +413,3 @@ void DELETE_TS(tHTable* ptrht)
 	ptrht=NULL;
 }
 
-
-char* low(char *sring)
-{
-  char* help;
-  help=(char*)malloc(sizeof(char)*strlen(sring)+1);
-	for (unsigned int i=0;i<=(strlen(sring));i++)
-	{
-		help[i]=tolower(sring[i]);
-	}
-	help[strlen(sring)]='\0';
-  return help;
-}
