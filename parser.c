@@ -11,6 +11,7 @@ extern TOKEN token;
 extern int error;			//error code
 extern int line;			//line number
 extern tHTable* ptrht;		//HASH table
+extern tStack *s;
 
 bool loaded_token = false;
 
@@ -209,20 +210,33 @@ int p_declare(void) {
 				DELETE_SEARCH(idData);
 				return SEM_ERROR;
 			}
-			DELETE_SEARCH(idData);
 			
-			if((error = Get_Token(&token)) != OK)
+			if((error = Get_Token(&token)) != OK) {
+				DELETE_SEARCH(idData);
 				return error;//gettoken
+			}
 			
-			if(token.name != EOL_)			//Function ID(<p_parameter>) As <p_type> EOL
+			if(token.name != EOL_) {		//Function ID(<p_parameter>) As <p_type> EOL
+				DELETE_SEARCH(idData);
 				return SYN_A_ERROR;
+			}
 			
-			if((error = Get_Token(&token)) != OK)
+			if((error = Get_Token(&token)) != OK) {
+				DELETE_SEARCH(idData);
 				return error;//gettoken
+			}
+			
+			//zmena ptrht na lokalnu TS kvoli vstupu do funkcie
+			//implementovany zasobnik kvoli moznemu viacnasobnemu znoreniu
+			stackPush(s, ptrht);
+			ptrht = idData->LocalTS;
 			
 			if((error = p_body()) != OK) {		//Function ID(<p_parameter>) As <p_type> EOL <p_body>
 				return error;
 			}
+			
+			//opatovne vratenie ptrht
+			ptrht = stackPop(s);
 			
 			if(token.name != END)			//Function ID(<p_parameter>) As <p_type> EOL <p_body> End
 				return SYN_A_ERROR;
@@ -585,14 +599,34 @@ int p_declare_nextparameter(char* funcName) {
 //<p_vparameter>	ε)
 //<p_vparameter>	ID)
 //<p_vparameter>	ID, <p_vnextparameter>
-int p_vparameter(void) {
+int p_vparameter(tRetData *funcData, int *pocet_parametrov) {
 	
 	if(token.name == RIGHTPAREN)	//ε)
 		return OK;
 	
-	if((error = id(NULL)) != UNEXIST) {	//ID
-		return error;
+	tRetData *idData = NULL;
+	if((error = id(idData)) != DIM_ID) {	//ID
+		int ret;
+		
+		if(error == NON_ID)
+			ret = SYN_A_ERROR;
+		else //if(error == F_ID)
+			ret = SEM_TYPE_ERROR;
+		
+		DELETE_SEARCH(idData);
+		return ret;
 	}
+	
+	//Semanticke overovanie vstupneho parametra == Data type
+	if(idData->type != funcData->typy[*pocet_parametrov]) {
+		DELETE_SEARCH(idData);
+		return SEM_TYPE_ERROR;
+	}
+	
+	DELETE_SEARCH(idData);
+	
+	//inkrement poctu parametrov po korektnom prejdeni
+	(*pocet_parametrov)++;
 	
 	if((error = Get_Token(&token)) != OK)
 		return error;	//gettoken
@@ -605,7 +639,7 @@ int p_vparameter(void) {
 			if((error = Get_Token(&token)) != OK)
 				return error;	//gettoken
 			
-			return p_vnextparameter();
+			return p_vnextparameter(funcData, pocet_parametrov);
 		default:
 			return SYN_A_ERROR;
 	}
@@ -613,11 +647,31 @@ int p_vparameter(void) {
 
 //<p_vnextparameter>	ID)
 //<p_vnextparameter>	ID, <p_vnextparameter>
-int p_vnextparameter(void) {
+int p_vnextparameter(tRetData *funcData, int *pocet_parametrov) {
 	
-	if((error = id(NULL)) != UNEXIST) {	//ID
-		return error;
+	tRetData *idData = NULL;
+	if((error = id(idData)) != DIM_ID) {	//ID
+		int ret;
+		
+		if(error == NON_ID)
+			ret = SYN_A_ERROR;
+		else //if(error == F_ID)
+			ret = SEM_TYPE_ERROR;
+		
+		DELETE_SEARCH(idData);
+		return ret;
 	}
+	
+	//Semanticke overovanie vstupneho parametra == Data type
+	if(idData->type != funcData->typy[*pocet_parametrov]) {
+		DELETE_SEARCH(idData);
+		return SEM_TYPE_ERROR;
+	}
+	
+	DELETE_SEARCH(idData);
+	
+	//inkrement poctu parametrov po korektnom prejdeni
+	(*pocet_parametrov)++;
 	
 	if((error = Get_Token(&token)) != OK)
 		return error;	//gettoken
@@ -630,7 +684,7 @@ int p_vnextparameter(void) {
 			if((error = Get_Token(&token)) != OK)
 				return error;	//gettoken
 			
-			return p_vnextparameter();
+			return p_vnextparameter(funcData, pocet_parametrov);
 		default:
 			return SYN_A_ERROR;
 	}
@@ -646,197 +700,282 @@ int p_vnextparameter(void) {
 //<p_prikaz>			Return <vyraz>
 int p_prikaz(void) {
 	
+	/*
+	 	Uprava navratovej hodnoty error v celej funkcii
+	 	z dovodu korekcie uvolnenia pamate v *idData a
+	 	prikazu switch
+	 */
+	tRetData *idData = NULL;
+	error = OK;
+	
 	switch(token.name) {
 		case(DIM):							//Dim
 			
 			if((error = Get_Token(&token)) != OK)
-				return error;	//gettoken
+				break;	//gettoken
 			
-			if((error = id(NULL)) != UNEXIST)	//Dim ID
-				return error;
+			if((error = id(idData)) != UNEXIST) {	//Dim ID
+				//int ret;
+				
+				if(error == NON_ID)
+					error = SYN_A_ERROR;
+				else //if(error == DIM_ID || error == F_ID)
+					error = SEM_ERROR;
+				
+				//DELETE_SEARCH(idData);
+				break;
+			}
+			DELETE_SEARCH(idData);
 			
-			if((error = Get_Token(&token)) != OK)
-				return error;	//gettoken
+			TOKEN idToken;
+			Init_Token(&idToken);
+			idToken = token;
 			
-			if(token.name != AS)			//Dim ID As
-				return SYN_A_ERROR;
+			if((error = Get_Token(&token)) != OK) {
+				Clear_Token(&idToken);
+				break;	//gettoken
+			}
 			
-			if((error = Get_Token(&token)) != OK)
-				return error;	//gettoken
+			if(token.name != AS) {			//Dim ID As
+				Clear_Token(&idToken);
+				error = SYN_A_ERROR;
+				break;
+			}
+				
+			if((error = Get_Token(&token)) != OK) {
+				Clear_Token(&idToken);
+				break;	//gettoken
+			}
 			
-			if((error = p_type()) != OK)	//Dim ID As <p_type>
-				return error;
+			if((error = p_type()) != OK) {	//Dim ID As <p_type>
+				Clear_Token(&idToken);
+				break;
+			}
 			
-			return OK;
+			//Vlozenie ID do TS
+			INSERT_DIM(token.name, idToken.data, ptrht);
+			
+			Clear_Token(&idToken);
 			break;
 		case(INPUT):					//Input
 			
 			if((error = Get_Token(&token)) != OK)
-				return error;	//gettoken
+				break;	//gettoken
 			
-			if((error = id(NULL)) != UNEXIST)
-				return error;
+			if((error = id(idData)) != DIM_ID) {	//Input ID
+				//int ret;
+				
+				if(error == NON_ID)
+					error = SYN_A_ERROR;
+				else //if(error == UNEXIST || error == F_ID)
+					error = SEM_ERROR;
+				
+				DELETE_SEARCH(idData);
+				break;
+			}
 			
-			return OK;
 			break;
 		case(PRINT):					//Print
 			
 			if((error = Get_Token(&token)) != OK)
-				return error;	//gettoken
+				break;	//gettoken
 			
 			//ocakavame p_print
-			return p_print();					//Print <p_print>
+			error = p_print();					//Print <p_print>
 			
 			break;
 		case(IF):							//If
 			
 			if((error = Get_Token(&token)) != OK)
-				return error;	//gettoken
+				break;	//gettoken
 			
 			if((error = p_vyraz(BL)) != OK)	//If <p_vyraz>
-				return error;
+				break;
 			
 			loaded_token = false;
 			
-			if(token.name != THEN)			//If <p_vyraz> Then
-				return SYN_A_ERROR;
+			if(token.name != THEN) {		//If <p_vyraz> Then
+				error = SYN_A_ERROR;
+				break;
+			}
 			
 			if((error = Get_Token(&token)) != OK)
-				return error;	//gettoken
+				break;	//gettoken
 			
-			if(token.name != EOL_)			//If <p_vyraz> Then EOL
-				return SYN_A_ERROR;
-			
-			//line++; //pocitadlo riadku pre vypis pri chybe
+			if(token.name != EOL_) {		//If <p_vyraz> Then EOL
+				error = SYN_A_ERROR;
+				break;
+			}
 			
 			if((error = Get_Token(&token)) != OK)
-				return error;	//gettoken
+				break;	//gettoken
 			
 			if((error = p_body()) != OK) {	//If <p_vyraz> Then EOL <p_body>
-				return error;
+				break;
 			}
 			
-			if(token.name != ELSE)			//If <p_vyraz> Then EOL <p_body> Else
-				return SYN_A_ERROR;
+			if(token.name != ELSE) {		//If <p_vyraz> Then EOL <p_body> Else
+				error = SYN_A_ERROR;
+				break;
+			}
 			
 			if((error = Get_Token(&token)) != OK)
-				return error;	//gettoken
+				break;	//gettoken
 			
-			if(token.name != EOL_)			//If <p_vyraz> Then EOL <p_body> Else EOL
-				return SYN_A_ERROR;
-			
-			//line++; //pocitadlo riadku pre vypis pri chybe
+			if(token.name != EOL_) {		//If <p_vyraz> Then EOL <p_body> Else EOL
+				error = SYN_A_ERROR;
+				break;
+			}
 			
 			if((error = Get_Token(&token)) != OK)
-				return error;	//gettoken
+				break;	//gettoken
 			
 			if((error = p_body()) != OK) {	//If <p_vyraz> Then EOL <p_body> Else EOL <p_body>
-				return error;
+				break;
 			}
 			
-			if(token.name != END)			//If <p_vyraz> Then EOL <p_body> Else EOL <p_body> End
-				return SYN_A_ERROR;
+			if(token.name != END) {			//If <p_vyraz> Then EOL <p_body> Else EOL <p_body> End
+				error = SYN_A_ERROR;
+				break;
+			}
 			
 			if((error = Get_Token(&token)) != OK)
-				return error;	//gettoken
+				break;	//gettoken
 			
-			if(token.name != IF)			//If <p_vyraz> Then EOL <p_body> Else EOL <p_body> End If
-				return SYN_A_ERROR;
-			
-			return OK;
+			if(token.name != IF) {			//If <p_vyraz> Then EOL <p_body> Else EOL <p_body> End If
+				error = SYN_A_ERROR;
+				break;
+			}
 			
 			break;
 		case(DO):							//Do
 			
 			if((error = Get_Token(&token)) != OK)
-				return error;	//gettoken
+				break;	//gettoken
 			
-			if(token.name != WHILE)		//Do While
-				return SYN_A_ERROR;
+			if(token.name != WHILE) {		//Do While
+				error = SYN_A_ERROR;
+				break;
+			}
 			
 			if((error = Get_Token(&token)) != OK)
-				return error;	//gettoken
+				break;	//gettoken
 			
 			if((error = p_vyraz(BL)) != OK)	//Do While <p_vyraz>
-				return error;
+				break;
 			
 			loaded_token = false;
 			
-			if(token.name != EOL_)			//Do While <p_vyraz> EOL
-				return SYN_A_ERROR;
-			
-			//line++; //pocitadlo riadku pre vypis pri chybe
-			
-			if((error = Get_Token(&token)) != OK)
-				return error;	//gettoken
-			
-			if((error = p_body()) != OK) {	//Do While <p_vyraz> EOL <p_body>
-				return error;
+			if(token.name != EOL_) {		//Do While <p_vyraz> EOL
+				error = SYN_A_ERROR;
+				break;
 			}
 			
-			if(token.name != LOOP)
-				return SYN_A_ERROR;
+			if((error = Get_Token(&token)) != OK)
+				break;	//gettoken
 			
-			return OK;
+			if((error = p_body()) != OK) {	//Do While <p_vyraz> EOL <p_body>
+				break;
+			}
+			
+			if(token.name != LOOP) {
+				error = SYN_A_ERROR;
+				break;
+			}
 			
 			break;
 		case(RETURN):					//Return
 			
 			if((error = Get_Token(&token)) != OK)
-				return error;	//gettoken
+				break;	//gettoken
 			
 			if((error = p_vyraz(INT_NUM)) != OK)	//Return <p_vyraz>
-				return error;
-			
-			return OK;
+				break;
 			
 			break;
 		default:
 			
-			if((error = id(NULL)) != UNEXIST)			//ak nie je id, vracia ε
-				return E_OK;
+			if((error = id(idData)) != DIM_ID) {
+				//int ret;
+				
+				if(error == NON_ID)
+					error = E_OK;				//ε
+				else //if(error == F_ID)
+					error = SEM_ERROR;
+				
+				//DELETE_SEARCH(idData);
+				break;
+			}
 			
-			if((error = Get_Token(&token)) != OK)
-				return error;	//gettoken
+			if((error = Get_Token(&token)) != OK) {
+				break;	//gettoken
+			}
 			
-			if(token.name != EQUAL)			//ID =
-				return SYN_A_ERROR;
+			if(token.name != EQUAL) {		//ID =
+				error = SYN_A_ERROR;
+				break;
+			}
 			
-			if((error = Get_Token(&token)) != OK)
-				return error;	//gettoken
-			
-			if((error = p_priradenie()) != OK)	//ID = <p_priradenie>
-				return error;
-			
-			return OK;
+			if((error = Get_Token(&token)) != OK) {
+				break;	//gettoken
+			}
+				
+			if((error = p_priradenie(idData->type)) != OK) {	//ID = <p_priradenie>
+				break;
+			}
 			
 			break;
 	}
+	
+	DELETE_SEARCH(idData);
+	return error;
 }
 
 //<p_priradenie>		F_ID(<p_vparameter>
 //<p_priradenie>		<p_vyraz>
-int p_priradenie(void) {
+int p_priradenie(int type) {
 	
-	if(true) {//if((error = id()) != OK) {				//je potreba rozhodnut, ci sa jedna o F_ID alebo nie, treba dokoncit id(void)
-		if((error = p_vyraz(INT_NUM)) != OK) {		//<p_vyraz>
+	tRetData *idData = NULL;
+	if((error = id(idData)) != F_ID) {
+		
+		if((error = p_vyraz(type)) != OK) {		//<p_vyraz>
+			DELETE_SEARCH(idData);
 			return error;
 		}
 		
+		DELETE_SEARCH(idData);
 		return OK;
-	}										//F_ID
+	}						//F_ID
+	//DELETE_SEARCH(idData);
 	
-	if((error = Get_Token(&token)) != OK)
+	if((error = Get_Token(&token)) != OK) {
+		DELETE_SEARCH(idData);
 		return error;	//gettoken
+	}
 	
-	if(token.name != LEFTPAREN)			//F_ID(
+	if(token.name != LEFTPAREN) {			//F_ID(
+		DELETE_SEARCH(idData);
 		return SYN_A_ERROR;
+	}
 	
-	if((error = Get_Token(&token)) != OK)
+	if((error = Get_Token(&token)) != OK) {
+		DELETE_SEARCH(idData);
 		return error;	//gettoken
+	}
 	
-	return p_vparameter();					//F_ID(<p_vparameter>
+	int pocet_parametrov = 0;
+	if((error = p_vparameter(idData, &pocet_parametrov)) != OK) {	//F_ID(<p_vparameter>
+		DELETE_SEARCH(idData);
+		return error;
+	}
 	
+	if(idData->pocet_parametru != pocet_parametrov) {
+		DELETE_SEARCH(idData);
+		return SEM_TYPE_ERROR;
+	}
+	
+	DELETE_SEARCH(idData);
+	return OK;
 }
 
 //<p_print>			<p_vyraz>; <p_nextprint>

@@ -1,11 +1,13 @@
 #include "scanner.h"
 #include "parser.h"
 #include "ts.h"
+#include "tstack.h"
 
 TOKEN token;
 int error;		//error code
 int line;		//line number
 tHTable* ptrht;	//HASH table
+tStack *s;
 
 int main(void) {
 	
@@ -13,6 +15,7 @@ int main(void) {
 	
 	Init_Token(&token);
 	htInit(ptrht);
+	stackInit(s);
 	
 	int final = parser();
 	
