@@ -1,3 +1,10 @@
+/**
+ * @Name IFJ17 Zasobnik
+ * @author Tomas Lapsansky (xlapsa00)
+ * @file tstack.c
+ * @date 29.11.2017
+ */
+
 #include "tstack.h"
 
 int stackInit(tStack *s) {

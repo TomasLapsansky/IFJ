@@ -1,3 +1,10 @@
+/**
+ * @Name IFJ17 Zasobnik
+ * @author Tomas Lapsansky (xlapsa00)
+ * @file tstack.h
+ * @date 29.11.2017
+ */
+
 #ifndef _STACK_H_
 #define _STACK_H_
 
