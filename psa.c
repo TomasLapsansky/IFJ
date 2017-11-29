@@ -125,7 +125,14 @@ printf("Var %s not declared\n",token.data);
 		if(sign == '-'){
 			psa_item *final = psa_list_top(list);
 			// ocekavany datovy typ
-//qprintf("final_data_type: %d type: %d\n",final->data_type,type);
+			switch(type){
+				case INTEGER: type = INT_NUM; break;
+				case DOUBLE: type = DOUBLE_NUM; break;
+				case STRING: type = STR; break;
+				case BOOLEAN_: type = BL; break;
+				case BL: type = BL; break;
+			}	
+printf("final_data_type: %d type: %d\n",final->data_type,type);
 			if(final->data_type == type){
 				printf("*****PSA_COMPLETE******\n\n");
 				psa_list_delete(list);
@@ -331,7 +338,7 @@ printf("PSA_ERROR SIGN ' '\n");
 						item = psa_create_item();
 		 			 	// URCENI VYSLEDNEHO DATOVEHO TYPU
 		 			 	// pokud je operator porovnavaci vraci BOOL
-		 			 	if(aitem[1].oper > 4 && aitem[1].oper < 11){
+		 			 	if(aitem[1].oper > 3 && aitem[1].oper < 10){
 		 			 		item->data_type = BL;
 		 			 	}
 		 			 	else{
