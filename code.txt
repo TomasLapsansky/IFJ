@@ -4,5 +4,5 @@
 
 Scope 'Hlavni telo programu
 	Dim A as integer
-	A = (2)
+	A = 2
 End Scope

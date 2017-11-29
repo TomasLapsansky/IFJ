@@ -4,12 +4,14 @@ static int eol;
 static int countT;
 static int eof_t;
 static int next_line;
+static int loadedc;
 extern int line;
 
 enum State{
 	start = 1,
 	id,
 	int_,
+	exp_,
 	double_,
 	lesser,
 	greater,
@@ -17,6 +19,7 @@ enum State{
 	string,
 	escape_seq,
 	ddd,
+	div_,
 };
 
 // funkce pro inicializaci Tokenu
@@ -106,7 +109,14 @@ int Get_Token(TOKEN *t){
 	Clear_Token(t);
 	countT++;
 
-	while((c = fgetc(stdin))){
+	while(1){
+		if(loadedc != 0){
+			c = loadedc;
+			loadedc = 0;
+		}else{
+			c = fgetc(stdin);
+			loadedc = 0;
+		}
 		// Kontrola EOF 
 		if((c == EOF) && (state == start)){
 			if((pom = Add_Char(t,'E')) == ALLOC_ERROR){
@@ -131,7 +141,7 @@ int Get_Token(TOKEN *t){
 
 		switch(state){
 			case start: // radkovani
-						if(next_line == 1){
+					if(next_line == 1){
 							next_line = 0;
 							line++;
 							//printf("line: %d\n",line);
@@ -157,43 +167,24 @@ int Get_Token(TOKEN *t){
 								return OK;
 							}
 							state = start;
-						}
-						else{ 
+					}
+					else{ 
+
 						// pokud po EOLu neni dalsi EOL, vynuluju pom promenou, ze uz lze vypsat dalsi EOL na vystup
 						if(eol == 1) eol = 0;
+
 						// odstrani jednoradkovy komentar
 						if(c == 39){
 							// odebrani komentaru po konec radku nebo po EOF
 							while (c != EOF && c != '\n') c=fgetc(stdin);
 							// vraceni nechteneho znaku
-							ungetc(c,stdin);
+							loadedc = c;
 
 							state = start;
 						}
 						// odstraneni slozeneho komentare
 						else if(c == '/'){
-							nextc = fgetc(stdin);
-							if(nextc == 39){
-								nextc = fgetc(stdin);
-								// odebrani komentare po konec radku nebo po EOF
-								while (nextc != EOF){ 
-									c = nextc;
-									nextc = fgetc(stdin);
-									if(c == 39){
-										if(nextc == '/'){
-											break;
-										}
-									}
-									if(nextc == EOF){
-										return LEX_A_ERROR;
-									}
-								}
-							}
-							else{
-								// vraceni nechteneho znaku
-								ungetc(nextc,stdin);
-							}
-
+							state = div_;
 						}
 						// identifikator
 						else if(isalpha(c) || c == '_'){							
@@ -258,13 +249,13 @@ int Get_Token(TOKEN *t){
 											return OK;
 											break;
 
-								case '/' : if((pom = Add_Char(t,c)) == ALLOC_ERROR){
+							/*	case '/' : if((pom = Add_Char(t,c)) == ALLOC_ERROR){
 												return ALLOC_ERROR;
 											}
 											t->name = DIVISION;
 											return OK;
 											break;
-
+							*/
 								case 92: if((pom = Add_Char(t,c)) == ALLOC_ERROR){
 												return ALLOC_ERROR;
 											}
@@ -337,7 +328,8 @@ int Get_Token(TOKEN *t){
 						}
 						else{
 							if(c != EOF){
-							ungetc(c,stdin);
+							loadedc = c;
+							//ungetc(c,stdin);
 							}
 							if((pom = KeywordCheck(t->data)) != 0){
 								t->name = pom;
@@ -359,7 +351,6 @@ int Get_Token(TOKEN *t){
 									next_d = false;
 								}
 								else{
-									ungetc(c,stdin);
 									return LEX_A_ERROR;
 								}
 						}
@@ -389,18 +380,29 @@ int Get_Token(TOKEN *t){
 									if(c == '+' || c == '-'){
 										next_d = true;
 									}
-									state = int_exp;
+									state = exp_;
 								}
 								else{
-									ungetc(c,stdin);
+									//ungetc(c,stdin);
 									return LEX_A_ERROR;
 								}
 							}
 							else{
-								ungetc(c,stdin);
+								//ungetc(c,stdin);
+								loadedc = c;
 								t->name = INT_NUM;
 								return OK;
 							}
+						}break;
+			case exp_:{
+						 if(isdigit(c)){
+									if((pom = Add_Char(t,c)) == ALLOC_ERROR){
+											return ALLOC_ERROR;
+										}
+								}
+								else{
+									return LEX_A_ERROR;
+								}
 						}break;
 			// stav double
 			case double_:
@@ -412,7 +414,7 @@ int Get_Token(TOKEN *t){
 								next_d = false;
 							}
 							else{
-								ungetc(c,stdin);
+								//ungetc(c,stdin);
 								return LEX_A_ERROR;
 							}
 						}
@@ -436,12 +438,13 @@ int Get_Token(TOKEN *t){
 									}
 								}
 								else{
-									ungetc(c,stdin);
+									//ungetc(c,stdin);
 									return LEX_A_ERROR;
 								}
 							}
 							else{
-								ungetc(c,stdin);
+								//ungetc(c,stdin);
+								loadedc = c;
 								t->name = DOUBLE_NUM;
 								return OK;
 							}
@@ -463,7 +466,8 @@ int Get_Token(TOKEN *t){
 							return OK;
 						}
 						else{
-							ungetc(c,stdin);
+							//ungetc(c,stdin);
+							loadedc = c;
 							t->name = LESSER;
 							return OK;
 						}break;
@@ -477,7 +481,7 @@ int Get_Token(TOKEN *t){
 							return OK;
 						}
 						else{
-							ungetc(c,stdin);
+							//ungetc(c,stdin);
 							t->name = GREATER;
 							return OK;
 						}break;
@@ -487,7 +491,7 @@ int Get_Token(TOKEN *t){
 							state = string;
 						}
 						else{
-							ungetc(c,stdin);
+							//ungetc(c,stdin);
 							return LEX_A_ERROR;
 						}break;
 
@@ -551,9 +555,31 @@ int Get_Token(TOKEN *t){
 							}
 						}
 						else{
-							ungetc(c,stdin);
+							//ungetc(c,stdin);
 							return LEX_A_ERROR;
 						}break;
+			case div_:
+						if(c == 39){
+								nextc = fgetc(stdin);
+								// odebrani komentare po konec radku nebo po EOF
+								while (nextc != EOF){ 
+									c = nextc;
+									nextc = fgetc(stdin);
+									if(c == 39){
+										if(nextc == '/'){
+											break;
+										}
+									}
+									if(nextc == EOF){
+										return LEX_A_ERROR;
+									}
+								}
+								state = start;
+							}
+							else{
+								t->name = DIVISION;
+								return OK;
+							}break;
 		}
 	}
 	return EOF;

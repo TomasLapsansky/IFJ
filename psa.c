@@ -62,13 +62,13 @@ int p_vyraz(int type){
 	loaded_token = true;
 	if(type)printf("\n*****START_PSA*****\n\n");
 	tRetData *var;
-//printf("##########################\n");
+//qprintf("##########################\n");
 //printf("START PSA:\n");
 	newitem = psa_create_item();
 	newitem->oper = OP_END;
 	// vlozeni OP_END = & na zasobnik
 	psa_list_push(list,newitem);
-//printf("ZASOBNIK INICIALIZACE: $\n");
+//qprintf("ZASOBNIK INICIALIZACE: $\n");
 	//pre testovanie vyrazov, bude nasledovat uprava
 	while(1){
 		if(((token.name != THEN && token.name != EOL_ && token.name != SEMICOLON)&&(start == 0))&&(sign == '<')){
@@ -97,7 +97,7 @@ int p_vyraz(int type){
 		if(token.name == ID){
 			if((var = SEARCH(token.data,ptrht)) == NULL){
 				// promena neni deklarovana
-printf("Var %s not declared\n",token.data);
+//qprintf("Var %s not declared\n",token.data);
 				psa_list_delete(list);
 				return SYN_A_ERROR;
 			}
@@ -109,36 +109,41 @@ printf("Var %s not declared\n",token.data);
 			}
 		}
 
-//printf("__________________\n\n");
-//psa_list_show(list);
+//qprintf("__________________\n\n");
+//qpsa_list_show(list);
 		 // urceni operace, na zaklade precedencni tabulky
 		item = psa_search_term(list);
 
-//printf("VSTUP: %d\n\n",column);
+//qprintf("VSTUP: %d\n\n",column);
 		sign = prec_tab[item->oper][column];	
-//printf("VYHODNOCENI PREC_TAB\n");
-//printf("==========\n");
-//printf("::::| %d|\n",column);
-//printf(" %d | %c |\n",item->oper,sign);
-//printf("==========\n\n");
+//qprintf("VYHODNOCENI PREC_TAB\n");
+//qprintf("==========\n");
+//qprintf("::::| %d|\n",column);
+//qprintf(" %d | %c |\n",item->oper,sign);
+//qprintf("==========\n\n");
 
 		// $ == $ OK konec whilu
 		if(sign == '-'){
+			psa_item *final = psa_list_top(list);
 			// ocekavany datovy typ
-/*			if(item->data_type == type){
+			switch(type){
+				case INTEGER: type = INT_NUM; break;
+				case DOUBLE: type = DOUBLE_NUM; break;
+				case STRING: type = STR; break;
+				case BOOLEAN_: type = BL; break;
+			}	
+			
+			if(final->data_type == type){
+				printf("*****PSA_COMPLETE******\n\n");
 				psa_list_delete(list);
 				return OK;
 			}
 			else{
+				printf("*****VYSLEDEK NEMA STEJNY DATOVY TYP******\n\n");
 				psa_list_delete(list);
 				return SYN_A_ERROR;
 			}
 			break;
-*/			//SMAZAT TODO
-printf("*****PSA_COMPLETE******\n\n");
-//printf("##########################\n\n");
-			psa_list_delete(list);
-			return OK;
 		}
 		// $ != $ ERROR
 		else if(sign == ' '){
@@ -151,7 +156,7 @@ printf("*****PSA_COMPLETE******\n\n");
 		switch(sign){
 /*        ---------  OPERACE < PSA ----------			*/
 		 	case '<': {
-//printf("PSA_OPERACE <:\n");
+//qprintf("PSA_OPERACE <:\n");
 		 				// vrchol seznamu je TERM
 		 				// pripad | &  |<|  i |   ===> &<i
 		 				psa_item *topitem = psa_list_top(list);
@@ -167,7 +172,7 @@ printf("*****PSA_COMPLETE******\n\n");
 		 					newitem = psa_create_item();
 
 							if(token.name == DIVISION_INT){
-								newitem->oper = OP_DIV_INT;
+								newitem->oper = OP_DIV;
 							}else newitem->oper = column;
 
 							// urceni hodnoty
@@ -204,7 +209,7 @@ printf("*****PSA_COMPLETE******\n\n");
 
 							// vlozeni TERMU
 		 					psa_list_push(list,newitem);
-//psa_list_show(list);
+//qpsa_list_show(list);
 		 				}
 		 				else{
 		 					// pripad | &E  |<|  + |   ===> &<E+
@@ -221,7 +226,7 @@ printf("*****PSA_COMPLETE******\n\n");
 									if(token.name == DIVISION_INT){
 										// ma stejne precedencni hodnoty jako DIV, 
 										// zajisteni spravne operace pri volani instrukce
-										newitem->oper = OP_DIV_INT;
+										newitem->oper = OP_DIV;
 									}
 									else{
 										newitem->oper = column;
@@ -258,14 +263,14 @@ printf("*****PSA_COMPLETE******\n\n");
 
 									// vlozeni TERMU
 				 					psa_list_push(list,newitem);
-//psa_list_show(list);
+//qpsa_list_show(list);
 		 					}
 		 			  }break;
 
 /*        ---------  OPERACE > PSA ----------			*/
 
 		 	case '>': {
-//printf("PSA_OPERACE >:\n");	 			 
+//qprintf("PSA_OPERACE >:\n");	 			 
 		 			 int i = 0;
 		 			 // vytvorim si misto v pameti na ulozeni 3 itemu, ktere budu porovnavat s pravidly
 		 			 aitem[0].oper = OP_EXP;
@@ -289,7 +294,7 @@ printf("*****PSA_COMPLETE******\n\n");
 
 		 			 	item = item->lptr;
 
-//printf("POP %d\n",list->top->oper);
+//qprintf("POP %d\n",list->top->oper);
 		 			 	psa_list_pop(list);
 		 			 	i++;
 		 			 }
@@ -302,17 +307,17 @@ printf("*****PSA_COMPLETE******\n\n");
 		 			 else{
 		 			 	// nasel se OP_EXP
 		 			 	// vymazani OP_EXP
-//printf("POP %d\n",list->top->oper);
+//qprintf("POP %d\n",list->top->oper);
 		 			 	psa_list_pop(list);
 		 			 }
 
-//printf("NACTENE HODNOTY: |$|%d|%d|%d|\n",aitem[2].oper,aitem[1].oper,aitem[0].oper);
+//qprintf("NACTENE HODNOTY: |$|%d|%d|%d|\n",aitem[2].oper,aitem[1].oper,aitem[0].oper);
 
 /*        ---------  VYHODNOCENI PRAVIDEL ----------			*/
 					 
 /*        ---------  i nebo (E) ----------			*/ 
 		 			 if(((aitem[0].oper == OP_ID)&&(aitem[1].oper == OP_EXP)&&(aitem[2].oper == OP_EXP))||((aitem[0].oper == OP_RPARENT)&&(aitem[1].oper == OP_E)&&(aitem[2].oper == OP_LPARENT))){
-//printf("VYHODNOCENI PRAVIDLA i->E | E->(E)\n");
+//qprintf("VYHODNOCENI PRAVIDLA i->E | E->(E)\n");
 		 			 	psa_item *i = psa_create_item();
 		 			 	i->data_type = aitem[0].data_type;
 		 			 	// TODO item->value.ptr = 
@@ -321,12 +326,12 @@ printf("*****PSA_COMPLETE******\n\n");
 					    i->oper = OP_E;
 					    // vlozeni OP_E do seznamu
 			 		    psa_list_push(list,i);
-//psa_list_show(list);
+//qpsa_list_show(list);
 		 			 }
 		 			 
 /*        --------- E operator E ----------			*/ 
 		 			 else if((aitem[0].oper == OP_E)&&((aitem[1].oper < 11)||(aitem[1].oper == 16))&&(aitem[2].oper == OP_E)){
-//printf("VYHODNOCENI PRAVIDLA E->E operator E\n");	
+//qprintf("VYHODNOCENI PRAVIDLA E->E operator E\n");	
 						item = psa_create_item();
 		 			 	// URCENI VYSLEDNEHO DATOVEHO TYPU
 		 			 	// pokud je operator porovnavaci vraci BOOL
@@ -373,7 +378,7 @@ printf("*****PSA_COMPLETE******\n\n");
 		 			 }
 /*        ---------  ZADNE ZE ZADANYCH PRAVIDEL NEBYLO NALEZENO  ----------			*/ 		 			 
 		 			 else{
-//printf("VYHODNOCENI PRAVIDLA - NEBYLO NALEZENO PRAVIDLO\n");	
+//qprintf("VYHODNOCENI PRAVIDLA - NEBYLO NALEZENO PRAVIDLO\n");	
 		 			 	// ZADNE PRAVIDLO NEBYLO SPLNENO
 		 			 	psa_list_delete(list);
 printf("*****PSA ERROR*****\n");
