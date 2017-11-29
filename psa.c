@@ -17,9 +17,9 @@ static char prec_tab[14][14] = {
 /*| >= |*/ {'<','<','<','<','>','>','>','>',' ','>','<','>','<','>'},
 /*|  = |*/ {'<','<','<','<','<','<','<','<',' ','<','<','>','<','>'},
 /*| <> |*/ {'<','<','<','<','>','>','>','>',' ','>','<','>','<','>'},
-/*| (  |*/ {'<','<','<','<','<','<','<','<',' ','<','<','=','<','>'},
+/*| (  |*/ {'<','<','<','<','<','<','<','<','<','<','<','<','<','>'},
 /*| )  |*/ {'>','>','>','>','>','>','>','>',' ','>',' ','>',' ','>'},
-/*| id |*/ {'>','>','>','>','>','>','>','>','=','>',' ','>',' ','>'},
+/*| id |*/ {'>','>','>','>','>','>','>','>','>','>',' ','>',' ','>'},
 /*| $  |*/ {'<','<','<','<','<','<','<','<','<','<','<',' ','<','-'},
 };
 
@@ -60,8 +60,8 @@ int p_vyraz(int type){
 	char sign;
 	int column,error,start = 1;
 	loaded_token = true;
-	if(type)printf("START_PSA\n\n");
-	//tRetData *var;
+	if(type)printf("\n*****START_PSA*****\n\n");
+	tRetData *var;
 //printf("##########################\n");
 //printf("START PSA:\n");
 	newitem = psa_create_item();
@@ -94,9 +94,10 @@ int p_vyraz(int type){
 		}
 
 		// kdyz narazim na promenou, zkontroluji zda je deklaravona
-/*		if(token.name == ID){
+		if(token.name == ID){
 			if((var = SEARCH(token.data,ptrht)) == NULL){
 				// promena neni deklarovana
+printf("Var %s not declared\n",token.data);
 				psa_list_delete(list);
 				return SYN_A_ERROR;
 			}
@@ -107,7 +108,7 @@ int p_vyraz(int type){
 				return SYN_A_ERROR;
 			}
 		}
-*/
+
 //printf("__________________\n\n");
 //psa_list_show(list);
 		 // urceni operace, na zaklade precedencni tabulky
@@ -134,7 +135,7 @@ int p_vyraz(int type){
 			}
 			break;
 */			//SMAZAT TODO
-printf("PSA_COMPLETE\n");
+printf("*****PSA_COMPLETE******\n\n");
 //printf("##########################\n\n");
 			psa_list_delete(list);
 			return OK;
@@ -144,22 +145,23 @@ printf("PSA_COMPLETE\n");
 			psa_list_delete(list);
 			return SYN_A_ERROR;
 			break;
-printf("PSA_ERROR SIGN ' '\n");	
+//printf("PSA_ERROR SIGN ' '\n");	
 		}
 
 		switch(sign){
 /*        ---------  OPERACE < PSA ----------			*/
-			case '=': 
 		 	case '<': {
 //printf("PSA_OPERACE <:\n");
 		 				// vrchol seznamu je TERM
 		 				// pripad | &  |<|  i |   ===> &<i
 		 				psa_item *topitem = psa_list_top(list);
 		 				if((topitem->oper != OP_E)&&(topitem->oper != OP_EXP)){
-		 					newitem = psa_create_item();
-							newitem->oper = OP_EXP;
-							// vlozeni OP_EXP = <
-		 					psa_list_push(list,newitem);
+		 					if(token.name != RIGHTPAREN){
+			 					newitem = psa_create_item();
+								newitem->oper = OP_EXP;
+								// vlozeni OP_EXP = <
+			 					psa_list_push(list,newitem);
+		 					}
 
 		 					// vytvoreni itemu pro nacteny token
 		 					newitem = psa_create_item();
@@ -192,12 +194,12 @@ printf("PSA_ERROR SIGN ' '\n");
 							}
 							else if(token.name == ID){
 									//TODO
-									
-									//vyhledat a ulozit data_type a value.ptr
-									//id = get_id_from_sym_table(token.data);
-									//newitem->value.ptr = id;
-									//item->data_type = var.type;
-									newitem->data_type = INT_NUM;
+								switch(var->type){
+										case INTEGER: newitem->data_type = INT_NUM; break;
+										case DOUBLE: newitem->data_type = DOUBLE_NUM; break;
+										case STRING: newitem->data_type = STR; break;
+										case BOOLEAN_: newitem->data_type = BL; break;
+									}	
 							}							
 
 							// vlozeni TERMU
@@ -206,11 +208,12 @@ printf("PSA_ERROR SIGN ' '\n");
 		 				}
 		 				else{
 		 					// pripad | &E  |<|  + |   ===> &<E+
-				 					newitem = psa_create_item();
-									newitem->oper = OP_EXP;
-									// vlozeni OP_EXP za TERM
-				 					psa_list_push_after_item(list,item,newitem);
-
+		 							if(token.name != RIGHTPAREN){
+					 					newitem = psa_create_item();
+										newitem->oper = OP_EXP;
+										// vlozeni OP_EXP za TERM
+					 					psa_list_push_after_item(list,item,newitem);
+				 					}
 				 					// vytvoreni itemu pro nacteny token
 				 					newitem = psa_create_item();
 				
@@ -245,13 +248,12 @@ printf("PSA_ERROR SIGN ' '\n");
 									}
 									else if(token.name == ID){
 									//TODO
-									//vyhledat a ulozit data_type a value.ptr
-									//id = get_id_from_sym_table(token.data);
-									//newitem->data_type = id->data_type;
-									//newitem->value.ptr = id;
-									// vezmu si z promene vsechny data, promenou jsme nasli v tab_symb na zacatku
-									//item->data_type = var.type;
-									newitem->data_type = INT_NUM;
+										switch(var->type){
+											case INTEGER: newitem->data_type = INT_NUM; break;
+											case DOUBLE: newitem->data_type = DOUBLE_NUM; break;
+											case STRING: newitem->data_type = STR; break;
+											case BOOLEAN_: newitem->data_type = BL; break;
+										}
 									}
 
 									// vlozeni TERMU
@@ -266,7 +268,6 @@ printf("PSA_ERROR SIGN ' '\n");
 //printf("PSA_OPERACE >:\n");	 			 
 		 			 int i = 0;
 		 			 // vytvorim si misto v pameti na ulozeni 3 itemu, ktere budu porovnavat s pravidly
-		 		
 		 			 aitem[0].oper = OP_EXP;
 		 			 aitem[1].oper = OP_EXP;
 		 			 aitem[2].oper = OP_EXP;
@@ -313,13 +314,14 @@ printf("PSA_ERROR SIGN ' '\n");
 		 			 if(((aitem[0].oper == OP_ID)&&(aitem[1].oper == OP_EXP)&&(aitem[2].oper == OP_EXP))||((aitem[0].oper == OP_RPARENT)&&(aitem[1].oper == OP_E)&&(aitem[2].oper == OP_LPARENT))){
 //printf("VYHODNOCENI PRAVIDLA i->E | E->(E)\n");
 		 			 	psa_item *i = psa_create_item();
-		 			 	i->data_type = INT_NUM;
+		 			 	i->data_type = aitem[0].data_type;
 		 			 	// TODO item->value.ptr = 
 						
 						// vytvoreni OP_E
 					    i->oper = OP_E;
 					    // vlozeni OP_E do seznamu
 			 		    psa_list_push(list,i);
+//psa_list_show(list);
 		 			 }
 		 			 
 /*        --------- E operator E ----------			*/ 
@@ -374,7 +376,7 @@ printf("PSA_ERROR SIGN ' '\n");
 //printf("VYHODNOCENI PRAVIDLA - NEBYLO NALEZENO PRAVIDLO\n");	
 		 			 	// ZADNE PRAVIDLO NEBYLO SPLNENO
 		 			 	psa_list_delete(list);
-printf("PSA ERROR\n");
+printf("*****PSA ERROR*****\n");
 		 			 	return SYN_A_ERROR;
 		 			 }
 	 			 
@@ -382,7 +384,7 @@ printf("PSA ERROR\n");
 /*        ---------  SIGN " " ----------			*/ 		
 		 	default:{
 		 			psa_list_delete(list);
-printf("PSA ERROR\n");
+printf("*****PSA ERROR SIGN DOESNT EXIST*****\n");
 		 			return SYN_A_ERROR;
 		 			}break;
 		 }
