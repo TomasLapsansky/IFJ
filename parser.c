@@ -16,16 +16,20 @@ extern tStack *s;
 bool loaded_token = false;
 
 //spracovanie ID		TODO
-int id(tRetData *ins_id) {
+int id(tRetData **ins_id, TOKEN *ins_token) {
 	
-	if(token.name == ID) {
-		ins_id = SEARCH(token.data, ptrht);
+	printf("ID\n");
+	if(ins_token->name == ID) {
+		*ins_id = SEARCH(ins_token->data, ptrht);
 		
-		if(ins_id == NULL) {
+		printf("instid %p\n", (void*)*ins_id);
+		
+		if((*ins_id) == NULL) {
+			printf("NULL\n");
 			return UNEXIST;
 		} else {
 		
-			if(ins_id->funkce)
+			if((*ins_id)->funkce)
 				return F_ID;
 			else
 				return DIM_ID;
@@ -62,6 +66,7 @@ int p_start(void) {
 int p_declare(void) {
 	
 	tRetData *idData = NULL;//pre korektnost prekladu
+	TOKEN idToken;
 	
 	switch(token.name) {
 			
@@ -76,8 +81,9 @@ int p_declare(void) {
 			if((error = Get_Token(&token)) != OK)
 				return error;//gettoken
 			
+			Init_Token(&idToken);
 			//tRetData *idData = NULL;
-			if((error = id(idData)) != UNEXIST) {	//Declare Function ID
+			if((error = id(&idData, &idToken)) != UNEXIST) {	//Declare Function ID
 				int ret;
 				
 				if(error == NON_ID)
@@ -85,6 +91,7 @@ int p_declare(void) {
 				else //if(ret == DIM_ID || ret == F_ID)
 					ret = SEM_ERROR;
 				
+				Clear_Token(&idToken);
 				DELETE_SEARCH(idData);
 				return ret;
 			}
@@ -92,34 +99,43 @@ int p_declare(void) {
 			
 			INSERT_F(token.data, ptrht);
 			
-			//ukladanie token hodnoty pre vyhladavanie v TS
-			TOKEN idToken;
-			Init_Token(&idToken);
-			idToken = token;
-			
-			if((error = Get_Token(&token)) != OK)
+			if((error = Get_Token(&token)) != OK) {
+				Clear_Token(&idToken);
 				return error;//gettoken
+			}
 			
-			if(token.name != LEFTPAREN)	//Declare Function ID(
+			if(token.name != LEFTPAREN) {	//Declare Function ID(
+				Clear_Token(&idToken);
 				return SYN_A_ERROR;
+			}
 			
-			if((error = Get_Token(&token)) != OK)
+			if((error = Get_Token(&token)) != OK) {
+				Clear_Token(&idToken);
 				return error;//gettoken
+			}
 			
 			if((error = p_declare_parameter(idToken.data)) != OK) {		//Declare Function ID(<p_declare_parameter>)
+				Clear_Token(&idToken);
 				return error;
 			}
 			
-			if((error = Get_Token(&token)) != OK)
+			if((error = Get_Token(&token)) != OK) {
+				Clear_Token(&idToken);
 				return error;//gettoken
+			}
 			
-			if(token.name != AS)			//Declare Function ID(<p_declare_parameter>) As
+			if(token.name != AS) {			//Declare Function ID(<p_declare_parameter>) As
+				Clear_Token(&idToken);
 				return SYN_A_ERROR;
+			}
 			
-			if((error = Get_Token(&token)) != OK)
+			if((error = Get_Token(&token)) != OK) {
+				Clear_Token(&idToken);
 				return error;//gettoken
+			}
 			
 			if((error = p_type()) != OK) {	//Declare Function ID(<p_declare_parameter>) As <p_type>
+				Clear_Token(&idToken);
 				return error;
 			}
 			
@@ -146,7 +162,7 @@ int p_declare(void) {
 				return error;//gettoken
 			
 			//tRetData *idData = NULL;
-			if((error = id(idData)) != F_ID) {	//Declare Function ID
+			if((error = id(&idData, &token)) != F_ID) {	//Declare Function ID
 				int ret;
 				
 				if(error == NON_ID)
@@ -365,7 +381,7 @@ int p_parameter(tRetData *funcData, int *pocet_parametrov) {
 		return OK;
 	
 	tRetData *idData = NULL;
-	if((error = id(idData)) != DIM_ID) {	//ID
+	if((error = id(&idData, &token)) != DIM_ID) {	//ID
 		int ret;
 		
 		if(error == NON_ID)
@@ -425,7 +441,7 @@ int p_parameter(tRetData *funcData, int *pocet_parametrov) {
 int p_nextparameter(tRetData *funcData, int *pocet_parametrov) {
 	
 	tRetData *idData = NULL;
-	if((error = id(idData)) != DIM_ID) {	//ID
+	if((error = id(&idData, &token)) != DIM_ID) {	//ID
 		int ret;
 		
 		if(error == NON_ID)
@@ -489,7 +505,7 @@ int p_declare_parameter(char* funcName) {
 		return OK;
 	
 	tRetData *idData = NULL;
-	if((error = id(idData)) != UNEXIST) {	//ID
+	if((error = id(&idData, &token)) != UNEXIST) {	//ID
 		int ret;
 		
 		if(error == NON_ID)
@@ -545,7 +561,7 @@ int p_declare_parameter(char* funcName) {
 int p_declare_nextparameter(char* funcName) {
 	
 	tRetData *idData = NULL;
-	if((error = id(idData)) != UNEXIST) {	//ID
+	if((error = id(&idData, &token)) != UNEXIST) {	//ID
 		int ret;
 		
 		if(error == NON_ID)
@@ -605,7 +621,7 @@ int p_vparameter(tRetData *funcData, int *pocet_parametrov) {
 		return OK;
 	
 	tRetData *idData = NULL;
-	if((error = id(idData)) != DIM_ID) {	//ID
+	if((error = id(&idData, &token)) != DIM_ID) {	//ID
 		int ret;
 		
 		if(error == NON_ID)
@@ -650,7 +666,7 @@ int p_vparameter(tRetData *funcData, int *pocet_parametrov) {
 int p_vnextparameter(tRetData *funcData, int *pocet_parametrov) {
 	
 	tRetData *idData = NULL;
-	if((error = id(idData)) != DIM_ID) {	//ID
+	if((error = id(&idData, &token)) != DIM_ID) {	//ID
 		int ret;
 		
 		if(error == NON_ID)
@@ -707,14 +723,16 @@ int p_prikaz(void) {
 	 */
 	tRetData *idData = NULL;
 	error = OK;
+	TOKEN idToken;
 	
 	switch(token.name) {
 		case(DIM):							//Dim
 			
-			if((error = Get_Token(&token)) != OK)
+			Init_Token(&idToken);
+			if((error = Get_Token(&idToken)) != OK)	//ulozenie potencialneho id do idToken
 				break;	//gettoken
 			
-			if((error = id(idData)) != UNEXIST) {	//Dim ID
+			if((error = id(&idData, &idToken)) != UNEXIST) {	//Dim ID
 				//int ret;
 				
 				if(error == NON_ID)
@@ -726,10 +744,6 @@ int p_prikaz(void) {
 				break;
 			}
 			DELETE_SEARCH(idData);
-			
-			TOKEN idToken;
-			Init_Token(&idToken);
-			idToken = token;
 			
 			if((error = Get_Token(&token)) != OK) {
 				Clear_Token(&idToken);
@@ -755,6 +769,8 @@ int p_prikaz(void) {
 			//Vlozenie ID do TS
 			INSERT_DIM(token.name, idToken.data, ptrht);
 			
+			printf("DIM\n %d \n %s \n", token.name, idToken.data);
+			
 			Clear_Token(&idToken);
 			break;
 		case(INPUT):					//Input
@@ -762,7 +778,7 @@ int p_prikaz(void) {
 			if((error = Get_Token(&token)) != OK)
 				break;	//gettoken
 			
-			if((error = id(idData)) != DIM_ID) {	//Input ID
+			if((error = id(&idData, &token)) != DIM_ID) {	//Input ID
 				//int ret;
 				
 				if(error == NON_ID)
@@ -773,6 +789,8 @@ int p_prikaz(void) {
 				DELETE_SEARCH(idData);
 				break;
 			}
+			
+			error = OK;
 			
 			break;
 		case(PRINT):					//Print
@@ -895,7 +913,7 @@ int p_prikaz(void) {
 			break;
 		default:
 			
-			if((error = id(idData)) != DIM_ID) {
+			if((error = id(&idData, &token)) != DIM_ID) {
 				//int ret;
 				
 				if(error == NON_ID)
@@ -919,6 +937,11 @@ int p_prikaz(void) {
 			if((error = Get_Token(&token)) != OK) {
 				break;	//gettoken
 			}
+			
+			printf("%p\n", (void*)idData);
+			printf("test\n");
+			printf("%d\n", idData->type);
+			printf("test\n");
 				
 			if((error = p_priradenie(idData->type)) != OK) {	//ID = <p_priradenie>
 				break;
@@ -936,7 +959,7 @@ int p_prikaz(void) {
 int p_priradenie(int type) {
 	
 	tRetData *idData = NULL;
-	if((error = id(idData)) != F_ID) {
+	if((error = id(&idData, &token)) != F_ID) {
 		
 		if((error = p_vyraz(type)) != OK) {		//<p_vyraz>
 			DELETE_SEARCH(idData);

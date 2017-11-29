@@ -413,3 +413,29 @@ void DELETE_TS(tHTable* ptrht)
 	ptrht=NULL;
 }
 
+
+void htPrintTable( tHTable* ptrht ) {
+	int maxlen = 0;
+	int sumcnt = 0;
+	
+	printf ("------------HASH TABLE--------------\n");
+	for ( int i=0; i<HTSIZE; i++ ) {
+		printf ("%i:",i);
+		int cnt = 0;
+		tHTItem* ptr = (*ptrht)[i];
+		while ( ptr != NULL ) {
+			printf (" [%s,data:%d,%s,%d,pocet=%d,pointer=%p]",ptr->key,ptr->data.type,ptr->data.navesti,ptr->data.funkce,ptr->data.pocet_par,ptr->lcht);
+			cnt++;
+			ptr = ptr->ptrnext;
+		}
+		printf ("\n");
+		
+		if (cnt > maxlen)
+			maxlen = cnt;
+		sumcnt+=cnt;
+	}
+	
+	printf ("------------------------------------\n");
+	printf ("Items count %i   The longest list %i\n",sumcnt,maxlen);
+	printf ("------------------------------------\n");
+}

@@ -19,14 +19,20 @@ int main(void) {
 	
 	int final = parser();
 	
-	DELETE_TS(ptrht);
-	Clear_Token(&token);
+	htPrintTable(ptrht);
 	
 	if(final == OK) {
+		DELETE_TS(ptrht);
+		Clear_Token(&token);
 		return 0;
 	} else {
-		printf("%d on line %d\ntoken = %d\n", final, line, token.name);
+		printf("%d on line %d\ntoken.name = %d\ntoken.data = %s\n", final, line, token.name, token.data);
+		DELETE_TS(ptrht);
+		Clear_Token(&token);
 		return final;
 	}
+	
+	//DELETE_TS(ptrht);
+	//Clear_Token(&token);
 }
 
