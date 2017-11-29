@@ -97,7 +97,7 @@ int p_vyraz(int type){
 		if(token.name == ID){
 			if((var = SEARCH(token.data,ptrht)) == NULL){
 				// promena neni deklarovana
-//qprintf("Var %s not declared\n",token.data);
+printf("Var %s not declared\n",token.data);
 				psa_list_delete(list);
 				return SYN_A_ERROR;
 			}
@@ -132,7 +132,7 @@ int p_vyraz(int type){
 				case STRING: type = STR; break;
 				case BOOLEAN_: type = BL; break;
 			}	
-			
+//qprintf("final_data_type: %d type: %d\n",final->data_type,type);
 			if(final->data_type == type){
 				printf("*****PSA_COMPLETE******\n\n");
 				psa_list_delete(list);
@@ -150,7 +150,7 @@ int p_vyraz(int type){
 			psa_list_delete(list);
 			return SYN_A_ERROR;
 			break;
-//printf("PSA_ERROR SIGN ' '\n");	
+printf("PSA_ERROR SIGN ' '\n");	
 		}
 
 		switch(sign){
@@ -298,7 +298,6 @@ int p_vyraz(int type){
 		 			 	psa_list_pop(list);
 		 			 	i++;
 		 			 }
-
 		 			 if(item->oper == OP_END){
 		 			 	// nenasel OP_EXP
 		 			 	psa_list_delete(list);
@@ -318,14 +317,18 @@ int p_vyraz(int type){
 /*        ---------  i nebo (E) ----------			*/ 
 		 			 if(((aitem[0].oper == OP_ID)&&(aitem[1].oper == OP_EXP)&&(aitem[2].oper == OP_EXP))||((aitem[0].oper == OP_RPARENT)&&(aitem[1].oper == OP_E)&&(aitem[2].oper == OP_LPARENT))){
 //qprintf("VYHODNOCENI PRAVIDLA i->E | E->(E)\n");
-		 			 	psa_item *i = psa_create_item();
-		 			 	i->data_type = aitem[0].data_type;
-		 			 	// TODO item->value.ptr = 
+		 			 	item = psa_create_item();
+		 			 	if(aitem[0].oper == OP_ID){
+		 			 		item->data_type = aitem[0].data_type;
+		 			 	}
+		 			 	else{
+		 			 		item->data_type = aitem[1].data_type;
+		 			 	}
 						
 						// vytvoreni OP_E
-					    i->oper = OP_E;
+					    item->oper = OP_E;
 					    // vlozeni OP_E do seznamu
-			 		    psa_list_push(list,i);
+			 		    psa_list_push(list,item);
 //qpsa_list_show(list);
 		 			 }
 		 			 
@@ -378,7 +381,7 @@ int p_vyraz(int type){
 		 			 }
 /*        ---------  ZADNE ZE ZADANYCH PRAVIDEL NEBYLO NALEZENO  ----------			*/ 		 			 
 		 			 else{
-//qprintf("VYHODNOCENI PRAVIDLA - NEBYLO NALEZENO PRAVIDLO\n");	
+//printf("VYHODNOCENI PRAVIDLA - NEBYLO NALEZENO PRAVIDLO\n");	
 		 			 	// ZADNE PRAVIDLO NEBYLO SPLNENO
 		 			 	psa_list_delete(list);
 printf("*****PSA ERROR*****\n");

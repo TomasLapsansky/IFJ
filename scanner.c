@@ -4,7 +4,7 @@ static int eol;
 static int countT;
 static int eof_t;
 static int next_line;
-static int loadedc;
+extern int loadedc;
 extern int line;
 
 enum State{
@@ -100,7 +100,7 @@ int KeywordCheck(char *string){
 }
 
 int Get_Token(TOKEN *t){
-	int c,nextc,pom,next_d = false,int_exp = false,count = 0;
+	int c,nextc,pom,next_d = false,double_exp = false,count = 0;
 	int state = start;
 
 	// Pomocna podminka, aby se vratila hodnota EOF a ukoncila tak nacitani dalsich tokenu
@@ -115,7 +115,6 @@ int Get_Token(TOKEN *t){
 			loadedc = 0;
 		}else{
 			c = fgetc(stdin);
-			loadedc = 0;
 		}
 		// Kontrola EOF 
 		if((c == EOF) && (state == start)){
@@ -311,10 +310,10 @@ int Get_Token(TOKEN *t){
 											t->name = COMMA;
 											return OK;
 											break;
-								default: 
+								default:{
 										t->name = INVALIDCHAR;
 										return LEX_A_ERROR;
-										break;
+										}break;
 							}
 						}
 						}break;
@@ -360,7 +359,7 @@ int Get_Token(TOKEN *t){
 										return ALLOC_ERROR;
 									}
 							}
-							else if(c == '.' && int_exp == false){
+							else if(c == '.'){
 								if((pom = Add_Char(t,c)) == ALLOC_ERROR){
 										return ALLOC_ERROR;
 									}
@@ -368,7 +367,6 @@ int Get_Token(TOKEN *t){
 								next_d = true;
 							}
 							else if(c == 'E' || c == 'e'){
-								int_exp = true;
 								if((pom = Add_Char(t,c)) == ALLOC_ERROR){
 										return ALLOC_ERROR;
 									}
@@ -376,9 +374,6 @@ int Get_Token(TOKEN *t){
 								if(c == '+' || c == '-' || isdigit(c)){
 									if((pom = Add_Char(t,c)) == ALLOC_ERROR){
 										return ALLOC_ERROR;
-									}
-									if(c == '+' || c == '-'){
-										next_d = true;
 									}
 									state = exp_;
 								}
@@ -395,14 +390,16 @@ int Get_Token(TOKEN *t){
 							}
 						}break;
 			case exp_:{
-						 if(isdigit(c)){
-									if((pom = Add_Char(t,c)) == ALLOC_ERROR){
-											return ALLOC_ERROR;
-										}
-								}
-								else{
-									return LEX_A_ERROR;
-								}
+						if(isdigit(c)){
+							if((pom = Add_Char(t,c)) == ALLOC_ERROR){
+								return ALLOC_ERROR;
+							}
+						}
+						else{
+							loadedc = c;
+							t->name = INT_NUM;
+							return OK;
+						}
 						}break;
 			// stav double
 			case double_:
@@ -425,6 +422,10 @@ int Get_Token(TOKEN *t){
 									}
 							}
 							else if(c == 'E' || c == 'e'){
+								if(double_exp == true){
+									return LEX_A_ERROR;
+								}
+								double_exp = true;
 								if((pom = Add_Char(t,c)) == ALLOC_ERROR){
 										return ALLOC_ERROR;
 									}
@@ -574,9 +575,14 @@ int Get_Token(TOKEN *t){
 										return LEX_A_ERROR;
 									}
 								}
+								loadedc = c;
 								state = start;
 							}
 							else{
+								loadedc = c;
+								if((pom = Add_Char(t,'/')) == ALLOC_ERROR){
+									return ALLOC_ERROR;
+								}
 								t->name = DIVISION;
 								return OK;
 							}break;
