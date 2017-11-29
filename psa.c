@@ -60,10 +60,9 @@ int p_vyraz(int type){
 	char sign;
 	int column,error,start = 1;
 	loaded_token = true;
-	if(type)printf("\n*****START_PSA*****\n\n");
+	printf("\n*****START_PSA*****\n\n");
 	tRetData *var;
 //qprintf("##########################\n");
-//printf("START PSA:\n");
 	newitem = psa_create_item();
 	newitem->oper = OP_END;
 	// vlozeni OP_END = & na zasobnik
@@ -126,12 +125,6 @@ printf("Var %s not declared\n",token.data);
 		if(sign == '-'){
 			psa_item *final = psa_list_top(list);
 			// ocekavany datovy typ
-			switch(type){
-				case INTEGER: type = INT_NUM; break;
-				case DOUBLE: type = DOUBLE_NUM; break;
-				case STRING: type = STR; break;
-				case BOOLEAN_: type = BL; break;
-			}	
 //qprintf("final_data_type: %d type: %d\n",final->data_type,type);
 			if(final->data_type == type){
 				printf("*****PSA_COMPLETE******\n\n");
