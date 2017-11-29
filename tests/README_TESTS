@@ -1,0 +1,7 @@
+
+TESTY NAD TABULKOU SYMBOLU
+- ts-test-main.c
+- pokusne volani vsech komunikacnich funkci ts
+- nezpracovava zadny vstup
+- obsahuje 2 nezavisle testy, ridi se pomoci definovani makra RUN_TEST1/RUN_TEST2
+- vhodne je testovat s valgrindem
