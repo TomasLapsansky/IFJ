@@ -132,8 +132,8 @@ printf("Var %s not declared\n",token.data);
 				case BOOLEAN_: type = BL; break;
 				case BL: type = BL; break;
 			}	
-printf("final_data_type: %d type: %d\n",final->data_type,type);
-			if(final->data_type == type){
+//printf("final_data_type: %d type: %d\n",final->data_type,type);
+			if(final->data_type == type || type == STR){
 				printf("*****PSA_COMPLETE******\n\n");
 				psa_list_delete(list);
 				return OK;
