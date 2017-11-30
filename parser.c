@@ -19,6 +19,7 @@ bool loaded_token = false;
 int id(tRetData **ins_id, TOKEN *ins_token) {
 	
 	printf("ID\n");
+	printf("%d\n", ins_token->name);
 	if(ins_token->name == ID) {
 		*ins_id = SEARCH(ins_token->data, ptrht);
 		
@@ -807,8 +808,11 @@ int p_prikaz(void) {
 			if((error = Get_Token(&token)) != OK)
 				break;	//gettoken
 			
+			printf("pred vyrazom\n");
 			if((error = p_vyraz(BL)) != OK)	//If <p_vyraz>
 				break;
+			printf("po vyraze\n");
+			
 			
 			loaded_token = false;
 			
@@ -958,6 +962,7 @@ int p_prikaz(void) {
 //<p_priradenie>		<p_vyraz>
 int p_priradenie(int type) {
 	
+	printf("type = %d\n", type);
 	tRetData *idData = NULL;
 	if((error = id(&idData, &token)) != F_ID) {
 		
