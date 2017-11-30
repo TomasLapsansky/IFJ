@@ -102,7 +102,6 @@ int KeywordCheck(char *string){
 int Get_Token(TOKEN *t){
 	int c,nextc,pom,next_d = false,double_exp = false,count = 0;
 	int state = start;
-
 	// Pomocna podminka, aby se vratila hodnota EOF a ukoncila tak nacitani dalsich tokenu
 	if(eof_t == 1) return EOF;
 
@@ -510,7 +509,9 @@ int Get_Token(TOKEN *t){
 									return ALLOC_ERROR;
 								}
 							}
-							
+							else{
+								return LEX_A_ERROR;
+							}	
 						}break;
 
 			case escape_seq:
@@ -563,7 +564,7 @@ int Get_Token(TOKEN *t){
 						if(c == 39){
 								nextc = fgetc(stdin);
 								// odebrani komentare po konec radku nebo po EOF
-								while (nextc != EOF){ 
+								while (nextc != EOF || nextc != '\n'){ 
 									c = nextc;
 									nextc = fgetc(stdin);
 									if(c == 39){
@@ -575,7 +576,8 @@ int Get_Token(TOKEN *t){
 										return LEX_A_ERROR;
 									}
 								}
-								loadedc = c;
+								eol = 1;
+								//loadedc = nextc;
 								state = start;
 							}
 							else{

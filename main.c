@@ -57,7 +57,7 @@ while((pom = Get_Token(&token)) != EOF){
 		}
 		Clear_Token(&token);
 	}
-*/	
+*/
 	//DELETE_TS(ptrht);
 	//Clear_Token(&token);
 }
