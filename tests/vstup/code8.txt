@@ -1,0 +1,7 @@
+function puf() as string
+'koment
+end function 
+
+scope
+puf()
+end scope

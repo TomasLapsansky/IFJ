@@ -1,0 +1,10 @@
+function b() as integer
+return 5
+end function 
+
+scope
+
+dim b as integer
+bar=b()
+print b
+end scope

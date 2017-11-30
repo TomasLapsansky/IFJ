@@ -1,0 +1,10 @@
+scope
+Dim a as string
+Dim b as integer
+Dim c as double
+
+a=!""
+b=10
+c=2.5
+
+end scope

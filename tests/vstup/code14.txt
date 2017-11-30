@@ -1,0 +1,6 @@
+SCOPE
+
+
+	return 5
+
+END SCOPE
