@@ -211,90 +211,149 @@ int p_declare(void) {
 			
 		case(FUNCTION):					//Function
 			
-			if((error = Get_Token(&token)) != OK)
+            Init_Token(&idToken);
+			if((error = Get_Token(&idToken)) != OK)
 				return error;//gettoken
 			
 			//tRetData *idData = NULL;
-			if((error = id(&idData, &token, ptrht)) != F_ID) {	//Function ID
-				int ret;
+			if((error = id(&idData, &idToken, ptrht)) == F_ID) {	//Function ID + pokracuje sa v overovani a dodefinovani
+                
+                Clear_Token(&idToken);
+                
+                if(!(idData->definovana)) {     //ak uz bola definovana, vrat SEM_ERROR
+                    DELETE_SEARCH(idData);
+                    return SEM_ERROR;
+                }
+                
+                if((error = Get_Token(&token)) != OK) {
+                    DELETE_SEARCH(idData);
+                    return error;//gettoken
+                }
+                
+                if(token.name != LEFTPAREN) {    //Function ID(
+                    DELETE_SEARCH(idData);
+                    return SYN_A_ERROR;
+                }
+                
+                if((error = Get_Token(&token)) != OK) {
+                    DELETE_SEARCH(idData);
+                    return error;//gettoken
+                }
+                
+                int pocet_parametrov = 0;
+                if((error = p_parameter(idData, &pocet_parametrov)) != OK) {        //Function ID(<p_parameter>)
+                    DELETE_SEARCH(idData);
+                    return error;
+                }
+                
+                //Semanticka kontrola poctu parametrov vo funkcii
+                if(idData->pocet_parametru != pocet_parametrov) {
+                    DELETE_SEARCH(idData);
+                    return SEM_TYPE_ERROR;
+                }
+                
+                if((error = Get_Token(&token)) != OK) {
+                    DELETE_SEARCH(idData);
+                    return error;//gettoken
+                }
+                
+                if(token.name != AS) {            //Function ID(<p_parameter>) As
+                    DELETE_SEARCH(idData);
+                    return SYN_A_ERROR;
+                }
+                
+                if((error = Get_Token(&token)) != OK) {
+                    DELETE_SEARCH(idData);
+                    return error;//gettoken
+                }
+                
+                if((error = p_type()) != OK) {    //Function ID(<p_parameter>) As <p_type>
+                    DELETE_SEARCH(idData);
+                    return error;
+                }
+                
+                //Semanticka kontrola navratoveho typu funkcie
+                if(idData->type != token.name) {
+                    DELETE_SEARCH(idData);
+                    return SEM_ERROR;
+                }
+                
+                if((error = Get_Token(&token)) != OK) {
+                    DELETE_SEARCH(idData);
+                    return error;//gettoken
+                }
+                
+                if(token.name != EOL_) {        //Function ID(<p_parameter>) As <p_type> EOL
+                    DELETE_SEARCH(idData);
+                    return SYN_A_ERROR;
+                }
+                    
+            } else if(error == UNEXIST) {        //je potrebna definicia
 				
-				if(error == NON_ID)
-					ret = SYN_A_ERROR;
-				else {//if(error == DIM_ID || error == UNEXIST)
-					ret = SEM_ERROR;
-				}
-				
-				DELETE_SEARCH(idData);
-				return ret;
-			}
-			
-			if((error = Get_Token(&token)) != OK) {
-				DELETE_SEARCH(idData);
-				return error;//gettoken
-			}
-			
-			if(token.name != LEFTPAREN) {	//Function ID(
-				DELETE_SEARCH(idData);
-				return SYN_A_ERROR;
-			}
-			
-			if((error = Get_Token(&token)) != OK) {
-				DELETE_SEARCH(idData);
-				return error;//gettoken
-			}
-			
-			int pocet_parametrov = 0;
-			if((error = p_parameter(idData, &pocet_parametrov)) != OK) {		//Function ID(<p_parameter>)
-				DELETE_SEARCH(idData);
-				return error;
-			}
-			
-			//Semanticka kontrola poctu parametrov vo funkcii
-			if(idData->pocet_parametru != pocet_parametrov) {
-				DELETE_SEARCH(idData);
-				return SEM_TYPE_ERROR;
-			}
-			
-			if((error = Get_Token(&token)) != OK) {
-				DELETE_SEARCH(idData);
-				return error;//gettoken
-			}
-			
-			if(token.name != AS) {			//Function ID(<p_parameter>) As
-				DELETE_SEARCH(idData);
-				return SYN_A_ERROR;
-			}
-			
-			if((error = Get_Token(&token)) != OK) {
-				DELETE_SEARCH(idData);
-				return error;//gettoken
-			}
-			
-			if((error = p_type()) != OK) {	//Function ID(<p_parameter>) As <p_type>
-				DELETE_SEARCH(idData);
-				return error;
-			}
-			
-			//Semanticka kontrola navratoveho typu funkcie
-			if(idData->type != token.name) {
-				DELETE_SEARCH(idData);
-				return SEM_ERROR;
-			}
-			
-			if((error = Get_Token(&token)) != OK) {
-				DELETE_SEARCH(idData);
-				return error;//gettoken
-			}
-			
-			if(token.name != EOL_) {		//Function ID(<p_parameter>) As <p_type> EOL
-				DELETE_SEARCH(idData);
-				return SYN_A_ERROR;
-			}
-			
-			if((error = Get_Token(&token)) != OK) {
-				DELETE_SEARCH(idData);
-				return error;//gettoken
-			}
+                INSERT_F(idToken.data, ptrht);
+                
+                if((error = Get_Token(&token)) != OK) {
+                    Clear_Token(&idToken);
+                    return error;//gettoken
+                }
+                
+                if(token.name != LEFTPAREN) {    //Declare Function ID(
+                    Clear_Token(&idToken);
+                    return SYN_A_ERROR;
+                }
+                
+                if((error = Get_Token(&token)) != OK) {
+                    Clear_Token(&idToken);
+                    return error;//gettoken
+                }
+                
+                if((error = p_declare_parameter(idToken.data)) != OK) {        //Declare Function ID(<p_declare_parameter>)
+                    Clear_Token(&idToken);
+                    return error;
+                }
+                
+                if((error = Get_Token(&token)) != OK) {
+                    Clear_Token(&idToken);
+                    return error;//gettoken
+                }
+                
+                if(token.name != AS) {            //Declare Function ID(<p_declare_parameter>) As
+                    Clear_Token(&idToken);
+                    return SYN_A_ERROR;
+                }
+                
+                if((error = Get_Token(&token)) != OK) {
+                    Clear_Token(&idToken);
+                    return error;//gettoken
+                }
+                
+                if((error = p_type()) != OK) {    //Declare Function ID(<p_declare_parameter>) As <p_type>
+                    Clear_Token(&idToken);
+                    return error;
+                }
+                
+                INSERT_F_TYPE(token.name, idToken.data, ptrht);
+                
+                Clear_Token(&idToken);
+                
+                if((error = Get_Token(&token)) != OK)
+                    return error;//gettoken
+                
+                if(token.name != EOL_)            //Declare Function ID(<p_declare_parameter>) As <p_type> EOL
+                    return SYN_A_ERROR;
+                
+                
+            } else if(error == DIM_ID) {
+                DELETE_SEARCH(idData);
+                return SEM_ERROR;
+            } else {    //error = NON_ID
+                return SYN_A_ERROR;
+            }
+            
+            if((error = Get_Token(&token)) != OK) {
+                DELETE_SEARCH(idData);
+                return error;//gettoken
+            }
 			
 			//zmena ptrht na lokalnu TS kvoli vstupu do funkcie
 			//implementovany zasobnik kvoli moznemu viacnasobnemu znoreniu
@@ -305,11 +364,13 @@ int p_declare(void) {
                 DELETE_SEARCH(idData);
 				return error;
 			}
-            DELETE_SEARCH(idData);
 			
 			//opatovne vratenie ptrht
 			ptrht = stackPop(s);
 			
+            DEFINED(idData->navesti, ptrht);
+            DELETE_SEARCH(idData);
+            
 			if(token.name != END)			//Function ID(<p_parameter>) As <p_type> EOL <p_body> End
 				return SYN_A_ERROR;
 			
