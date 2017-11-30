@@ -22,12 +22,15 @@ int main(void) {
 	stackInit(s);
     
 	int final = parser();
-	
+    
 	if(final == OK) {
 		DELETE_TS(ptrht);
 		Clear_Token(&token);
 		return 0;
 	} else {
+        //pomocne vypisi
+        //printf("ERROR: %d on line %d\n", final, line);
+        //printf("token.name = %d\ntoken.data = %s\n", token.name, token.data);
 		DELETE_TS(ptrht);
 		Clear_Token(&token);
 		return final;

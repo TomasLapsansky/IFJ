@@ -204,7 +204,7 @@ int p_declare(void) {
 			
 			if((error = Get_Token(&token)) != OK)
 				return error;//gettoken
-			
+            
 			return p_declare();				//prechod do potencialneho dalsieho stavu
 			
 			break;
@@ -220,7 +220,7 @@ int p_declare(void) {
                 
                 Clear_Token(&idToken);
                 
-                if(!(idData->definovana)) {     //ak uz bola definovana, vrat SEM_ERROR
+                if(idData->definovana) {     //ak uz bola definovana, vrat SEM_ERROR
                     DELETE_SEARCH(idData);
                     return SEM_ERROR;
                 }
