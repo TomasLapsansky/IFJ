@@ -98,13 +98,13 @@ int p_vyraz(int type){
 				// promena neni deklarovana
 //printf("Var %s not declared\n",token.data);
 				psa_list_delete(list);
-				return SYN_A_ERROR;
+				return SEM_ERROR;
 			}
 
 			// kontrola zda je to funkce -> ERROR
 			if(var->funkce == true){
 				psa_list_delete(list);
-				return SYN_A_ERROR;
+				return SEM_ERROR;
 			}
 		}
 
