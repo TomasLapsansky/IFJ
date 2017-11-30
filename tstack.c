@@ -10,7 +10,6 @@
 int stackInit(tStack *s) {
 	
 	if(s == NULL) {
-		printf("stack alloc error\n");
 		return ALLOC_ERROR;
 	}
 	
@@ -33,8 +32,6 @@ int stackPush(tStack *s, tHTable* ptrht) {
 		return ALLOC_ERROR;
 	
 	s->table[s->top+1] = ptrht;
-	
-    printf("\n\n\n\n\nSTACK\nptrht = %p pushed\ninc top = %d\n\n\n\n\n", (void*)ptrht, s->top);
     
     s->top++;
 	return OK;
@@ -43,13 +40,10 @@ int stackPush(tStack *s, tHTable* ptrht) {
 tHTable* stackPop(tStack *s) {
 	
     if(stackEmpty(s)) {
-        //printf("STACKEMPTY!!!!!");
 		return NULL;
     }
 	
 	s->top--;
-    
-    printf("\n\n\n\n\nSTACK\nptrht = %p poped\ntop = %d\n\n\n\n\n", (void*)s->table[s->top + 1], s->top);
     
 	return s->table[s->top + 1];
 }

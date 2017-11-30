@@ -1,6 +1,6 @@
 #include "scanner.h"
 #include "parser.h"
-#include "ts.h"
+#include "symtable.h"
 #include "tstack.h"
 
 TOKEN token;
@@ -14,25 +14,20 @@ int loadedc = 0;
 int main(void) {
 	
 	ptrht = (tHTable*)malloc(sizeof(tHTable));
-    printf("%p\n", (void*)ptrht);
     global_ptrht = ptrht;
 	s = (tStack*)malloc(sizeof(tStack));
 	
 	Init_Token(&token);
 	htInit(ptrht);
-    printf("%p\n", (void*)ptrht);
 	stackInit(s);
     
 	int final = parser();
-	
-	htPrintTable(ptrht);
 	
 	if(final == OK) {
 		DELETE_TS(ptrht);
 		Clear_Token(&token);
 		return 0;
 	} else {
-		printf("%d on line %d\ntoken.name = %d\ntoken.data = %s\n", final, line, token.name, token.data);
 		DELETE_TS(ptrht);
 		Clear_Token(&token);
 		return final;

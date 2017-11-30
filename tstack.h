@@ -10,7 +10,7 @@
 
 #define MAX_STACK 20
 
-#include "ts.h"
+#include "symtable.h"
 
 typedef struct {
 	tHTable *table[MAX_STACK];

@@ -20,21 +20,13 @@ bool loaded_token = false;
 //spracovanie ID		TODO
 int id(tRetData **ins_id, TOKEN *ins_token, tHTable* use_ptrht) {
 	
-	printf("ID\n");
-	printf("%d\n", ins_token->name);
-	htPrintTable(use_ptrht);
     if((ins_token->name == LENGTH) || (ins_token->name == SUBSTR) || (ins_token->name == ASC) || (ins_token->name == CHR)) {    //prednostna podmienka pre vstavane funkcie
         *ins_id = SEARCH(ins_token->data, use_ptrht);   //pri vstavanych funkciach nie je potrebne overovat ich pritomnost
         return F_ID;
     } else if(ins_token->name == ID) {
 		*ins_id = SEARCH(ins_token->data, use_ptrht);
 		
-		printf("instid %p\n", (void*)*ins_id);
-		printf("line=%d\n", line);
-		printf("token.name = %s\n",ins_token->data);
-		
 		if((*ins_id) == NULL) {
-			printf("NULL\n");
 			return UNEXIST;
 		} else {
 		
@@ -98,8 +90,6 @@ int parser(void) {
     strcpy(par, "i");
     INSERT_PAR(INTEGER, par, nazov_f, ptrht);
     
-    printf("parser ptrht %p\n", (void*)ptrht);
-    
     free(nazov_f);
     free(par);
     
@@ -160,9 +150,7 @@ int p_declare(void) {
 			}
 			DELETE_SEARCH(idData);
 			
-			printf("nazov fcie = %s\n", idToken.data);
 			INSERT_F(idToken.data, ptrht);
-			htPrintTable(ptrht);
 			
 			if((error = Get_Token(&token)) != OK) {
 				Clear_Token(&idToken);
@@ -233,15 +221,12 @@ int p_declare(void) {
 				if(error == NON_ID)
 					ret = SYN_A_ERROR;
 				else {//if(error == DIM_ID || error == UNEXIST)
-					printf("help\n");
 					ret = SEM_ERROR;
 				}
 				
 				DELETE_SEARCH(idData);
 				return ret;
 			}
-			
-			printf("nasiel = hladaj error\n");
 			
 			if((error = Get_Token(&token)) != OK) {
 				DELETE_SEARCH(idData);
@@ -258,17 +243,11 @@ int p_declare(void) {
 				return error;//gettoken
 			}
 			
-			printf("RIPtest\n");
-			printf("iddatatype= %d\n", idData->type);
-			
-			printf("RIP1\n");
 			int pocet_parametrov = 0;
-			printf("test8000\n");
 			if((error = p_parameter(idData, &pocet_parametrov)) != OK) {		//Function ID(<p_parameter>)
 				DELETE_SEARCH(idData);
 				return error;
 			}
-			printf("RIP2\n");
 			
 			//Semanticka kontrola poctu parametrov vo funkcii
 			if(idData->pocet_parametru != pocet_parametrov) {
@@ -317,7 +296,6 @@ int p_declare(void) {
 				return error;//gettoken
 			}
 			
-            printf("\n\n\n\n\nPTRHT = %p\n\n\n\n\n", (void*)ptrht);
 			//zmena ptrht na lokalnu TS kvoli vstupu do funkcie
 			//implementovany zasobnik kvoli moznemu viacnasobnemu znoreniu
 			stackPush(s, ptrht);
@@ -460,17 +438,12 @@ int p_scope(void) {
 //<p_parameter>	ID As <p_type>, <p_nextparameter>
 int p_parameter(tRetData *funcData, int *pocet_parametrov) {
 	
-	printf("test8001\n");
 	if(token.name == RIGHTPAREN) {	//ε)
-		printf("wtf?\n");
 		return OK;
 	}
 	
-	printf("stack test1\n");
 	stackPush(s, ptrht);
-	printf("push ide\n");
 	ptrht = funcData->LocalTS;
-	printf("stack test2\n");
 	
 	tRetData *idData = NULL;
 	if((error = id(&idData, &token, ptrht)) != DIM_ID) {	//ID
@@ -485,12 +458,9 @@ int p_parameter(tRetData *funcData, int *pocet_parametrov) {
 		return ret;
 	}
 	
-	printf("stack test3");
 	ptrht = stackPop(s);
-	printf("stack test4");
 	
 	if(strcmp(funcData->nazvy[*pocet_parametrov], token.data) != 0) {
-		printf("ERROR\n%s\n%s", funcData->nazvy[*pocet_parametrov], token.data);
 		DELETE_SEARCH(idData);
 		return SEM_TYPE_ERROR;
 	}
@@ -639,8 +609,6 @@ int p_declare_parameter(char* funcName) {
 		return error;
 	}
 	
-	printf("declare id = %s\n", id_string);
-	
 	//Vlozenie par do TS + clear_token
 	INSERT_PAR(token.name, id_string, funcName, ptrht);
 	free(id_string);
@@ -732,10 +700,8 @@ int p_vparameter(tRetData *funcData, int *pocet_parametrov) {
 	if(token.name == RIGHTPAREN)	//ε)
 		return OK;
 	
-    printf("HMMMMV\n");
     if(p_type() == OK) {    //pri vstupovani presnych vyrazov, nie premennych
         
-        printf("PRESNY PARAMETEEEEER-------\n");
         if(token.name != funcData->typy[*pocet_parametrov])
             return SEM_TYPE_ERROR;
         
@@ -787,11 +753,7 @@ int p_vparameter(tRetData *funcData, int *pocet_parametrov) {
 //<p_vnextparameter>	ID, <p_vnextparameter>
 int p_vnextparameter(tRetData *funcData, int *pocet_parametrov) {
 	
-    printf("HMMMMV\n");
     if(p_type() == OK) {    //pri vstupovani presnych vyrazov, nie premennych
-        
-        printf("PRESNY PARAMETEEEEER-------\n");
-        printf("%d == %d\n", token.name, funcData->typy[*pocet_parametrov]);
         
         //najhnusnejsia vec v mojom zivote, ktoru som urobil, aby sme nemuseli prerabat projekt kvoli roznym typom v tokene a TS
         if(!((token.name == INT_NUM && funcData->typy[*pocet_parametrov] == INTEGER) ||
@@ -862,10 +824,6 @@ int p_prikaz(int return_type) {
 	tRetData *idData = NULL;
 	error = OK;
 	TOKEN idToken;
-	
-    printf("PARSER = %d LINE\n", line);
-    printf("GLOBTABLE = %p\n", (void*)global_ptrht);
-    printf("LOCALTABLE = %p\n", (void*)ptrht);
     
 	switch(token.name) {
 		case(DIM):							//Dim
@@ -912,8 +870,6 @@ int p_prikaz(int return_type) {
 			//Vlozenie ID do TS
 			INSERT_DIM(token.name, idToken.data, ptrht);
 			
-			printf("DIM\n %d \n %s \n", token.name, idToken.data);
-			
 			Clear_Token(&idToken);
 			break;
 		case(INPUT):					//Input
@@ -950,11 +906,8 @@ int p_prikaz(int return_type) {
 			if((error = Get_Token(&token)) != OK)
 				break;	//gettoken
 			
-			printf("pred vyrazom\n");
 			if((error = p_vyraz(BL)) != OK)	//If <p_vyraz>
 				break;
-			printf("po vyraze\n");
-			
 			
 			loaded_token = false;
 			
@@ -1088,11 +1041,6 @@ int p_prikaz(int return_type) {
 			if((error = Get_Token(&token)) != OK) {
 				break;	//gettoken
 			}
-			
-			printf("%p\n", (void*)idData);
-			printf("test\n");
-			printf("%d\n", idData->type);
-			printf("test\n");
 				
 			if((error = p_priradenie(idData->type)) != OK) {	//ID = <p_priradenie>
 				break;
@@ -1109,7 +1057,6 @@ int p_prikaz(int return_type) {
 //<p_priradenie>		<p_vyraz>
 int p_priradenie(int type) {
 	
-	printf("type = %d\n", type);
 	tRetData *idData = NULL;
 	if((error = id(&idData, &token, global_ptrht)) != F_ID) {
 		

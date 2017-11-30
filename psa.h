@@ -4,7 +4,7 @@
 #include "scanner.h"
 #include "psalist.h"
 #include "structs.h"
-#include "ts.h"
+#include "symtable.h"
 #include "tstack.h"
 
 int num_of_prec_table(TOKEN t);

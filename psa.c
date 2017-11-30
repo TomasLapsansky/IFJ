@@ -60,7 +60,7 @@ int p_vyraz(int type){
 	char sign;
 	int column,error,start = 1;
 	loaded_token = true;
-	printf("\n*****START_PSA*****\n\n");
+	//printf("\n*****START_PSA*****\n\n");
 	tRetData *var;
 //qprintf("##########################\n");
 	newitem = psa_create_item();
@@ -96,7 +96,7 @@ int p_vyraz(int type){
 		if(token.name == ID){
 			if((var = SEARCH(token.data,ptrht)) == NULL){
 				// promena neni deklarovana
-printf("Var %s not declared\n",token.data);
+//printf("Var %s not declared\n",token.data);
 				psa_list_delete(list);
 				return SYN_A_ERROR;
 			}
@@ -134,12 +134,12 @@ printf("Var %s not declared\n",token.data);
 			}	
 //printf("final_data_type: %d type: %d\n",final->data_type,type);
 			if(final->data_type == type || type == STR){
-				printf("*****PSA_COMPLETE******\n\n");
+				//printf("*****PSA_COMPLETE******\n\n");
 				psa_list_delete(list);
 				return OK;
 			}
 			else{
-				printf("*****VYSLEDEK NEMA STEJNY DATOVY TYP******\n\n");
+				//printf("*****VYSLEDEK NEMA STEJNY DATOVY TYP******\n\n");
 				psa_list_delete(list);
 				return SYN_A_ERROR;
 			}
@@ -150,7 +150,7 @@ printf("Var %s not declared\n",token.data);
 			psa_list_delete(list);
 			return SYN_A_ERROR;
 			break;
-printf("PSA_ERROR SIGN ' '\n");	
+//printf("PSA_ERROR SIGN ' '\n");
 		}
 
 		switch(sign){
@@ -384,7 +384,7 @@ printf("PSA_ERROR SIGN ' '\n");
 //printf("VYHODNOCENI PRAVIDLA - NEBYLO NALEZENO PRAVIDLO\n");	
 		 			 	// ZADNE PRAVIDLO NEBYLO SPLNENO
 		 			 	psa_list_delete(list);
-printf("*****PSA ERROR*****\n");
+//printf("*****PSA ERROR*****\n");
 		 			 	return SYN_A_ERROR;
 		 			 }
 	 			 
@@ -392,7 +392,7 @@ printf("*****PSA ERROR*****\n");
 /*        ---------  SIGN " " ----------			*/ 		
 		 	default:{
 		 			psa_list_delete(list);
-printf("*****PSA ERROR SIGN DOESNT EXIST*****\n");
+//printf("*****PSA ERROR SIGN DOESNT EXIST*****\n");
 		 			return SYN_A_ERROR;
 		 			}break;
 		 }

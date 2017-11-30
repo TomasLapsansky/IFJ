@@ -7,7 +7,7 @@
 
 #include "scanner.h"
 #include "structs.h"
-#include "ts.h"
+#include "symtable.h"
 #include "psa.h" 
 #include "tstack.h"
 
