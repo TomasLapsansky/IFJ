@@ -144,7 +144,7 @@ int Get_Token(TOKEN *t){
 							line++;
 							//printf("line: %d\n",line);
 						}
-					if(isspace(c) || c == 39){
+					if(isspace(c) || c == 39 || c == '/'){
 						// odstrani whitespace
 						if(isspace(c)){
 							// pomocny after EOL pro spravne radkovani debugu
@@ -175,20 +175,18 @@ int Get_Token(TOKEN *t){
 							loadedc = c;
 
 							state = start;
+						}// odstraneni slozeneho komentare
+						else if(c == '/'){
+							state = div_;
 						}
 					}
 					else{ 
 
 						// pokud po EOLu neni dalsi EOL, vynuluju pom promenou, ze uz lze vypsat dalsi EOL na vystup
 						if(eol == 1) eol = 0;
-
 			
-						// odstraneni slozeneho komentare
-						if(c == '/'){
-							state = div_;
-						}
 						// identifikator
-						else if(isalpha(c) || c == '_'){							
+						if(isalpha(c) || c == '_'){							
 							if((pom = Add_Char(t,c)) == ALLOC_ERROR){
 								return ALLOC_ERROR;
 							}
@@ -330,7 +328,6 @@ int Get_Token(TOKEN *t){
 						else{
 							if(c != EOF){
 							loadedc = c;
-							//ungetc(c,stdin);
 							}
 							if((pom = KeywordCheck(t->data)) != 0){
 								t->name = pom;
@@ -380,12 +377,10 @@ int Get_Token(TOKEN *t){
 									state = exp_;
 								}
 								else{
-									//ungetc(c,stdin);
 									return LEX_A_ERROR;
 								}
 							}
 							else{
-								//ungetc(c,stdin);
 								loadedc = c;
 								t->name = INT_NUM;
 								return OK;
@@ -413,7 +408,6 @@ int Get_Token(TOKEN *t){
 								next_d = false;
 							}
 							else{
-								//ungetc(c,stdin);
 								return LEX_A_ERROR;
 							}
 						}
@@ -441,12 +435,10 @@ int Get_Token(TOKEN *t){
 									}
 								}
 								else{
-									//ungetc(c,stdin);
 									return LEX_A_ERROR;
 								}
 							}
 							else{
-								//ungetc(c,stdin);
 								loadedc = c;
 								t->name = DOUBLE_NUM;
 								return OK;
@@ -469,7 +461,6 @@ int Get_Token(TOKEN *t){
 							return OK;
 						}
 						else{
-							//ungetc(c,stdin);
 							loadedc = c;
 							t->name = LESSER;
 							return OK;
@@ -484,7 +475,6 @@ int Get_Token(TOKEN *t){
 							return OK;
 						}
 						else{
-							//ungetc(c,stdin);
 							t->name = GREATER;
 							return OK;
 						}break;
@@ -494,7 +484,6 @@ int Get_Token(TOKEN *t){
 							state = string;
 						}
 						else{
-							//ungetc(c,stdin);
 							return LEX_A_ERROR;
 						}break;
 
@@ -560,7 +549,6 @@ int Get_Token(TOKEN *t){
 							}
 						}
 						else{
-							//ungetc(c,stdin);
 							return LEX_A_ERROR;
 						}break;
 			case div_:
@@ -579,11 +567,10 @@ int Get_Token(TOKEN *t){
 										return LEX_A_ERROR;
 									}
 								}
-								eol = 1;
-								//loadedc = nextc;
 								state = start;
 							}
 							else{
+								eol = 0;
 								loadedc = c;
 								if((pom = Add_Char(t,'/')) == ALLOC_ERROR){
 									return ALLOC_ERROR;
