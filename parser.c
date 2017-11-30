@@ -401,6 +401,11 @@ int p_type(void) {
 		case(INTEGER):
 		case(DOUBLE):
 		case(STRING):
+        case(BOOLEAN_):
+        case(INT_NUM):
+        case(DOUBLE_NUM):
+        case(STR):
+        case(BL):
 			return OK;
 		default:
 			return SYN_A_ERROR;
@@ -727,27 +732,37 @@ int p_vparameter(tRetData *funcData, int *pocet_parametrov) {
 	if(token.name == RIGHTPAREN)	//ε)
 		return OK;
 	
-	tRetData *idData = NULL;
-	if((error = id(&idData, &token, ptrht)) != DIM_ID) {	//ID
-		int ret;
+    printf("HMMMMV\n");
+    if(p_type() == OK) {    //pri vstupovani presnych vyrazov, nie premennych
+        
+        printf("PRESNY PARAMETEEEEER-------\n");
+        if(token.name != funcData->typy[*pocet_parametrov])
+            return SEM_TYPE_ERROR;
+        
+    } else {
+        tRetData *idData = NULL;
+        if((error = id(&idData, &token, ptrht)) != DIM_ID) {	//ID
+            int ret;
 		
-		if(error == NON_ID)
-			ret = SYN_A_ERROR;
-		else //if(error == F_ID)
-			ret = SEM_TYPE_ERROR;
-		
-		DELETE_SEARCH(idData);
-		return ret;
-	}
+            if(error == NON_ID)
+                ret = SYN_A_ERROR;
+            else //if(error == F_ID)
+                ret = SEM_TYPE_ERROR;
+        
+            DELETE_SEARCH(idData);
+            return ret;
+        }
+        
+        //Semanticke overovanie vstupneho parametra == Data type
+        if(idData->type != funcData->typy[*pocet_parametrov]) {
+            DELETE_SEARCH(idData);
+            return SEM_TYPE_ERROR;
+        }
+        
+        DELETE_SEARCH(idData);
 	
-	//Semanticke overovanie vstupneho parametra == Data type
-	if(idData->type != funcData->typy[*pocet_parametrov]) {
-		DELETE_SEARCH(idData);
-		return SEM_TYPE_ERROR;
-	}
-	
-	DELETE_SEARCH(idData);
-	
+    }
+    
 	//inkrement poctu parametrov po korektnom prejdeni
 	(*pocet_parametrov)++;
 	
@@ -772,45 +787,61 @@ int p_vparameter(tRetData *funcData, int *pocet_parametrov) {
 //<p_vnextparameter>	ID, <p_vnextparameter>
 int p_vnextparameter(tRetData *funcData, int *pocet_parametrov) {
 	
-	tRetData *idData = NULL;
-	if((error = id(&idData, &token, ptrht)) != DIM_ID) {	//ID
-		int ret;
-		
-		if(error == NON_ID)
-			ret = SYN_A_ERROR;
-		else //if(error == F_ID)
-			ret = SEM_TYPE_ERROR;
-		
-		DELETE_SEARCH(idData);
-		return ret;
-	}
-	
-	//Semanticke overovanie vstupneho parametra == Data type
-	if(idData->type != funcData->typy[*pocet_parametrov]) {
-		DELETE_SEARCH(idData);
-		return SEM_TYPE_ERROR;
-	}
-	
-	DELETE_SEARCH(idData);
-	
-	//inkrement poctu parametrov po korektnom prejdeni
-	(*pocet_parametrov)++;
-	
-	if((error = Get_Token(&token)) != OK)
-		return error;	//gettoken
-	
-	switch(token.name) {
-		case(RIGHTPAREN):			//ID)
-			return OK;
-		case(COMMA):				//ID, <p_nextparameter>
-			
-			if((error = Get_Token(&token)) != OK)
-				return error;	//gettoken
-			
-			return p_vnextparameter(funcData, pocet_parametrov);
-		default:
-			return SYN_A_ERROR;
-	}
+    printf("HMMMMV\n");
+    if(p_type() == OK) {    //pri vstupovani presnych vyrazov, nie premennych
+        
+        printf("PRESNY PARAMETEEEEER-------\n");
+        printf("%d == %d\n", token.name, funcData->typy[*pocet_parametrov]);
+        
+        //najhnusnejsia vec v mojom zivote, ktoru som urobil, aby sme nemuseli prerabat projekt kvoli roznym typom v tokene a TS
+        if(!((token.name == INT_NUM && funcData->typy[*pocet_parametrov] == INTEGER) ||
+           (token.name == DOUBLE_NUM && funcData->typy[*pocet_parametrov] == DOUBLE) ||
+           (token.name == STR && funcData->typy[*pocet_parametrov] == STRING) ||
+           (token.name == BL && funcData->typy[*pocet_parametrov] == BOOLEAN_)))
+            return SEM_TYPE_ERROR;
+        
+    } else {
+        tRetData *idData = NULL;
+        if((error = id(&idData, &token, ptrht)) != DIM_ID) {    //ID
+            int ret;
+            
+            if(error == NON_ID)
+                ret = SYN_A_ERROR;
+            else //if(error == F_ID)
+                ret = SEM_TYPE_ERROR;
+            
+            DELETE_SEARCH(idData);
+            return ret;
+        }
+        
+        //Semanticke overovanie vstupneho parametra == Data type
+        if(idData->type != funcData->typy[*pocet_parametrov]) {
+            DELETE_SEARCH(idData);
+            return SEM_TYPE_ERROR;
+        }
+        
+        DELETE_SEARCH(idData);
+        
+    }
+    
+    //inkrement poctu parametrov po korektnom prejdeni
+    (*pocet_parametrov)++;
+    
+    if((error = Get_Token(&token)) != OK)
+        return error;    //gettoken
+    
+    switch(token.name) {
+        case(RIGHTPAREN):            //ID)
+            return OK;
+        case(COMMA):                //ID, <p_nextparameter>
+            
+            if((error = Get_Token(&token)) != OK)
+                return error;    //gettoken
+            
+            return p_vnextparameter(funcData, pocet_parametrov);
+        default:
+            return SYN_A_ERROR;
+    }
 }
 
 //<p_prikaz>			ε
