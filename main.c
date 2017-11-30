@@ -7,17 +7,22 @@ TOKEN token;
 int error;		//error code
 int line;		//line number
 tHTable* ptrht;	//HASH table
+tHTable* global_ptrht;
 tStack *s;
 int loadedc = 0;
 
 int main(void) {
 	
 	ptrht = (tHTable*)malloc(sizeof(tHTable));
+    printf("%p\n", (void*)ptrht);
+    global_ptrht = ptrht;
+	s = (tStack*)malloc(sizeof(tStack));
 	
 	Init_Token(&token);
 	htInit(ptrht);
+    printf("%p\n", (void*)ptrht);
 	stackInit(s);
-	
+    
 	int final = parser();
 	
 	htPrintTable(ptrht);

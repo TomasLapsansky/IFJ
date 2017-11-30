@@ -17,7 +17,7 @@ Function factorial (n As Integer) As Integer
 End Function
 
 Scope 'Hlavni telo programu Dim a As Integer
-
+    Dim a as Integer
 	Dim vysl As Integer
 	Print !"Zadejte cislo pro vypocet faktorialu";
 	Input a

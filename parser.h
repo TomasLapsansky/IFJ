@@ -18,7 +18,7 @@ int parser(void);
 int p_start(void);
 int p_scope(void);
 int p_declare(void);
-int p_body(void);
+int p_body(int return_type);
 
 int p_type(void);
 
@@ -31,7 +31,7 @@ int p_declare_nextparameter(char* funcName);
 int p_vparameter(tRetData *funcData, int *pocet_parametrov);
 int p_vnextparameter(tRetData *funcData, int *pocet_parametrov);
 
-int p_prikaz(void);
+int p_prikaz(int return_type);
 int p_priradenie(int type);
 int p_print(void);
 int p_nextprint(void);
