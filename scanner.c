@@ -102,7 +102,7 @@ int KeywordCheck(char *string){
 int Get_Token(TOKEN *t){
 	int c,nextc,pom,next_d = false,double_exp = false,count = 0;
 	int state = start;
-
+	eol = 1;
 	// Pomocna podminka, aby se vratila hodnota EOF a ukoncila tak nacitani dalsich tokenu
 	if(eof_t == 1) return EOF;
 
@@ -510,7 +510,9 @@ int Get_Token(TOKEN *t){
 									return ALLOC_ERROR;
 								}
 							}
-							
+							else{
+								return LEX_A_ERROR;
+							}	
 						}break;
 
 			case escape_seq:
