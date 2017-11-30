@@ -144,6 +144,7 @@ int Get_Token(TOKEN *t){
 							line++;
 							//printf("line: %d\n",line);
 						}
+					if(isspace(c) || c == 39){
 						// odstrani whitespace
 						if(isspace(c)){
 							// pomocny after EOL pro spravne radkovani debugu
@@ -165,14 +166,9 @@ int Get_Token(TOKEN *t){
 								return OK;
 							}
 							state = start;
-					}
-					else{ 
-
-						// pokud po EOLu neni dalsi EOL, vynuluju pom promenou, ze uz lze vypsat dalsi EOL na vystup
-						if(eol == 1) eol = 0;
-
+						}
 						// odstrani jednoradkovy komentar
-						if(c == 39){
+						else if(c == 39){
 							// odebrani komentaru po konec radku nebo po EOF
 							while (c != EOF && c != '\n') c=fgetc(stdin);
 							// vraceni nechteneho znaku
@@ -180,8 +176,15 @@ int Get_Token(TOKEN *t){
 
 							state = start;
 						}
+					}
+					else{ 
+
+						// pokud po EOLu neni dalsi EOL, vynuluju pom promenou, ze uz lze vypsat dalsi EOL na vystup
+						if(eol == 1) eol = 0;
+
+			
 						// odstraneni slozeneho komentare
-						else if(c == '/'){
+						if(c == '/'){
 							state = div_;
 						}
 						// identifikator

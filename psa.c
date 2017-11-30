@@ -366,7 +366,7 @@ int p_vyraz(int type){
 		 			 		// jeden z operandu je string, int ani double nejde prevest na string -> ERROR
 		 			 		else{
 		 			 			psa_list_delete(list);
-		 			 			return SEM_A_ERROR;
+		 			 			return SEM_ERROR;
 		 			 		}
 		 			 	}
 		 			 	// datove typy jsou stejne
