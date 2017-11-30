@@ -191,6 +191,7 @@ enum Errors INSERT_DIM(int type,char* nazov_dim,tHTable* tabulka)
 	dato.navesti=NULL;
 	dato.pocet_par=0;
 	dato.type=type;
+	dato.definovana=false;
 	if(htInsert (tabulka,pamet,dato)==false)
 	{
 
@@ -217,6 +218,7 @@ enum Errors INSERT_F(char* nazov_f,tHTable* tabulka)
 	dato.navesti=pamet;
 	dato.pocet_par=0;
 	dato.type=-1;
+	dato.definovana=false;
 	if(htInsert (tabulka,pamet,dato)==false)	return ALLOC_ERROR;
 
 
@@ -288,6 +290,32 @@ enum Errors INSERT_PAR(int type,char* nazev_par, char* nazov_f,tHTable* tabulka)
 	return OK;
 }
 
+bool DEFINED(char* nazov_f,tHTable* tabulka)
+{
+	char * pamet;
+	pamet=(char*)malloc(sizeof(char)*(strlen(nazov_f)+1));
+	if(pamet==NULL)	return ALLOC_ERROR;
+	for (unsigned int i=0;i<=(strlen(nazov_f));i++)
+	{
+		pamet[i]=tolower(nazov_f[i]);
+	}
+	pamet[strlen(nazov_f)]='\0';
+
+	tHTItem *tmp;
+	tmp=htSearch(tabulka,pamet);
+	free(pamet);
+	if(tmp==NULL)
+	{
+		return false;
+	}
+	else
+	{
+		tmp->data.definovana=true;
+		return true;
+	}
+
+}
+
 tRetData* SEARCH(char* nazov,tHTable* tabulka)
 {
 	char * pamet;
@@ -313,6 +341,7 @@ tRetData* SEARCH(char* nazov,tHTable* tabulka)
 		return NULL;
 	}
 	help->funkce=tmp->data.funkce;
+	help->definovana=tmp->data.definovana;
 	help->navesti=tmp->data.navesti;
 	help->type=tmp->data.type;
 	help->pocet_parametru=tmp->data.pocet_par;
@@ -413,29 +442,3 @@ void DELETE_TS(tHTable* ptrht)
 	ptrht=NULL;
 }
 
-
-void htPrintTable( tHTable* ptrht ) {
-	int maxlen = 0;
-	int sumcnt = 0;
-	
-	printf ("------------HASH TABLE--------------\n");
-	for ( int i=0; i<HTSIZE; i++ ) {
-		printf ("%i:",i);
-		int cnt = 0;
-		tHTItem* ptr = (*ptrht)[i];
-		while ( ptr != NULL ) {
-			printf (" [%s,data:%d,%s,%d,pocet=%d,pointer=%p]",ptr->key,ptr->data.type,ptr->data.navesti,ptr->data.funkce,ptr->data.pocet_par,ptr->lcht);
-			cnt++;
-			ptr = ptr->ptrnext;
-		}
-		printf ("\n");
-		
-		if (cnt > maxlen)
-			maxlen = cnt;
-		sumcnt+=cnt;
-	}
-	
-	printf ("------------------------------------\n");
-	printf ("Items count %i   The longest list %i\n",sumcnt,maxlen);
-	printf ("------------------------------------\n");
-}

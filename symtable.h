@@ -42,6 +42,7 @@ typedef struct tData{
 int type;	//prom dat typ, fce navratovy dat typ
 char* navesti;	//pomocny retezec pro tvoru 3ad kodu, je stejne jako key
 bool funkce;	//pokud je to funkce=true
+bool definovana; //implicit false
 int pocet_par;
 parametry *first;	//hlavicka lin seznamu parametru
 }tData;
@@ -71,6 +72,7 @@ struktura pro vystupni komunikaci (interface)
 typedef struct tRetData{
 	int type;									//typ parametru
 	bool funkce;							//pokud je to funkce=true prom=false
+	bool definovana;
 	int pocet_parametru;
 	char *navesti;						//fce=id  prom=NULL	slouzi pro generator
 	int *typy;								//pole typu paramtru
@@ -110,6 +112,12 @@ flase -> funkce neni v TS,chyba alokace
 ALLOC_ERROR / OK / SEM_TYPE_ERROR pokud se pokusite zadat podruhe stejny parametr
 */
 enum Errors INSERT_PAR(int type,char* nazev_par, char* nazov_f,tHTable* tabulka);
+
+/*
+nastavi bool definovana na true
+true uspech / false neuspech
+*/
+bool DEFINED(char* nazov_f,tHTable* tabulka);
 
 /*
 hleda polozku v tabulce a vraci tretdata
