@@ -1136,7 +1136,7 @@ int p_priradenie(int type) {
 int p_print(void) {
 	
 	if(token.name != STR) {			//String
-		if((error = p_vyraz(STR)) != OK)	//<p_vyraz>
+		if((error = p_vyraz(PRINT_VAR)) != OK)	//<p_vyraz>
 			return error;
 	}
 	
@@ -1167,7 +1167,7 @@ int p_nextprint(void) {
 	}
 		
 	if(token.name != STRING) {			//String
-		if((error = p_vyraz(STR)) != OK)	//<p_vyraz>
+		if((error = p_vyraz(PRINT_VAR)) != OK)	//<p_vyraz>
 			return error;
 	}
 	
