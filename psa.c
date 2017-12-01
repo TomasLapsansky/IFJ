@@ -46,7 +46,7 @@ int num_of_prec_table(TOKEN t){
 		case BL: return 12;break;
 		case THEN:
 		case EOL_:
-		case SEMICOLON:
+		case SEMICOLON: 
 		case ELSE: return 13;break;
 		// chyba SA, nic jineho nemuze byt ve vyrazu
 		default: return -1; break;
@@ -75,7 +75,6 @@ int p_vyraz(int type){
 				psa_list_delete(list);
 				return error;
 			}
-
 			if(token.name == EOF_){
 				psa_list_delete(list);
 				return SYN_A_ERROR;
@@ -133,7 +132,7 @@ int p_vyraz(int type){
 				case BL: type = BL; break;
 			}	
 //printf("final_data_type: %d type: %d\n",final->data_type,type);
-			if(final->data_type == type || type == BL || type == PRINT_VAR){
+			if(final->data_type == type || (final->data_type == DOUBLE_NUM && type == INT_NUM) || type == BL || type == PRINT_VAR){
 				//printf("*****PSA_COMPLETE******\n\n");
 				psa_list_delete(list);
 				return OK;
