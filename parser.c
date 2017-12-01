@@ -733,7 +733,11 @@ int p_vparameter(tRetData *funcData, int *pocet_parametrov) {
 	
     if(p_type() == OK) {    //pri vstupovani presnych vyrazov, nie premennych
         
-        if(token.name != funcData->typy[*pocet_parametrov])
+        //najhnusnejsia vec v mojom zivote, ktoru som urobil, aby sme nemuseli prerabat projekt kvoli roznym typom v tokene a TS - jej kopia, original je dole
+        if(!((token.name == INT_NUM && funcData->typy[*pocet_parametrov] == INTEGER) ||
+             (token.name == DOUBLE_NUM && funcData->typy[*pocet_parametrov] == DOUBLE) ||
+             (token.name == STR && funcData->typy[*pocet_parametrov] == STRING) ||
+             (token.name == BL && funcData->typy[*pocet_parametrov] == BOOLEAN_)))
             return SEM_TYPE_ERROR;
         
     } else {
