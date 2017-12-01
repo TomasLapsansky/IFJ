@@ -11,12 +11,12 @@ static char prec_tab[14][14] = {
 /*| / |*/  {'>','<','>','>','>','>','>','>',' ','>','<','>','<','>'},
 /*| + |*/  {'<','<','>','>','>','>','>','>',' ','>','<','>','<','>'},
 /*| - |*/  {'<','<','>','>','>','>','>','>',' ','>','<','>','<','>'},
-/*| < |*/  {'<','<','<','<','>','>','>','>',' ','>','<','>','<','>'},
-/*| > |*/  {'<','<','<','<','>','>','>','>',' ','>','<','>','<','>'},
-/*| <= |*/ {'<','<','<','<','>','>','>','>',' ','>','<','>','<','>'},
-/*| >= |*/ {'<','<','<','<','>','>','>','>',' ','>','<','>','<','>'},
-/*|  = |*/ {'<','<','<','<','<','<','<','<',' ','<','<','>','<','>'},
-/*| <> |*/ {'<','<','<','<','>','>','>','>',' ','>','<','>','<','>'},
+/*| < |*/  {'<','<','<','<',' ',' ',' ',' ',' ',' ','<','>','<','>'},
+/*| > |*/  {'<','<','<','<',' ',' ',' ',' ',' ',' ','<','>','<','>'},
+/*| <= |*/ {'<','<','<','<',' ',' ',' ',' ',' ',' ','<','>','<','>'},
+/*| >= |*/ {'<','<','<','<',' ',' ',' ',' ',' ',' ','<','>','<','>'},
+/*|  = |*/ {'<','<','<','<',' ',' ',' ',' ',' ',' ','<','>','<','>'},
+/*| <> |*/ {'<','<','<','<',' ',' ',' ',' ',' ',' ','<','>','<','>'},
 /*| (  |*/ {'<','<','<','<','<','<','<','<','<','<','<','<','<','>'},
 /*| )  |*/ {'>','>','>','>','>','>','>','>',' ','>',' ','>',' ','>'},
 /*| id |*/ {'>','>','>','>','>','>','>','>','>','>',' ','>',' ','>'},
@@ -133,7 +133,7 @@ int p_vyraz(int type){
 				case BL: type = BL; break;
 			}	
 //printf("final_data_type: %d type: %d\n",final->data_type,type);
-			if(final->data_type == type || type == STR){
+			if(final->data_type == type || type == BL || type == PRINT_VAR){
 				//printf("*****PSA_COMPLETE******\n\n");
 				psa_list_delete(list);
 				return OK;
@@ -351,8 +351,13 @@ int p_vyraz(int type){
 		 			 		}
 		 			 	}
 
-		 			 	// pokud nejsou stejne datove typy operandu, prevedeme
+		 			 	// pokud nejsou stejne datove typya operandu, prevedeme
 		 			 	if(aitem[0].data_type != aitem[2].data_type){
+		 			 		if(aitem[0].data_type == BL || aitem[2].data_type == BL){
+		 			 		psa_list_delete(list);
+		 			 		return SEM_ERROR;	
+		 			 		}
+
 		 			 		if(aitem[0].data_type == INT_NUM){
 		 			 			aitem[0].data_type = DOUBLE_NUM;
 		 			 			//aitem[0].value.d = int_to_double(aitem[0].value.i);
@@ -363,7 +368,7 @@ int p_vyraz(int type){
 		 			 			//aitem[2].value.d = int_to_double(aitem[2].value.i);
 		 			 			//GENERATE CONVERT TODO
 		 			 		}
-		 			 		// jeden z operandu je string, int ani double nejde prevest na string -> ERROR
+		 			 		// jeden z operandu je string,nebo bl, int ani double nejde prevest na string -> ERROR
 		 			 		else{
 		 			 			psa_list_delete(list);
 		 			 			return SEM_ERROR;
@@ -371,6 +376,7 @@ int p_vyraz(int type){
 		 			 	}
 		 			 	// datove typy jsou stejne
 		 			 	else{
+
 		 			 		// GENERATE INSTR
 		 			 		// OPERACE
 		 			 	}
