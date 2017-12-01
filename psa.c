@@ -132,7 +132,23 @@ int p_vyraz(int type){
 				case BL: type = BL; break;
 			}	
 //printf("final_data_type: %d type: %d\n",final->data_type,type);
-			if(final->data_type == type || (final->data_type == DOUBLE_NUM && type == INT_NUM) || type == BL || type == PRINT_VAR){
+			if(final->data_type == type){
+			//printf("*****PSA_COMPLETE******\n\n");
+				psa_list_delete(list);
+				return OK;
+			}else if(final->data_type == DOUBLE_NUM && type == INT_NUM){
+			//printf("*****PSA_COMPLETE******\n\n");
+				psa_list_delete(list);
+				return OK;
+			}else if(final->data_type == INT_NUM && type == DOUBLE_NUM){
+			//printf("*****PSA_COMPLETE******\n\n");
+				psa_list_delete(list);
+				return OK;
+			}else if(type == BL){
+				//printf("*****PSA_COMPLETE******\n\n");
+				psa_list_delete(list);
+				return OK;
+			}else if(type == PRINT_VAR){
 				//printf("*****PSA_COMPLETE******\n\n");
 				psa_list_delete(list);
 				return OK;

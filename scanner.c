@@ -100,8 +100,9 @@ int KeywordCheck(char *string){
 }
 
 int Get_Token(TOKEN *t){
-	int c,nextc,pom,next_d = false,double_exp = false,count = 0;
+	int c,nextc,pom,next_d = false,double_exp = false,count = 0,ascii = 0;
 	int state = start;
+	char arr[3];
 	// Pomocna podminka, aby se vratila hodnota EOF a ukoncila tak nacitani dalsich tokenu
 	if(eof_t == 1) return EOF;
 
@@ -532,6 +533,8 @@ int Get_Token(TOKEN *t){
 							state = string;
 						}
 						else if(isdigit(c)){
+							arr[count] = c;
+							count++;
 							if((pom = Add_Char(t,c)) == ALLOC_ERROR){
 								return ALLOC_ERROR;
 								}
@@ -540,11 +543,16 @@ int Get_Token(TOKEN *t){
 
 			case ddd:
 						if(isdigit(c)){
+							arr[count] = c;
 							count++;
 							if((pom = Add_Char(t,c)) == ALLOC_ERROR){
 								return ALLOC_ERROR;
 							}								
-							if(count == 2){
+							if(count == 3){
+								ascii = atoi(arr);
+								if((ascii < 1)||(ascii > 255)){
+									return LEX_A_ERROR;
+								}
 								state = string;
 							}
 						}
