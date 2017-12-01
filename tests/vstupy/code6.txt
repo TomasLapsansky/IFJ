@@ -1,0 +1,9 @@
+SCOPE
+
+	print 5;
+	print 5+5;
+	print 1/5.6;
+	print !"ahojkz";!"neco"; 6*9
+
+
+END SCOPE

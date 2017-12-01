@@ -3,8 +3,8 @@ CFLAGS=-std=c99 -Wall -W -Wextra -pedantic -ggdb
 RM=rm -f
 
 
-prg: main.o scanner.o parser.o symtable.o psa.o psalist.o tstack.o
-	$(CC) $(CFLAGS) scanner.o main.o parser.o symtable.o psa.o psalist.o tstack.o -o $@
+all: main.o scanner.o parser.o symtable.o psa.o psalist.o tstack.o
+	$(CC) $(CFLAGS) scanner.o main.o parser.o symtable.o psa.o psalist.o tstack.o -o prg
 
 parser.o: parser.c parser.h scanner.o psa.o psalist.o
 	$(CC) $(CFLAGS) -c parser.c -o $@
@@ -26,6 +26,9 @@ psa.o: psa.c psa.h scanner.o psalist.o
 
 tstack.o: tstack.c tstack.h
 	$(CC) $(CFLAGS) -c tstack.c -o $@
+
+test: all
+	cd tests; bash test.sh
 
 clean:
 	$(RM) *.o

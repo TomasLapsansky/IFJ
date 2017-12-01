@@ -6,3 +6,8 @@ TESTY NAD TABULKOU SYMBOLU
 - obsahuje 2 nezavisle testy, ridi se pomoci definovani makra RUN_TEST1/RUN_TEST2
 - vhodne je testovat s valgrindem
 - soubory pro preklad: ts.h  ts.c
+
+TESTOVACI SKRIPT
+- test.sh
+- pro kazdy vstupni kod zavola vztvoreny program
+- vyspis na stdou

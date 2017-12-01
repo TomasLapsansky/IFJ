@@ -157,4 +157,5 @@ bool InsertParametr(tHTItem* ptrht,int typ,char* nazev);
 void Uvolnitparametry(tHTItem* ptrht);
 
 void htPrintTable( tHTable* ptrht );
+void htPrintTable( tHTable* ptrht );
 #endif

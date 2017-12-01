@@ -1,0 +1,19 @@
+function a__(a as integer) as integer
+	return 42
+end function
+
+function b(a as integer) as integer
+	a=c(a)
+	return a
+end function
+
+function C(a as integer) as integer
+	a = B(a)
+	return a
+end function
+
+scope
+	dim a as integer = 9
+	a = c()
+	print a;
+end scope

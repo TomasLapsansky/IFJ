@@ -1,0 +1,12 @@
+SCOPE
+
+	dim a as integer
+	dim b as integer
+	dim c as double
+	a=5
+	b=6
+	c=9.5
+	a = a + b + c
+	print a;
+
+END SCOPE
