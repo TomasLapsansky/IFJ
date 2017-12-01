@@ -66,9 +66,9 @@ vstup=code6.txt
 
 if [  $? = 2 ] 
 then 
-echo -e ${GREEN}OK  - ${vstup} -  printu${NC}
+echo -e ${GREEN}OK  - ${vstup} -  spatny print =2${NC}
 else 
-echo -e ${RED}FAIL  - ${vstup} -  print${NC}
+echo -e ${RED}FAIL  - ${vstup} -  spatny print !=2${NC}
 fi
 
 vstup=code7.txt
@@ -169,7 +169,7 @@ vstup=code15.txt
 
 if [  $? != 0 ] 
 then 
-echo -e ${GREEN}OK  - ${vstup} - spatna seqence ascii  !=1${NC}
+echo -e ${GREEN}OK  - ${vstup} - spatna seqence ascii  =1${NC}
 else 
 echo -e ${RED}FAIL  - ${vstup} -  spatna seqence ascii !=1${NC}
 fi
