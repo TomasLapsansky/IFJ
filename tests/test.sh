@@ -64,9 +64,9 @@ vstup=code6.txt
 
 ../prg < ./vstupy/${vstup}
 
-if [  $? = 0 ] 
+if [  $? = 2 ] 
 then 
-echo -e ${GREEN}OK  - ${vstup} -  print${NC}
+echo -e ${GREEN}OK  - ${vstup} -  printu${NC}
 else 
 echo -e ${RED}FAIL  - ${vstup} -  print${NC}
 fi
@@ -161,3 +161,80 @@ else
 echo -e ${RED}FAIL  - ${vstup} -  retur n uvnitr scope !=0${NC}
 fi
 
+vstup=code15.txt
+
+../prg < ./vstupy/${vstup}
+
+
+
+if [  $? != 0 ] 
+then 
+echo -e ${GREEN}OK  - ${vstup} - spatna seqence ascii  !=1${NC}
+else 
+echo -e ${RED}FAIL  - ${vstup} -  spatna seqence ascii !=1${NC}
+fi
+
+vstup=code16.txt
+
+../prg < ./vstupy/${vstup}
+
+
+
+if [  $? = 0 ] 
+then 
+echo -e ${GREEN}OK  - ${vstup} - spravna seqence ascii  =0${NC}
+else 
+echo -e ${RED}FAIL  - ${vstup} -  spravna seqence ascii !=0${NC}
+fi
+
+vstup=code17.txt
+
+../prg < ./vstupy/${vstup}
+
+
+
+if [  $? != 0 ] 
+then 
+echo -e ${GREEN}OK  - ${vstup} - spravny vyraz v ifu =0${NC}
+else 
+echo -e ${RED}FAIL  - ${vstup} -  spravny vyraz v ifu !=0${NC}
+fi
+
+vstup=code18.txt
+
+../prg < ./vstupy/${vstup}
+
+
+
+if [  $? == 2 ] 
+then 
+echo -e ${GREEN}OK  - ${vstup} - spatny vyraz v ifu =2${NC}
+else 
+echo -e ${RED}FAIL  - ${vstup} -  spatny vyraz v ifu !=2${NC}
+fi
+
+vstup=code19.txt
+
+../prg < ./vstupy/${vstup}
+
+
+
+if [  $? = 3 ] 
+then 
+echo -e ${GREEN}OK  - ${vstup} - nedefinovana promena =3${NC}
+else 
+echo -e ${RED}FAIL  - ${vstup} -  nedefinovana promena !=3${NC}
+fi
+
+vstup=code20.txt
+
+../prg < ./vstupy/${vstup}
+
+
+
+if [  $? = 3 ] 
+then 
+echo -e ${GREEN}OK  - ${vstup} - vyraz je spatne semanticky =3${NC}
+else 
+echo -e ${RED}FAIL  - ${vstup} -  vyraz je spatne semantick !=3${NC}
+fi

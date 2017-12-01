@@ -1,0 +1,5 @@
+Scope 'error
+
+	Print !"\nAhojsvete\432";
+
+End Scope

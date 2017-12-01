@@ -1,0 +1,7 @@
+
+Scope 'ok
+
+	Print !"\nAhojsvete\034";
+	
+
+End Scope
