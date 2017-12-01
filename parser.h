@@ -11,13 +11,14 @@
 #include "psa.h" 
 #include "tstack.h"
 
+int declare(TOKEN idToken);
 
 //KA pre syntakticku analyzu
 int parser(void);
 
 int p_start(void);
 int p_scope(void);
-int p_declare(void);
+int p_define(void);
 int p_body(int return_type);
 
 int p_type(void);

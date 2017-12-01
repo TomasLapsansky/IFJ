@@ -104,7 +104,7 @@ int p_start(void) {
 		return error;
 	}
 	
-	if((error = p_declare()) != OK)
+	if((error = p_define()) != OK)
 		return error;
 	
 	if((error = p_scope()) != OK)
@@ -113,10 +113,67 @@ int p_start(void) {
 	return OK;
 }//p_start
 
+int declare(TOKEN idToken) {
+    
+    if((error = Get_Token(&token)) != OK) {
+        Clear_Token(&idToken);
+        return error;//gettoken
+    }
+    
+    if(token.name != LEFTPAREN) {    //Declare Function ID(
+        Clear_Token(&idToken);
+        return SYN_A_ERROR;
+    }
+    
+    if((error = Get_Token(&token)) != OK) {
+        Clear_Token(&idToken);
+        return error;//gettoken
+    }
+    
+    if((error = p_declare_parameter(idToken.data)) != OK) {        //Declare Function ID(<p_declare_parameter>)
+        Clear_Token(&idToken);
+        return error;
+    }
+    
+    if((error = Get_Token(&token)) != OK) {
+        Clear_Token(&idToken);
+        return error;//gettoken
+    }
+    
+    if(token.name != AS) {            //Declare Function ID(<p_declare_parameter>) As
+        Clear_Token(&idToken);
+        return SYN_A_ERROR;
+    }
+    
+    if((error = Get_Token(&token)) != OK) {
+        Clear_Token(&idToken);
+        return error;//gettoken
+    }
+    
+    if((error = p_type()) != OK) {    //Declare Function ID(<p_declare_parameter>) As <p_type>
+        Clear_Token(&idToken);
+        return error;
+    }
+    
+    INSERT_F_TYPE(token.name, idToken.data, ptrht);
+    
+    if((error = Get_Token(&token)) != OK) {
+        Clear_Token(&idToken);
+        return error;//gettoken
+    }
+        
+    if(token.name != EOL_) {            //Declare Function ID(<p_declare_parameter>) As <p_type> EOL
+        return SYN_A_ERROR;
+        Clear_Token(&idToken);
+    }
+    
+    return OK;
+}
+
 //<p_declare>		ε
 //<p_declare>		Declare Function ID (<p_parameter> As <p_type> "EOL" <p_declare>
 //<p_declare>		Function ID (<p_parameter> As <p_type> "EOL" <p_body> <p_declare>
-int p_declare(void) {
+int p_define(void) {
 	
 	tRetData *idData = NULL;//pre korektnost prekladu
 	TOKEN idToken;
@@ -152,65 +209,21 @@ int p_declare(void) {
 			
 			INSERT_F(idToken.data, ptrht);
 			
-			if((error = Get_Token(&token)) != OK) {
-				Clear_Token(&idToken);
-				return error;//gettoken
-			}
-			
-			if(token.name != LEFTPAREN) {	//Declare Function ID(
-				Clear_Token(&idToken);
-				return SYN_A_ERROR;
-			}
-			
-			if((error = Get_Token(&token)) != OK) {
-				Clear_Token(&idToken);
-				return error;//gettoken
-			}
-			
-			if((error = p_declare_parameter(idToken.data)) != OK) {		//Declare Function ID(<p_declare_parameter>)
-				Clear_Token(&idToken);
-				return error;
-			}
-			
-			if((error = Get_Token(&token)) != OK) {
-				Clear_Token(&idToken);
-				return error;//gettoken
-			}
-			
-			if(token.name != AS) {			//Declare Function ID(<p_declare_parameter>) As
-				Clear_Token(&idToken);
-				return SYN_A_ERROR;
-			}
-			
-			if((error = Get_Token(&token)) != OK) {
-				Clear_Token(&idToken);
-				return error;//gettoken
-			}
-			
-			if((error = p_type()) != OK) {	//Declare Function ID(<p_declare_parameter>) As <p_type>
-				Clear_Token(&idToken);
-				return error;
-			}
-			
-			INSERT_F_TYPE(token.name, idToken.data, ptrht);
-			
-			Clear_Token(&idToken);
-			
-			if((error = Get_Token(&token)) != OK)
-				return error;//gettoken
-			
-			if(token.name != EOL_)			//Declare Function ID(<p_declare_parameter>) As <p_type> EOL
-				return SYN_A_ERROR;
-			
-			if((error = Get_Token(&token)) != OK)
-				return error;//gettoken
+            if((error = declare(idToken)) != OK) {
+                return error;
+            }
             
-			return p_declare();				//prechod do potencialneho dalsieho stavu
+            Clear_Token(&idToken);
+            
+            if((error = Get_Token(&token)) != OK)
+                return error;//gettoken
+            
+			return p_define();				//prechod do potencialneho dalsieho stavu
 			
 			break;
 			
 		case(FUNCTION):					//Function
-			
+            
             Init_Token(&idToken);
 			if((error = Get_Token(&idToken)) != OK)
 				return error;//gettoken
@@ -289,59 +302,16 @@ int p_declare(void) {
                 }
                     
             } else if(error == UNEXIST) {        //je potrebna definicia
-				
+                
                 INSERT_F(idToken.data, ptrht);
                 
-                if((error = Get_Token(&token)) != OK) {
-                    Clear_Token(&idToken);
-                    return error;//gettoken
-                }
-                
-                if(token.name != LEFTPAREN) {    //Declare Function ID(
-                    Clear_Token(&idToken);
-                    return SYN_A_ERROR;
-                }
-                
-                if((error = Get_Token(&token)) != OK) {
-                    Clear_Token(&idToken);
-                    return error;//gettoken
-                }
-                
-                if((error = p_declare_parameter(idToken.data)) != OK) {        //Declare Function ID(<p_declare_parameter>)
-                    Clear_Token(&idToken);
+                if((error = declare(idToken)) != OK) {
                     return error;
                 }
                 
-                if((error = Get_Token(&token)) != OK) {
-                    Clear_Token(&idToken);
-                    return error;//gettoken
-                }
-                
-                if(token.name != AS) {            //Declare Function ID(<p_declare_parameter>) As
-                    Clear_Token(&idToken);
-                    return SYN_A_ERROR;
-                }
-                
-                if((error = Get_Token(&token)) != OK) {
-                    Clear_Token(&idToken);
-                    return error;//gettoken
-                }
-                
-                if((error = p_type()) != OK) {    //Declare Function ID(<p_declare_parameter>) As <p_type>
-                    Clear_Token(&idToken);
-                    return error;
-                }
-                
-                INSERT_F_TYPE(token.name, idToken.data, ptrht);
+                idData = SEARCH(idToken.data, ptrht);
                 
                 Clear_Token(&idToken);
-                
-                if((error = Get_Token(&token)) != OK)
-                    return error;//gettoken
-                
-                if(token.name != EOL_)            //Declare Function ID(<p_declare_parameter>) As <p_type> EOL
-                    return SYN_A_ERROR;
-                
                 
             } else if(error == DIM_ID) {
                 DELETE_SEARCH(idData);
@@ -359,7 +329,7 @@ int p_declare(void) {
 			//implementovany zasobnik kvoli moznemu viacnasobnemu znoreniu
 			stackPush(s, ptrht);
 			ptrht = idData->LocalTS;
-			
+            
 			if((error = p_body(idData->type)) != OK) {		//Function ID(<p_parameter>) As <p_type> EOL <p_body>
                 DELETE_SEARCH(idData);
 				return error;
@@ -389,7 +359,7 @@ int p_declare(void) {
 			if((error = Get_Token(&token)) != OK)
 				return error;//gettoken
 			
-			return p_declare();				//prechod do potencialneho dalsieho stavu
+			return p_define();				//prechod do potencialneho dalsieho stavu
 			
 			break;
 			
@@ -401,7 +371,7 @@ int p_declare(void) {
 			return SYN_A_ERROR;
 	}//switch
 	
-}//p_declare
+}//p_define
 
 //<p_body>		ε
 //<p_body>		<p_prikaz> EOL <p_body>

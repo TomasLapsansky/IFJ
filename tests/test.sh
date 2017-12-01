@@ -7,7 +7,7 @@ GREEN='\033[0;32m'
 NC='\033[0m'
 
 vstup=code1.txt
-../prg < ./vstupy/code1.txt
+../prg < vstupy/code1.txt
 
 if [  $? = 0 ] 
 then 
@@ -119,11 +119,11 @@ vstup=code11.txt
 
 ../prg < ./vstupy/${vstup}
 
-if [  $? = 0 ] 
+if [  $? != 0 ] 
 then 
-echo -e ${GREEN}OK  - ${vstup} -  3 funkce jeden parametr${NC}
+echo -e ${GREEN}OK  - ${vstup} -  volanie pred declare${NC}
 else 
-echo -e ${RED}FAIL  - ${vstup} -  3 funkce jeden parametr${NC}
+echo -e ${RED}FAIL  - ${vstup} -  volanie pred declare${NC}
 fi
 
 vstup=code12.txt

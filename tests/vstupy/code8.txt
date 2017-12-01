@@ -3,5 +3,6 @@ function puf() as string
 end function 
 
 scope
-puf()
+dim a as string
+a = puf()
 end scope
