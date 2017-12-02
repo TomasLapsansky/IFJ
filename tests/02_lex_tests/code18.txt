@@ -2,4 +2,5 @@ scope
 	dim a as double
 	a = 1e+1
 	a = 1e-1
+	a = 1e1
 end scope

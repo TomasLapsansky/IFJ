@@ -7,6 +7,6 @@ scope
 	a = 5e-10
 	a = 5E+10
 	a = 5E-10
-	a = 5.5e+10
+	a = 5.5e10
 
 end scope

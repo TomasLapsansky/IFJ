@@ -1,6 +1,6 @@
 scope
 	
 	dim s as string
-	s = !"test/255retazcov/143"
+	s = !"test\255retazcov \n \t \\ \" haha"
 	
 end scope
