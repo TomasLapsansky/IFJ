@@ -1,7 +1,0 @@
-scope
-Dim a as string
-
-a=8
-
-
-end scope

@@ -1,0 +1,12 @@
+scope
+
+	dim a as double
+	a = 2.5
+	a = -2.5
+	a = 5e+10
+	a = 5e-10
+	a = 5E+10
+	a = 5E-10
+	a = 5.5e+10
+
+end scope

@@ -1,8 +1,0 @@
-'koment
-/' koment '/
-SCOPE
-'koment
-/' koment '/
-END SCOPE
-'koment
-/' koment '/

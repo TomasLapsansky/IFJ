@@ -1,8 +1,0 @@
-function puf() as string
-'koment
-end function 
-
-scope
-dim a as string
-a = puf()
-end scope

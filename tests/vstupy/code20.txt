@@ -1,5 +1,0 @@
-Scope 'error
-	Dim vysl As Integer
-
-	vysl = 22/1 < 1
-End Scope
