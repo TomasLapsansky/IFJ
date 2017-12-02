@@ -508,11 +508,11 @@ vstup=code21.txt
 
 
 A=$?
-if [  $A = 0 ]
+if [  $A = 1 ]
 then
-echo -e ${GREEN}OK  - ${vstup} - -5.5e10 =0${NC}
+echo -e ${GREEN}OK  - ${vstup} - zaporny double -5.5e10 =1${NC}
 else
-echo -e ${RED}FAIL  - ${vstup} - -5.5e10 !=0 =$A ${NC}
+echo -e ${RED}FAIL  - ${vstup} - zaporny double -5.5e10 !=1 =$A ${NC}
 fi
 
 vstup=code22.txt
@@ -552,5 +552,18 @@ then
 echo -e ${GREEN}OK  - ${vstup} - 5e+10e =1${NC}
 else
 echo -e ${RED}FAIL  - ${vstup} - 5e+10e !=1 =$A ${NC}
+fi
+
+vstup=code25.txt
+
+../prg < ./02_lex_tests/${vstup}
+
+
+A=$?
+if [  $A = 1 ]
+then
+echo -e ${GREEN}OK  - ${vstup} - zaporne cislo, int =1${NC}
+else
+echo -e ${RED}FAIL  - ${vstup} - zaporne cislo, int !=1 =$A ${NC}
 fi
 
