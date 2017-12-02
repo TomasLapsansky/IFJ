@@ -580,3 +580,251 @@ else
 echo -e ${RED}FAIL  - ${vstup} - e+1 !=1 =$A ${NC}
 fi
 
+
+echo ---03 Syn Testy---
+
+vstup=code1.txt
+../prg < ./03_syn_tests/${vstup}
+
+
+A=$?
+if [  $A = 0 ]
+then
+echo -e ${GREEN}OK  - ${vstup} -  DIM test =0${NC}
+else
+echo -e ${RED}FAIL  - ${vstup} -  DIM test !=0 =$A ${NC}
+fi
+
+vstup=code2.txt
+
+../prg < ./03_syn_tests/${vstup}
+
+A=$?
+if [  $A = 2 ]
+then
+echo -e ${GREEN}OK  - ${vstup} -  DIM test =2${NC}
+else
+echo -e ${RED}FAIL  - ${vstup} -  DIM test !=2 =$A ${NC}
+fi
+
+vstup=code3.txt
+
+../prg < ./03_syn_tests/${vstup}
+
+A=$?
+if [  $A = 0 ]
+then
+echo -e ${GREEN}OK  - ${vstup} - priradenie =0${NC}
+else
+echo -e ${RED}FAIL  - ${vstup} - priradenie !=0 =$A ${NC}
+fi
+
+vstup=code4.txt
+
+../prg < ./03_syn_tests/${vstup}
+
+A=$?
+if [  $A = 2 ]
+then
+echo -e ${GREEN}OK  - ${vstup} -  priradenie =2${NC}
+else
+echo -e ${RED}FAIL  - ${vstup} -  priradenie !=2 =$A ${NC}
+fi
+
+vstup=code5.txt
+
+../prg < ./03_syn_tests/${vstup}
+
+A=$?
+if [  $A = 0 ]
+then
+echo -e ${GREEN}OK  - ${vstup} -  INPUT =0${NC}
+else
+echo -e ${RED}FAIL  - ${vstup} -  INPUT !=0 =$A ${NC}
+fi
+
+vstup=code6.txt
+
+../prg < ./03_syn_tests/${vstup}
+
+A=$?
+if [  $A = 2 ]
+then
+echo -e ${GREEN}OK  - ${vstup} -  INPUT =2${NC}
+else
+echo -e ${RED}FAIL  - ${vstup} -  INPUT !=2 =$A ${NC}
+fi
+
+vstup=code7.txt
+
+../prg < ./03_syn_tests/${vstup}
+
+A=$?
+if [  $A = 0 ]
+then
+echo -e ${GREEN}OK  - ${vstup} -  PRINT =0${NC}
+else
+echo -e ${RED}FAIL  - ${vstup} -  PRINT !=0 =$A ${NC}
+fi
+
+vstup=code8.txt
+
+../prg < ./03_syn_tests/${vstup}
+
+A=$?
+if [  $A = 2 ]
+then
+echo -e ${GREEN}OK  - ${vstup} -  PRINT =2${NC}
+else
+echo -e ${RED}FAIL  - ${vstup} -  PRINT !=2 =$A ${NC}
+fi
+
+vstup=code9.txt
+
+../prg < ./03_syn_tests/${vstup}
+
+A=$?
+if [  $A = 0 ]
+then
+echo -e ${GREEN}OK  - ${vstup} -  IF =0 ${NC}
+else
+echo -e ${RED}FAIL  - ${vstup} -  IF !=0 =$A ${NC}
+fi
+
+vstup=code10.txt
+
+../prg < ./03_syn_tests/${vstup}
+
+A=$?
+if [  $A = 2 ]
+then
+echo -e ${GREEN}OK  - ${vstup} -  IF =2${NC}
+else
+echo -e ${RED}FAIL  - ${vstup} -  IF !=2 =$A ${NC}
+fi
+
+vstup=code11.txt
+
+../prg < ./03_syn_tests/${vstup}
+
+A=$?
+if [  $A = 0 ]
+then
+echo -e ${GREEN}OK  - ${vstup} -  DO WHILE =0${NC}
+else
+echo -e ${RED}FAIL  - ${vstup} -  DO WHILE !=0 =$A ${NC}
+fi
+
+vstup=code12.txt
+
+../prg < ./03_syn_tests/${vstup}
+
+A=$?
+if [  $A = 2 ]
+then
+echo -e ${GREEN}OK  - ${vstup} -  DO WHILE =2${NC}
+else
+echo -e ${RED}FAIL  - ${vstup} -  DO WHILE !=2 =$A ${NC}
+fi
+
+vstup=code13.txt
+
+../prg < ./03_syn_tests/${vstup}
+
+A=$?
+if [  $A = 0 ]
+then
+echo -e ${GREEN}OK  - ${vstup} -  Priradenie f =0${NC}
+else
+echo -e ${RED}FAIL  - ${vstup} -  Priradenie f !=0 !=$A ${NC}
+fi
+
+vstup=code14.txt
+
+../prg < ./03_syn_tests/${vstup}
+
+A=$?
+if [  $A = 2 ]
+then
+echo -e ${GREEN}OK  - ${vstup} -  Chybne volanie f =2${NC}
+else
+echo -e ${RED}FAIL  - ${vstup} -  Chybne volanie f !=2 !=$A ${NC}
+fi
+
+vstup=code15.txt
+
+../prg < ./03_syn_tests/${vstup}
+
+
+A=$?
+if [  $A = 0 ]
+then
+echo -e ${GREEN}OK  - ${vstup} - Vyraz =0${NC}
+else
+echo -e ${RED}FAIL  - ${vstup} - Vyraz !=0 =$A ${NC}
+fi
+
+vstup=code16.txt
+
+../prg < ./03_syn_tests/${vstup}
+
+
+A=$?
+if [  $A = 2 ]
+then
+echo -e ${GREEN}OK  - ${vstup} -  Vyraz =2${NC}
+else
+echo -e ${RED}FAIL  - ${vstup} -  Vyraz !=2 !=$A ${NC}
+fi
+
+vstup=code17.txt
+
+../prg < ./03_syn_tests/${vstup}
+
+
+A=$?
+if [  $A = 2 ]
+then
+echo -e ${GREEN}OK  - ${vstup} - Vyraz s relaciou =2${NC}
+else
+echo -e ${RED}FAIL  - ${vstup} - Vyraz s relaciou !=2 =$A ${NC}
+fi
+
+vstup=code18.txt
+
+../prg < ./03_syn_tests/${vstup}
+
+
+A=$?
+if [  $A = 0 ]
+then
+echo -e ${GREEN}OK  - ${vstup} - Vyraz s relaciou =0${NC}
+else
+echo -e ${RED}FAIL  - ${vstup} - Vyraz s relaciou !=0 =$A ${NC}
+fi
+
+vstup=code19.txt
+
+../prg < ./03_syn_tests/${vstup}
+
+
+A=$?
+if [  $A = 2 ]
+then
+echo -e ${GREEN}OK  - ${vstup} - Vyraz uzatvorkovanie =2${NC}
+else
+echo -e ${RED}FAIL  - ${vstup} - Vyraz uzatvorkovanie !=2 =$A ${NC}
+fi
+
+vstup=code20.txt
+
+../prg < ./03_syn_tests/${vstup}
+
+
+A=$?
+if [  $A = 2 ]
+then
+echo -e ${GREEN}OK  - ${vstup} - Vyraz blizkost operatorov =2${NC}
+else
+echo -e ${RED}FAIL  - ${vstup} - Vyraz blizkost operatorov !=2 =$A ${NC}
+fi

@@ -1058,7 +1058,7 @@ int p_prikaz(int return_type) {
 				if(error == NON_ID)
 					error = E_OK;				//ε
 				else //if(error == F_ID)
-					error = SEM_ERROR;
+					error = SYN_A_ERROR;
 				
 				//DELETE_SEARCH(idData);
 				break;
