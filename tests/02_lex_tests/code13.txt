@@ -1,6 +1,6 @@
 scope
 	
 	dim s as string
-	s = !"test/53retazcov/143"
+	s = !"test\53retazcov\143"
 	
 end scope

@@ -220,11 +220,11 @@ vstup=code18.txt
 
 
 A=$?
-if [  $A = 3 ]
+if [  $A = 4 ]
 then
-echo -e ${GREEN}OK  - ${vstup} - typova konverzia =3${NC}
+echo -e ${GREEN}OK  - ${vstup} - typova konverzia =4${NC}
 else
-echo -e ${RED}FAIL  - ${vstup} - typova konverzia !=3 =$A ${NC}
+echo -e ${RED}FAIL  - ${vstup} - typova konverzia !=4 =$A ${NC}
 fi
 
 vstup=code19.txt
@@ -233,11 +233,11 @@ vstup=code19.txt
 
 
 A=$?
-if [  $A = 3 ]
+if [  $A = 4 ]
 then
-echo -e ${GREEN}OK  - ${vstup} - typova konverzia =3${NC}
+echo -e ${GREEN}OK  - ${vstup} - typova konverzia =4${NC}
 else
-echo -e ${RED}FAIL  - ${vstup} - typova konverzia !=3 =$A ${NC}
+echo -e ${RED}FAIL  - ${vstup} - typova konverzia !=4 =$A ${NC}
 fi
 
 vstup=code20.txt

@@ -298,13 +298,6 @@ int Get_Token(TOKEN *t){
 											return OK;
 											break;
 
-								case '.' : if((pom = Add_Char(t,c)) == ALLOC_ERROR){
-												return ALLOC_ERROR;
-											}
-											t->name = DOT;
-											return OK;
-											break;
-
 								case ',' : if((pom = Add_Char(t,c)) == ALLOC_ERROR){
 												return ALLOC_ERROR;
 											}
@@ -395,7 +388,7 @@ int Get_Token(TOKEN *t){
 						}
 						else{
 							loadedc = c;
-							t->name = INT_NUM;
+							t->name = DOUBLE_NUM;
 							return OK;
 						}
 						}break;
@@ -497,7 +490,7 @@ int Get_Token(TOKEN *t){
 							if(c == '\\'){
 								state = escape_seq;
 							}
-							else if((c > 31)&&(c < 255)){
+							else if((c > 31)&&(c < 126)){
 								if((pom = Add_Char(t,c)) == ALLOC_ERROR){
 									return ALLOC_ERROR;
 								}
@@ -535,6 +528,9 @@ int Get_Token(TOKEN *t){
 						else if(isdigit(c)){
 							arr[count] = c;
 							count++;
+							if((pom = Add_Char(t,'\\')) == ALLOC_ERROR){
+								return ALLOC_ERROR;
+								}
 							if((pom = Add_Char(t,c)) == ALLOC_ERROR){
 								return ALLOC_ERROR;
 								}
@@ -553,6 +549,7 @@ int Get_Token(TOKEN *t){
 								if((ascii < 1)||(ascii > 255)){
 									return LEX_A_ERROR;
 								}
+								count = 0; 
 								state = string;
 							}
 						}
@@ -569,6 +566,11 @@ int Get_Token(TOKEN *t){
 									if(c == 39){
 										if(nextc == '/'){
 											break;
+										}
+									}
+									else if(c == '/'){
+										if(nextc == 39){
+											return LEX_A_ERROR;
 										}
 									}
 									if(nextc == EOF){

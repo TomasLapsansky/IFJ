@@ -38,8 +38,7 @@ enum Token_Name{
 	LEFTBRACE,
 	RIGHTBRACE,
 
-	DOT = 50,
-	COMMA,
+	COMMA = 50,
 	SEMICOLON,
 	INVALIDCHAR,
 
