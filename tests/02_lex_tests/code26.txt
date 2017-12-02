@@ -1,0 +1,6 @@
+scope
+
+	a = e+1
+	a = e-1
+
+end scope
