@@ -567,19 +567,6 @@ else
 echo -e ${RED}FAIL  - ${vstup} - zaporne cislo, int !=1 =$A ${NC}
 fi
 
-vstup=code25.txt
-
-../prg < ./02_lex_tests/${vstup}
-
-
-A=$?
-if [  $A = 1 ]
-then
-echo -e ${GREEN}OK  - ${vstup} - e+1 =1${NC}
-else
-echo -e ${RED}FAIL  - ${vstup} - e+1 !=1 =$A ${NC}
-fi
-
 
 echo ---03 Syn Testy---
 
