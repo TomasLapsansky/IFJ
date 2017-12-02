@@ -1,4 +1,4 @@
-/ blokovy komentar'/
+/' blokovy komentar/'
 scope
 
 end scope
