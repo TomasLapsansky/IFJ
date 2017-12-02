@@ -1,7 +1,7 @@
 declare function inc(a as integer) as integer
 function inc(a as integer) as integer
 
-	dim b as double
+	dim b as integer
 	b = a + 1
 	return b
 
@@ -9,12 +9,8 @@ end function
 
 scope
 
-	dim a as double
-	
-	if 0 < a < 1 then
-		a = inc(a)
-	else
-		
-	end if
+	dim a as integer
+
+	a = inc(a)
 
 end scope

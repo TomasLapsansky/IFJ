@@ -1,5 +1,5 @@
 declare function inc(a as integer) as integer
-function inc(a as integer) as integer
+function inc(a as integer, c as integer) as integer
 
 	dim b as double
 	b = a + 1
@@ -10,11 +10,7 @@ end function
 scope
 
 	dim a as double
-	
-	if 0 < a < 1 then
-		a = inc(a)
-	else
-		
-	end if
+
+	a = inc(a)
 
 end scope
