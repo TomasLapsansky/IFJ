@@ -156,7 +156,7 @@ int p_vyraz(int type){
 			else{
 				//printf("*****VYSLEDEK NEMA STEJNY DATOVY TYP******\n\n");
 				psa_list_delete(list);
-				return SEM_ERROR;
+				return SEM_TYPE_ERROR;
 			}
 			break;
 		}
@@ -386,7 +386,7 @@ int p_vyraz(int type){
 		 			 		// jeden z operandu je string,nebo bl, int ani double nejde prevest na string -> ERROR
 		 			 		else{
 		 			 			psa_list_delete(list);
-		 			 			return SEM_ERROR;
+		 			 			return SEM_TYPE_ERROR;
 		 			 		}
 		 			 	}
 		 			 	// datove typy jsou stejne
