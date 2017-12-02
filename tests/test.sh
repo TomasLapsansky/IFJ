@@ -508,11 +508,11 @@ vstup=code21.txt
 
 
 A=$?
-if [  $A = 1 ]
+if [  $A = 0 ]
 then
-echo -e ${GREEN}OK  - ${vstup} - 5e10 =1${NC}
+echo -e ${GREEN}OK  - ${vstup} - -5.5e10 =0${NC}
 else
-echo -e ${RED}FAIL  - ${vstup} - 5e10 !=1 =$A ${NC}
+echo -e ${RED}FAIL  - ${vstup} - -5.5e10 !=0 =$A ${NC}
 fi
 
 vstup=code22.txt
