@@ -65,6 +65,8 @@ int parser(void) {
     if((error = INSERT_PAR(STRING, par, nazov_f, ptrht)) != OK)
         return error;
     
+    DEFINED(nazov_f, ptrht);
+    
     //SubStr(s As String, i As Integer, n As Integer) As String
     strcpy(nazov_f, "SubStr");
     if((error = INSERT_F(nazov_f, ptrht)) != OK)
@@ -84,6 +86,8 @@ int parser(void) {
     if((error = INSERT_PAR(INTEGER, par, nazov_f, ptrht)) != OK)
         return error;
     
+    DEFINED(nazov_f, ptrht);
+    
     //Asc(s As String, i As Integer) As Integer
     strcpy(nazov_f, "Asc");
     if((error = INSERT_F(nazov_f, ptrht)) != OK)
@@ -99,6 +103,8 @@ int parser(void) {
     if((error = INSERT_PAR(INTEGER, par, nazov_f, ptrht)) != OK)
         return error;
     
+    DEFINED(nazov_f, ptrht);
+    
     //Chr(i As Integer) As String
     strcpy(nazov_f, "Chr");
     if((error = INSERT_F(nazov_f, ptrht)) != OK)
@@ -109,6 +115,8 @@ int parser(void) {
     strcpy(par, "i");
     if((error = INSERT_PAR(INTEGER, par, nazov_f, ptrht)) != OK)
         return error;
+    
+    DEFINED(nazov_f, ptrht);
     
     free(nazov_f);
     free(par);
@@ -448,11 +456,9 @@ int p_type(void) {
 int p_scope(void) {
 	if(token.name != SCOPE)	//Scope
 		return SYN_A_ERROR;
-	
-    /*
+    
     if((error = declare_define()) != OK)    //overenie definicie a deklaracie vsetkych funkcii
         return error;
-    */
      
 	if((error = Get_Token(&token)) != OK)
 		return error;	//gettoken
