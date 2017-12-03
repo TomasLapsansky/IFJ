@@ -58,8 +58,8 @@
 <p_priradenie>		<p_vyraz>
 
 <p_print>		<p_vyraz>; <p_nextprint>
-<p_print>		<p_type> = String; <p_nextprint>
+<p_print>		String; <p_nextprint>
 
 <p_nextprint>		ε
-<p_nextprint>		; String <p_nextprint>
-<p_nextprint>		; <p_vyraz> <p_nextprint>
+<p_nextprint>		<p_vyraz>; <p_nextprint>
+<p_nextprint>		String; <p_nextprint>
