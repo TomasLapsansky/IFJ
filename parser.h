@@ -12,6 +12,7 @@
 #include "tstack.h"
 
 int declare(TOKEN idToken);
+int declare_define(void);
 
 //KA pre syntakticku analyzu
 int parser(void);

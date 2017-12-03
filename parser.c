@@ -449,6 +449,11 @@ int p_scope(void) {
 	if(token.name != SCOPE)	//Scope
 		return SYN_A_ERROR;
 	
+    /*
+    if((error = declare_define()) != OK)    //overenie definicie a deklaracie vsetkych funkcii
+        return error;
+    */
+     
 	if((error = Get_Token(&token)) != OK)
 		return error;	//gettoken
 	
@@ -1231,4 +1236,22 @@ int p_nextprint(void) {
 	return p_nextprint();				//; String/<p_vyraz> <p_nextprint>
 }
 
-
+int declare_define(void) {
+    for(int i = 0; i < HTSIZE; i++) {
+        
+        tHTItem *tmp;
+        tmp=(*ptrht)[i];    //pomocny prvek
+        
+        while(tmp!=NULL)
+        {
+            if(!(tmp->data.definovana && tmp->data.funkce))
+               return SEM_ERROR;
+            //printf("%d %d\n", tmp->data.definovana, tmp->data.funkce);
+            
+            tmp=tmp->ptrnext;    //nenalezne, posun na dalsi prvek
+        }
+        
+    }
+    
+    return OK;
+}
