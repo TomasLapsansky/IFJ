@@ -199,9 +199,10 @@ int declare(TOKEN idToken) {
     return OK;
 }
 
-//<p_declare>		ε
-//<p_declare>		Declare Function ID (<p_parameter> As <p_type> "EOL" <p_declare>
-//<p_declare>		Function ID (<p_parameter> As <p_type> "EOL" <p_body> <p_declare>
+//<p_define>		ε
+//<p_define>		Declare Function ID (<p_declareparameter> As <p_type> EOL <p_define>
+//<p_define>        Function ID (<p_declareparameter> As <p_type> EOL <p_body> End Function <p_define>
+//<p_define>        Function ID (<p_parameter> As <p_type> EOL <p_body> End Function <p_define>
 int p_define(void) {
 	
 	tRetData *idData = NULL;//pre korektnost prekladu
@@ -239,7 +240,7 @@ int p_define(void) {
 			if((error = INSERT_F(idToken.data, ptrht)) != OK)
                 return error;
 			
-            if((error = declare(idToken)) != OK) {
+            if((error = declare(idToken)) != OK) {      //Declare Function ID(<p_declare_parameter>) As <p_type> EOL
                 return error;
             }
             
@@ -899,9 +900,9 @@ int p_vnextparameter(tRetData *funcData, int *pocet_parametrov) {
 //<p_prikaz>			ID = <p_priradenie>
 //<p_prikaz>			Input ID
 //<p_prikaz>			Print <p_print>
-//<p_prikaz>			If (<p_vyraz>) Then EOL <p_body> Else EOL <p_body> End If
-//<p_prikaz>			Do While (<p_vyraz>) EOL <p_body> Loop
-//<p_prikaz>			Return <vyraz>
+//<p_prikaz>			If <p_vyraz> Then EOL <p_body> Else EOL <p_body> End If
+//<p_prikaz>			Do While <p_vyraz> EOL <p_body> Loop
+//<p_prikaz>			Return <p_vyraz>
 int p_prikaz(int return_type) {
 	
 	/*
