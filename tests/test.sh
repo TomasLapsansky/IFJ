@@ -815,3 +815,269 @@ echo -e ${GREEN}OK  - ${vstup} - Vyraz blizkost operatorov =2${NC}
 else
 echo -e ${RED}FAIL  - ${vstup} - Vyraz blizkost operatorov !=2 =$A ${NC}
 fi
+
+echo ---04 Sem Testy---
+
+vstup=code1.txt
+../prg < ./04_sem_tests/${vstup}
+
+A=$?
+if [  $A = 0 ]
+then
+echo -e ${GREEN}OK  - ${vstup} -  Function test =0${NC}
+else
+echo -e ${RED}FAIL  - ${vstup} -  Function test !=0 =$A ${NC}
+fi
+
+vstup=code2.txt
+../prg < ./04_sem_tests/${vstup}
+
+A=$?
+if [  $A = 0 ]
+then
+echo -e ${GREEN}OK  - ${vstup} -  Function test bez deklaracie =0${NC}
+else
+echo -e ${RED}FAIL  - ${vstup} -  Function test bez deklaracie !=0 =$A ${NC}
+fi
+
+vstup=code3.txt
+../prg < ./04_sem_tests/${vstup}
+
+A=$?
+if [  $A = 3 ]
+then
+echo -e ${GREEN}OK  - ${vstup} -  Function test bez definicie =3${NC}
+else
+echo -e ${RED}FAIL  - ${vstup} -  Function test bez definicie !=3 =$A ${NC}
+fi
+
+vstup=code4.txt
+../prg < ./04_sem_tests/${vstup}
+
+A=$?
+if [  $A = 3 ]
+then
+echo -e ${GREEN}OK  - ${vstup} -  Function test dvojita deklaracia =3${NC}
+else
+echo -e ${RED}FAIL  - ${vstup} -  Function test dvojita deklaracia !=3 =$A ${NC}
+fi
+
+vstup=code5.txt
+../prg < ./04_sem_tests/${vstup}
+
+A=$?
+if [  $A = 3 ]
+then
+echo -e ${GREEN}OK  - ${vstup} -  Function test dvojita definicia =3${NC}
+else
+echo -e ${RED}FAIL  - ${vstup} -  Function test dvojita definicia !=3 =$A ${NC}
+fi
+
+vstup=code6.txt
+../prg < ./04_sem_tests/${vstup}
+
+A=$?
+if [  $A = 3 ]
+then
+echo -e ${GREEN}OK  - ${vstup} -  Function test nezhodnost deklaracie a definicie =3${NC}
+else
+echo -e ${RED}FAIL  - ${vstup} -  Function test nezhodnost deklaracie a definicie !=3 =$A ${NC}
+fi
+
+vstup=code7.txt
+../prg < ./04_sem_tests/${vstup}
+
+A=$?
+if [  $A = 3 ]
+then
+echo -e ${GREEN}OK  - ${vstup} -  Overenie presuvania medzi TS =3${NC}
+else
+echo -e ${RED}FAIL  - ${vstup} -  Overenie presuvania medzi TS !=3 =$A ${NC}
+fi
+
+vstup=code8.txt
+../prg < ./04_sem_tests/${vstup}
+
+A=$?
+if [  $A = 0 ]
+then
+echo -e ${GREEN}OK  - ${vstup} -  Overenie presuvania medzi TS =0${NC}
+else
+echo -e ${RED}FAIL  - ${vstup} -  Overenie presuvania medzi TS !=0 =$A ${NC}
+fi
+
+vstup=code9.txt
+../prg < ./04_sem_tests/${vstup}
+
+A=$?
+if [  $A = 3 ]
+then
+echo -e ${GREEN}OK  - ${vstup} -  Overenie presuvania medzi TS =3${NC}
+else
+echo -e ${RED}FAIL  - ${vstup} -  Overenie presuvania medzi TS !=3 =$A ${NC}
+fi
+
+vstup=code10.txt
+../prg < ./04_sem_tests/${vstup}
+
+A=$?
+if [  $A = 0 ]
+then
+echo -e ${GREEN}OK  - ${vstup} -  Vzajomne volanie funkcii =0${NC}
+else
+echo -e ${RED}FAIL  - ${vstup} -  Vzajomne volanie funkcii !=0 =$A ${NC}
+fi
+
+vstup=code11.txt
+../prg < ./04_sem_tests/${vstup}
+
+A=$?
+if [  $A = 3 ]
+then
+echo -e ${GREEN}OK  - ${vstup} -  Chybna scope deklaracia =3${NC}
+else
+echo -e ${RED}FAIL  - ${vstup} -  Chybna scope deklaracia !=3 =$A ${NC}
+fi
+
+vstup=code12.txt
+../prg < ./04_sem_tests/${vstup}
+
+A=$?
+if [  $A = 0 ]
+then
+echo -e ${GREEN}OK  - ${vstup} -  Volanie funkcie double = integer =0${NC}
+else
+echo -e ${RED}FAIL  - ${vstup} -  Volanie funkcie double = integer !=0 =$A ${NC}
+fi
+
+vstup=code13.txt
+../prg < ./04_sem_tests/${vstup}
+
+A=$?
+if [  $A = 4 ]
+then
+echo -e ${GREEN}OK  - ${vstup} -  Volanie funkcie string = integer =4${NC}
+else
+echo -e ${RED}FAIL  - ${vstup} -  Volanie funkcie string = integer !=4 =$A ${NC}
+fi
+
+vstup=code14.txt
+../prg < ./04_sem_tests/${vstup}
+
+A=$?
+if [  $A = 0 ]
+then
+echo -e ${GREEN}OK  - ${vstup} -  Volanie funkcie integer = double =0${NC}
+else
+echo -e ${RED}FAIL  - ${vstup} -  Volanie funkcie integer = double !=0 =$A ${NC}
+fi
+
+vstup=code15.txt
+../prg < ./04_sem_tests/${vstup}
+
+A=$?
+if [  $A = 3 ]
+then
+echo -e ${GREEN}OK  - ${vstup} -  Nezhodnost parametrov definicie a deklaracie =3${NC}
+else
+echo -e ${RED}FAIL  - ${vstup} -  Nezhodnost parametrov definicie a deklaracie !=3 =$A ${NC}
+fi
+
+vstup=code16.txt
+../prg < ./04_sem_tests/${vstup}
+
+A=$?
+if [  $A = 3 ]
+then
+echo -e ${GREEN}OK  - ${vstup} -  Nezhodnost parametrov definicie a deklaracie =3${NC}
+else
+echo -e ${RED}FAIL  - ${vstup} -  Nezhodnost parametrov definicie a deklaracie !=3 =$A ${NC}
+fi
+
+vstup=code17.txt
+../prg < ./04_sem_tests/${vstup}
+
+A=$?
+if [  $A = 3 ]
+then
+echo -e ${GREEN}OK  - ${vstup} -  Redeklaracia premennej, rovnaky typ =3${NC}
+else
+echo -e ${RED}FAIL  - ${vstup} -  Redeklaracia premennej, rovnaky typ !=3 =$A ${NC}
+fi
+
+vstup=code18.txt
+../prg < ./04_sem_tests/${vstup}
+
+A=$?
+if [  $A = 3 ]
+then
+echo -e ${GREEN}OK  - ${vstup} -  Redeklaracia premennej, rozny typ =3${NC}
+else
+echo -e ${RED}FAIL  - ${vstup} -  Redeklaracia premennej, rozny typ !=3 =$A ${NC}
+fi
+
+vstup=code19.txt
+../prg < ./04_sem_tests/${vstup}
+
+A=$?
+if [  $A = 0 ]
+then
+echo -e ${GREEN}OK  - ${vstup} -  Return konverzia double = int,double =0${NC}
+else
+echo -e ${RED}FAIL  - ${vstup} -  Return konverzia double = int,double !=0 =$A ${NC}
+fi
+
+vstup=code20.txt
+../prg < ./04_sem_tests/${vstup}
+
+A=$?
+if [  $A = 0 ]
+then
+echo -e ${GREEN}OK  - ${vstup} -  Relacny vyraz =0${NC}
+else
+echo -e ${RED}FAIL  - ${vstup} -  Relacny vyraz !=0 =$A ${NC}
+fi
+
+vstup=code21.txt
+../prg < ./04_sem_tests/${vstup}
+
+A=$?
+if [  $A = 0 ]
+then
+echo -e ${GREEN}OK  - ${vstup} -  Relacny vyraz + aritmetika =0${NC}
+else
+echo -e ${RED}FAIL  - ${vstup} -  Relacny vyraz + aritmetika !=0 =$A ${NC}
+fi
+
+vstup=code22.txt
+../prg < ./04_sem_tests/${vstup}
+
+A=$?
+if [  $A = 4 ]
+then
+echo -e ${GREEN}OK  - ${vstup} -  Integer = boolean relacia =4${NC}
+else
+echo -e ${RED}FAIL  - ${vstup} -  Integer = boolean relacia !=4 =$A ${NC}
+fi
+
+vstup=code23.txt
+../prg < ./04_sem_tests/${vstup}
+
+A=$?
+if [  $A = 4 ]
+then
+echo -e ${GREEN}OK  - ${vstup} -  Chybne volanie funkcie =4${NC}
+else
+echo -e ${RED}FAIL  - ${vstup} -  Chybne volanie funkcie !=4 =$A ${NC}
+fi
+
+vstup=code24.txt
+../prg < ./04_sem_tests/${vstup}
+
+A=$?
+if [  $A = 4 ]
+then
+echo -e ${GREEN}OK  - ${vstup} -  Chybne volanie funkcie =4${NC}
+else
+echo -e ${RED}FAIL  - ${vstup} -  Chybne volanie funkcie !=4 =$A ${NC}
+fi

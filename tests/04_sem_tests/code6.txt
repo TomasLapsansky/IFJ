@@ -1,5 +1,5 @@
 declare function inc(a as integer) as integer
-function inc(a as integer) as integer
+function inc(a as double) as integer
 
 	dim b as integer
 	b = a + 1
