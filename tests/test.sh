@@ -381,11 +381,11 @@ vstup=code11.txt
 ../prg < ./02_lex_tests/${vstup}
 
 A=$?
-if [  $A = 1 ]
+if [  $A = 2 ]
 then
-echo -e ${GREEN}OK  - ${vstup} -  wrong string =1${NC}
+echo -e ${GREEN}OK  - ${vstup} -  wrong string =2${NC}
 else
-echo -e ${RED}FAIL  - ${vstup} -  wrong string !=1 =$A ${NC}
+echo -e ${RED}FAIL  - ${vstup} -  wrong string !=2 =$A ${NC}
 fi
 
 vstup=code12.txt

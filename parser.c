@@ -47,48 +47,68 @@ int parser(void) {
     //Vkladania vstavanych funkcii pre syntakticku a sematicku analyzu
     
     char *nazov_f = (char*)malloc(sizeof(char) * 50);
+    if(nazov_f == NULL)
+        return ALLOC_ERROR;
+    
     char *par = (char*)malloc(sizeof(char) * 50);
+    if(par == NULL)
+        return ALLOC_ERROR;
     
     //Length(s As String) As Integer
     strcpy(nazov_f, "Length");
-    INSERT_F(nazov_f, ptrht);
-    INSERT_F_TYPE(INTEGER, nazov_f, ptrht);
+    if((error = INSERT_F(nazov_f, ptrht)) != OK)
+        return error;
+    if((error = INSERT_F_TYPE(INTEGER, nazov_f, ptrht)) != OK)
+        return error;
     
     strcpy(par, "s");
-    INSERT_PAR(STRING, par, nazov_f, ptrht);
+    if((error = INSERT_PAR(STRING, par, nazov_f, ptrht)) != OK)
+        return error;
     
     //SubStr(s As String, i As Integer, n As Integer) As String
     strcpy(nazov_f, "SubStr");
-    INSERT_F(nazov_f, ptrht);
-    INSERT_F_TYPE(STRING, nazov_f, ptrht);
+    if((error = INSERT_F(nazov_f, ptrht)) != OK)
+        return error;
+    if((error = INSERT_F_TYPE(STRING, nazov_f, ptrht)) != OK)
+        return error;
     
     strcpy(par, "s");
-    INSERT_PAR(STRING, par, nazov_f, ptrht);
+    if((error = INSERT_PAR(STRING, par, nazov_f, ptrht)) != OK)
+        return error;
     
     strcpy(par, "i");
-    INSERT_PAR(INTEGER, par, nazov_f, ptrht);
+    if((error = INSERT_PAR(INTEGER, par, nazov_f, ptrht)) != OK)
+        return error;
     
     strcpy(par, "n");
-    INSERT_PAR(INTEGER, par, nazov_f, ptrht);
+    if((error = INSERT_PAR(INTEGER, par, nazov_f, ptrht)) != OK)
+        return error;
     
     //Asc(s As String, i As Integer) As Integer
     strcpy(nazov_f, "Asc");
-    INSERT_F(nazov_f, ptrht);
-    INSERT_F_TYPE(INTEGER, nazov_f, ptrht);
+    if((error = INSERT_F(nazov_f, ptrht)) != OK)
+        return error;
+    if((error = INSERT_F_TYPE(INTEGER, nazov_f, ptrht)) != OK)
+        return error;
     
     strcpy(par, "s");
-    INSERT_PAR(STRING, par, nazov_f, ptrht);
+    if((error = INSERT_PAR(STRING, par, nazov_f, ptrht)) != OK)
+        return error;
     
     strcpy(par, "i");
-    INSERT_PAR(INTEGER, par, nazov_f, ptrht);
+    if((error = INSERT_PAR(INTEGER, par, nazov_f, ptrht)) != OK)
+        return error;
     
     //Chr(i As Integer) As String
     strcpy(nazov_f, "Chr");
-    INSERT_F(nazov_f, ptrht);
-    INSERT_F_TYPE(STRING, nazov_f, ptrht);
+    if((error = INSERT_F(nazov_f, ptrht)) != OK)
+        return error;
+    if((error = INSERT_F_TYPE(STRING, nazov_f, ptrht)) != OK)
+        return error;
     
     strcpy(par, "i");
-    INSERT_PAR(INTEGER, par, nazov_f, ptrht);
+    if((error = INSERT_PAR(INTEGER, par, nazov_f, ptrht)) != OK)
+        return error;
     
     free(nazov_f);
     free(par);
@@ -155,7 +175,8 @@ int declare(TOKEN idToken) {
         return error;
     }
     
-    INSERT_F_TYPE(token.name, idToken.data, ptrht);
+    if((error = INSERT_F_TYPE(token.name, idToken.data, ptrht)) != OK)
+        return error;
     
     if((error = Get_Token(&token)) != OK) {
         Clear_Token(&idToken);
@@ -207,7 +228,8 @@ int p_define(void) {
 			}
 			DELETE_SEARCH(idData);
 			
-			INSERT_F(idToken.data, ptrht);
+			if((error = INSERT_F(idToken.data, ptrht)) != OK)
+                return error;
 			
             if((error = declare(idToken)) != OK) {
                 return error;
@@ -303,7 +325,8 @@ int p_define(void) {
                     
             } else if(error == UNEXIST) {        //je potrebna definicia
                 
-                INSERT_F(idToken.data, ptrht);
+                if((error = INSERT_F(idToken.data, ptrht)) != OK)
+                    return error;
                 
                 if((error = declare(idToken)) != OK) {
                     return error;
@@ -618,6 +641,9 @@ int p_declare_parameter(char* funcName) {
 	DELETE_SEARCH(idData);
 	
 	char *id_string = (char*)malloc(sizeof(char) * strlen(token.data));
+    if(id_string == NULL)
+        return ALLOC_ERROR;
+    
 	strcpy(id_string, token.data);
 	
 	if((error = Get_Token(&token)) != OK) {
@@ -641,7 +667,8 @@ int p_declare_parameter(char* funcName) {
 	}
 	
 	//Vlozenie par do TS + clear_token
-	INSERT_PAR(token.name, id_string, funcName, ptrht);
+	if((error = INSERT_PAR(token.name, id_string, funcName, ptrht)) != OK)
+        return error;
 	free(id_string);
 	
 	if((error = Get_Token(&token)) != OK)
@@ -680,6 +707,9 @@ int p_declare_nextparameter(char* funcName) {
 	DELETE_SEARCH(idData);
 	
 	char *id_string = (char*)malloc(sizeof(char) * strlen(token.data));
+    if(id_string == NULL)
+        return ALLOC_ERROR;
+    
 	strcpy(id_string, token.data);
 	
 	if((error = Get_Token(&token)) != OK) {
@@ -703,7 +733,9 @@ int p_declare_nextparameter(char* funcName) {
 	}
 	
 	//Vlozenie par do TS + clear_token
-	INSERT_PAR(token.name, id_string, funcName, ptrht);
+	if((error = INSERT_PAR(token.name, id_string, funcName, ptrht)) != OK)
+        return error;
+    
 	free(id_string);
 	
 	if((error = Get_Token(&token)) != OK)
@@ -903,7 +935,8 @@ int p_prikaz(int return_type) {
 			}
 			
 			//Vlozenie ID do TS
-			INSERT_DIM(token.name, idToken.data, ptrht);
+			if((error = INSERT_DIM(token.name, idToken.data, ptrht)) != OK)
+                return error;
 			
 			Clear_Token(&idToken);
 			break;

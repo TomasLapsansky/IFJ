@@ -16,7 +16,11 @@ int main(void) {
 	ptrht = (tHTable*)malloc(sizeof(tHTable));
     global_ptrht = ptrht;
 	s = (tStack*)malloc(sizeof(tStack));
-	
+	if(ptrht == NULL)
+        return ALLOC_ERROR;
+    if(s == NULL)
+        return ALLOC_ERROR;
+    
 	Init_Token(&token);
 	htInit(ptrht);
 	stackInit(s);

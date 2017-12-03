@@ -88,7 +88,7 @@ POZOR pokud v dane tabulce uz existuje neco se stejnym nazvem prepisuje!!!
 pred pouzitim volej SEARCH() !!!
 ALLOC_ERROR / OK
 */
-enum Errors INSERT_DIM(int type,char* nazov_dim,tHTable* tabulka);
+int INSERT_DIM(int type,char* nazov_dim,tHTable* tabulka);
 
 /*
 stejne jako INSERT_DIM
@@ -98,12 +98,12 @@ POZOR pokud v dane tabulce uz existuje neco se stejnym nazvem prepisuje!!!
 pred pouzitim volej SEARCH() !!!
 ALLOC_ERROR / OK
 */
-enum Errors INSERT_F(char* nazov_f,tHTable* tabulka);
+int INSERT_F(char* nazov_f,tHTable* tabulka);
 
 /*
 nastavi navratovy typ funkce
 */
-bool INSERT_F_TYPE(int type,char* nazov_f,tHTable* tabulka);
+int INSERT_F_TYPE(int type,char* nazov_f,tHTable* tabulka);
 
 /*
 v tabulce najde funkci do ni prida parametr a vlozi ho taky do jeji localni tabulky symbolu
@@ -111,7 +111,7 @@ true -> vse se povedlo
 flase -> funkce neni v TS,chyba alokace
 ALLOC_ERROR / OK / SEM_TYPE_ERROR pokud se pokusite zadat podruhe stejny parametr
 */
-enum Errors INSERT_PAR(int type,char* nazev_par, char* nazov_f,tHTable* tabulka);
+int INSERT_PAR(int type,char* nazev_par, char* nazov_f,tHTable* tabulka);
 
 /*
 nastavi bool definovana na true
@@ -141,7 +141,7 @@ void DELETE_TS(tHTable* global_tabulka);
 
 int hashCode ( char* key );
 
-void htInit ( tHTable* ptrht );
+bool htInit ( tHTable* ptrht );
 
 tHTItem* htSearch ( tHTable* ptrht, char* key );
 

@@ -26,15 +26,16 @@ int hashCode ( char* key ) {
 ** se volá pouze před prvním použitím tabulky.
 */
 
-void htInit ( tHTable* ptrht ) {
-	if(ptrht==NULL)	return;	//oevereni platnosti ukazatele
+bool htInit ( tHTable* ptrht ) {
+	if(ptrht==NULL)	return false;	//oevereni platnosti ukazatele
 	int i=0;
 	while(i<HTSIZE)	//projde vsechny polozky pole		{
 	{
 		(*ptrht)[i]=NULL;	//potreba ukotvit vsechny vytvorene pointery
 		i++;
 	}
-
+    
+    return true;
 }
 
 /* TRP s explicitně zřetězenými synonymy.
@@ -174,7 +175,7 @@ void Uvolnitparametry(tHTItem* ptrht)
 
 /*InterFace TS*/
 
-enum Errors INSERT_DIM(int type,char* nazov_dim,tHTable* tabulka)
+int INSERT_DIM(int type,char* nazov_dim,tHTable* tabulka)
 {
 	char * pamet;
 	pamet=(char*)malloc(sizeof(char)*(strlen(nazov_dim)+1));
@@ -201,7 +202,7 @@ enum Errors INSERT_DIM(int type,char* nazov_dim,tHTable* tabulka)
 	return OK;
 }
 
-enum Errors INSERT_F(char* nazov_f,tHTable* tabulka)
+int INSERT_F(char* nazov_f,tHTable* tabulka)
 {
 	char * pamet;
 	pamet=(char*)malloc(sizeof(char)*(strlen(nazov_f)+1));
@@ -233,7 +234,7 @@ enum Errors INSERT_F(char* nazov_f,tHTable* tabulka)
 	return OK;
 }
 
-bool INSERT_F_TYPE(int type,char* nazov_f,tHTable* tabulka)
+int INSERT_F_TYPE(int type,char* nazov_f,tHTable* tabulka)
 {
 	char * pamet;
 	pamet=(char*)malloc(sizeof(char)*(strlen(nazov_f)+1));
@@ -249,16 +250,16 @@ bool INSERT_F_TYPE(int type,char* nazov_f,tHTable* tabulka)
 	free(pamet);
 	if(tmp==NULL)
 	{
-		return false;
+		return UNEXIST;
 	}
 	else
 	{
 		tmp->data.type=type;
-		return true;
+		return OK;
 	}
 }
 
-enum Errors INSERT_PAR(int type,char* nazev_par, char* nazov_f,tHTable* tabulka)
+int INSERT_PAR(int type,char* nazev_par, char* nazov_f,tHTable* tabulka)
 {
 	char * pamet;
 	pamet=(char*)malloc(sizeof(char)*(strlen(nazov_f)+1));
