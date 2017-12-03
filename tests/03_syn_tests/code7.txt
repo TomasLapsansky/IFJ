@@ -6,6 +6,6 @@ scope
 	a = !"hello"
 	b = !"world"
 
-	print a; !" "; b; !"no ok"; "\128";
+	print a; !" "; b; !"no ok"; !"\128";
 
 end scope

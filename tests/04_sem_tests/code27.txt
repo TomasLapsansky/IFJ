@@ -10,11 +10,7 @@ end function
 scope
 
 	dim a as integer
-	
-	if a<>0 then
-		a = inc(a)
-	else
-		
-	end if
+
+	a = inc(2.5)
 
 end scope

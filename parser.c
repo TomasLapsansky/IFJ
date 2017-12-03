@@ -284,7 +284,7 @@ int p_define(void) {
                 //Semanticka kontrola poctu parametrov vo funkcii
                 if(idData->pocet_parametru != pocet_parametrov) {
                     DELETE_SEARCH(idData);
-                    return SEM_TYPE_ERROR;
+                    return SEM_ERROR;
                 }
                 
                 if((error = Get_Token(&token)) != OK) {
@@ -506,7 +506,7 @@ int p_parameter(tRetData *funcData, int *pocet_parametrov) {
 		if(error == NON_ID)
 			ret = SYN_A_ERROR;
 		else //if(error == F_ID || error == UNEXIST)
-			ret = SEM_TYPE_ERROR;
+			ret = SEM_ERROR;
 		
 		DELETE_SEARCH(idData);
 		return ret;
@@ -516,7 +516,7 @@ int p_parameter(tRetData *funcData, int *pocet_parametrov) {
 	
 	if(strcmp(funcData->nazvy[*pocet_parametrov], token.data) != 0) {
 		DELETE_SEARCH(idData);
-		return SEM_TYPE_ERROR;
+		return SEM_ERROR;
 	}
 	
 	if((error = Get_Token(&token)) != OK)
@@ -533,7 +533,7 @@ int p_parameter(tRetData *funcData, int *pocet_parametrov) {
 	
 	if(funcData->typy[*pocet_parametrov] != token.name) {
 		DELETE_SEARCH(idData);
-		return SEM_TYPE_ERROR;
+		return SEM_ERROR;
 	}
 	DELETE_SEARCH(idData);
 	
@@ -568,7 +568,7 @@ int p_nextparameter(tRetData *funcData, int *pocet_parametrov) {
 		if(error == NON_ID)
 			ret = SYN_A_ERROR;
 		else //if(error == F_ID || error == UNEXIST)
-			ret = SEM_TYPE_ERROR;
+			ret = SEM_ERROR;
 		
 		DELETE_SEARCH(idData);
 		return ret;
@@ -576,7 +576,7 @@ int p_nextparameter(tRetData *funcData, int *pocet_parametrov) {
 	
 	if(strcmp(funcData->nazvy[*pocet_parametrov], token.data) != 0) {
 		DELETE_SEARCH(idData);
-		return SEM_TYPE_ERROR;
+		return SEM_ERROR;
 	}
 	
 	if((error = Get_Token(&token)) != OK)
@@ -593,7 +593,7 @@ int p_nextparameter(tRetData *funcData, int *pocet_parametrov) {
 	
 	if(funcData->typy[*pocet_parametrov] != token.name) {
 		DELETE_SEARCH(idData);
-		return SEM_TYPE_ERROR;
+		return SEM_ERROR;
 	}
 	DELETE_SEARCH(idData);
 	
@@ -765,11 +765,13 @@ int p_vparameter(tRetData *funcData, int *pocet_parametrov) {
 	
     if(p_type() == OK) {    //pri vstupovani presnych vyrazov, nie premennych
         
-        //najhnusnejsia vec v mojom zivote, ktoru som urobil, aby sme nemuseli prerabat projekt kvoli roznym typom v tokene a TS - jej kopia, original je dole
+        //najhnusnejsia vec v mojom zivote, ktoru som urobil, aby sme nemuseli prerabat projekt kvoli roznym typom v tokene a TS - jej kopia, original je dole + typova konverzia int double
         if(!((token.name == INT_NUM && funcData->typy[*pocet_parametrov] == INTEGER) ||
              (token.name == DOUBLE_NUM && funcData->typy[*pocet_parametrov] == DOUBLE) ||
              (token.name == STR && funcData->typy[*pocet_parametrov] == STRING) ||
-             (token.name == BL && funcData->typy[*pocet_parametrov] == BOOLEAN_)))
+             (token.name == BL && funcData->typy[*pocet_parametrov] == BOOLEAN_) ||
+             (token.name == INT_NUM && funcData->typy[*pocet_parametrov] == DOUBLE) ||
+             (token.name == DOUBLE_NUM && funcData->typy[*pocet_parametrov] == INTEGER)))
             return SEM_TYPE_ERROR;
         
     } else {
@@ -788,8 +790,11 @@ int p_vparameter(tRetData *funcData, int *pocet_parametrov) {
         
         //Semanticke overovanie vstupneho parametra == Data type
         if(idData->type != funcData->typy[*pocet_parametrov]) {
-            DELETE_SEARCH(idData);
-            return SEM_TYPE_ERROR;
+            if(!((idData->type == INTEGER && funcData->typy[*pocet_parametrov] == DOUBLE) || (idData->type == DOUBLE && funcData->typy[*pocet_parametrov] == INTEGER))) {
+                //typova konverzia int double
+                DELETE_SEARCH(idData);
+                return SEM_TYPE_ERROR;
+            }
         }
         
         DELETE_SEARCH(idData);
@@ -822,11 +827,13 @@ int p_vnextparameter(tRetData *funcData, int *pocet_parametrov) {
 	
     if(p_type() == OK) {    //pri vstupovani presnych vyrazov, nie premennych
         
-        //najhnusnejsia vec v mojom zivote, ktoru som urobil, aby sme nemuseli prerabat projekt kvoli roznym typom v tokene a TS
+        //najhnusnejsia vec v mojom zivote, ktoru som urobil, aby sme nemuseli prerabat projekt kvoli roznym typom v tokene a TS - jej kopia, original je dole + typova konverzia int double
         if(!((token.name == INT_NUM && funcData->typy[*pocet_parametrov] == INTEGER) ||
-           (token.name == DOUBLE_NUM && funcData->typy[*pocet_parametrov] == DOUBLE) ||
-           (token.name == STR && funcData->typy[*pocet_parametrov] == STRING) ||
-           (token.name == BL && funcData->typy[*pocet_parametrov] == BOOLEAN_)))
+             (token.name == DOUBLE_NUM && funcData->typy[*pocet_parametrov] == DOUBLE) ||
+             (token.name == STR && funcData->typy[*pocet_parametrov] == STRING) ||
+             (token.name == BL && funcData->typy[*pocet_parametrov] == BOOLEAN_) ||
+             (token.name == INT_NUM && funcData->typy[*pocet_parametrov] == DOUBLE) ||
+             (token.name == DOUBLE_NUM && funcData->typy[*pocet_parametrov] == INTEGER)))
             return SEM_TYPE_ERROR;
         
     } else {
@@ -845,8 +852,11 @@ int p_vnextparameter(tRetData *funcData, int *pocet_parametrov) {
         
         //Semanticke overovanie vstupneho parametra == Data type
         if(idData->type != funcData->typy[*pocet_parametrov]) {
-            DELETE_SEARCH(idData);
-            return SEM_TYPE_ERROR;
+            if(!((idData->type == INTEGER && funcData->typy[*pocet_parametrov] == DOUBLE) || (idData->type == DOUBLE && funcData->typy[*pocet_parametrov] == INTEGER))) {
+                //typova konverzia int double
+                DELETE_SEARCH(idData);
+                return SEM_TYPE_ERROR;
+            }
         }
         
         DELETE_SEARCH(idData);
@@ -1081,7 +1091,7 @@ int p_prikaz(int return_type) {
 			
 			if((error = p_vyraz(return_type)) != OK)	//Return <p_vyraz>
 				break;
-			
+            
 			break;
 		default:
 			
@@ -1091,7 +1101,7 @@ int p_prikaz(int return_type) {
 				if(error == NON_ID)
 					error = E_OK;				//ε
 				else //if(error == F_ID)
-					error = SYN_A_ERROR;
+					error = SEM_ERROR;
 				
 				//DELETE_SEARCH(idData);
 				break;
@@ -1161,7 +1171,7 @@ int p_priradenie(int type) {
 	
 	if(idData->pocet_parametru != pocet_parametrov) {
 		DELETE_SEARCH(idData);
-		return SEM_TYPE_ERROR;
+		return SEM_ERROR;
 	}
 	
 	DELETE_SEARCH(idData);

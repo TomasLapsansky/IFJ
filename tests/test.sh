@@ -731,11 +731,11 @@ vstup=code14.txt
 ../prg < ./03_syn_tests/${vstup}
 
 A=$?
-if [  $A = 2 ]
+if [  $A = 3 ]
 then
-echo -e ${GREEN}OK  - ${vstup} -  Chybne volanie f =2${NC}
+echo -e ${GREEN}OK  - ${vstup} -  Chybne volanie f =3${NC}
 else
-echo -e ${RED}FAIL  - ${vstup} -  Chybne volanie f !=2 !=$A ${NC}
+echo -e ${RED}FAIL  - ${vstup} -  Chybne volanie f !=3 =$A ${NC}
 fi
 
 vstup=code15.txt
@@ -1022,9 +1022,9 @@ vstup=code19.txt
 A=$?
 if [  $A = 0 ]
 then
-echo -e ${GREEN}OK  - ${vstup} -  Return konverzia double = int,double =0${NC}
+echo -e ${GREEN}OK  - ${vstup} -  Return konverzia double = int= =0${NC}
 else
-echo -e ${RED}FAIL  - ${vstup} -  Return konverzia double = int,double !=0 =$A ${NC}
+echo -e ${RED}FAIL  - ${vstup} -  Return konverzia double = int !=0 =$A ${NC}
 fi
 
 vstup=code20.txt
@@ -1064,20 +1064,64 @@ vstup=code23.txt
 ../prg < ./04_sem_tests/${vstup}
 
 A=$?
-if [  $A = 4 ]
+if [  $A = 2 ]
 then
-echo -e ${GREEN}OK  - ${vstup} -  Chybne volanie funkcie =4${NC}
+echo -e ${GREEN}OK  - ${vstup} -  Chybne volanie funkcie =2${NC}
 else
-echo -e ${RED}FAIL  - ${vstup} -  Chybne volanie funkcie !=4 =$A ${NC}
+echo -e ${RED}FAIL  - ${vstup} -  Chybne volanie funkcie !=2 =$A ${NC}
 fi
 
 vstup=code24.txt
 ../prg < ./04_sem_tests/${vstup}
 
 A=$?
-if [  $A = 4 ]
+if [  $A = 3 ]
 then
-echo -e ${GREEN}OK  - ${vstup} -  Chybne volanie funkcie =4${NC}
+echo -e ${GREEN}OK  - ${vstup} -  Chybne volanie funkcie =3${NC}
 else
-echo -e ${RED}FAIL  - ${vstup} -  Chybne volanie funkcie !=4 =$A ${NC}
+echo -e ${RED}FAIL  - ${vstup} -  Chybne volanie funkcie !=3 =$A ${NC}
+fi
+
+vstup=code25.txt
+../prg < ./04_sem_tests/${vstup}
+
+A=$?
+if [  $A = 0 ]
+then
+echo -e ${GREEN}OK  - ${vstup} -  Vkladanie presneho vyrazu int to int =0${NC}
+else
+echo -e ${RED}FAIL  - ${vstup} -  Vkladanie presneho vyrazu int to int !=0 =$A ${NC}
+fi
+
+vstup=code26.txt
+../prg < ./04_sem_tests/${vstup}
+
+A=$?
+if [  $A = 0 ]
+then
+echo -e ${GREEN}OK  - ${vstup} -  Vkladanie presneho vyrazu double to double =0${NC}
+else
+echo -e ${RED}FAIL  - ${vstup} -  Vkladanie presneho vyrazu double to double !=0 =$A ${NC}
+fi
+
+vstup=code27.txt
+../prg < ./04_sem_tests/${vstup}
+
+A=$?
+if [  $A = 0 ]
+then
+echo -e ${GREEN}OK  - ${vstup} -  Vkladanie presneho vyrazu double to int =0${NC}
+else
+echo -e ${RED}FAIL  - ${vstup} -  Vkladanie presneho vyrazu double to int !=0 =$A ${NC}
+fi
+
+vstup=code28.txt
+../prg < ./04_sem_tests/${vstup}
+
+A=$?
+if [  $A = 0 ]
+then
+echo -e ${GREEN}OK  - ${vstup} -  Chybne volanie funkcie int to double =0${NC}
+else
+echo -e ${RED}FAIL  - ${vstup} -  Chybne volanie funkcie int to double !=0 =$A ${NC}
 fi
