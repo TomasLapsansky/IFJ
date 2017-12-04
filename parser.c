@@ -44,6 +44,8 @@ int id(tRetData **ins_id, TOKEN *ins_token, tHTable* use_ptrht) {
 //main
 int parser(void) {
     
+    printf(".IFJcode17\n");    //potrebna hlavicka
+    
     //Vkladania vstavanych funkcii pre syntakticku a sematicku analyzu
     
     char *nazov_f = (char*)malloc(sizeof(char) * 50);
@@ -456,7 +458,7 @@ int p_type(void) {
 //<p_scope>		Scope EOL <p_body> End Scope EOF
 int p_scope(void) {
 	if(token.name != SCOPE)	//Scope
-		return SYN_A_ERROR;
+        return SYN_A_ERROR;
     
     if((error = declare_define()) != OK)    //overenie definicie a deklaracie vsetkych funkcii
         return error;
@@ -469,6 +471,10 @@ int p_scope(void) {
 	
 	if((error = Get_Token(&token)) != OK)
 		return error;	//gettoken
+    
+    printf("label main\n");
+    printf("createframe\n");
+    printf("pushframe");
 	
 	if((error = p_body(0)) != OK) {	//Scope <p_body>
 		return error;
@@ -483,6 +489,9 @@ int p_scope(void) {
 	if(token.name != SCOPE)		//Scope <p_body> End Scope
 		return SYN_A_ERROR;
 	
+    printf("popframe\n");
+    printf("return\n")
+    
 	if((error = Get_Token(&token)) != OK)
 		return error;	//gettoken
 	
@@ -491,11 +500,9 @@ int p_scope(void) {
 			return error;	//gettoken
 	}
 	
-	
-	
 	if(token.name != EOF_)		//Scope <p_body> End Scope EOL EOF
 		return SYN_A_ERROR;
-	
+    
 	return OK;
 }
 
