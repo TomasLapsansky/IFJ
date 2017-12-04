@@ -21,8 +21,8 @@ bool loaded_token = false;
 int id(tRetData **ins_id, TOKEN *ins_token, tHTable* use_ptrht) {
 	
     if((ins_token->name == LENGTH) || (ins_token->name == SUBSTR) || (ins_token->name == ASC) || (ins_token->name == CHR)) {    //prednostna podmienka pre vstavane funkcie
-        *ins_id = SEARCH(ins_token->data, use_ptrht);   //pri vstavanych funkciach nie je potrebne overovat ich pritomnost
-        return F_ID;
+	*ins_id = SEARCH(ins_token->data, use_ptrht);   //pri vstavanych funkciach nie je potrebne overovat ich pritomnost
+	return F_ID;
     } else if(ins_token->name == ID) {
 		*ins_id = SEARCH(ins_token->data, use_ptrht);
 		
@@ -460,8 +460,8 @@ int p_scope(void) {
 	if(token.name != SCOPE)	//Scope
         return SYN_A_ERROR;
     
-    if((error = declare_define()) != OK)    //overenie definicie a deklaracie vsetkych funkcii
-        return error;
+	if((error = declare_define()) != OK)    //overenie definicie a deklaracie vsetkych funkcii
+		return error;
      
 	if((error = Get_Token(&token)) != OK)
 		return error;	//gettoken
@@ -660,8 +660,8 @@ int p_declare_parameter(char* funcName) {
 	DELETE_SEARCH(idData);
 	
 	char *id_string = (char*)malloc(sizeof(char) * strlen(token.data));
-    if(id_string == NULL)
-        return ALLOC_ERROR;
+	if(id_string == NULL)
+		return ALLOC_ERROR;
     
 	strcpy(id_string, token.data);
 	
@@ -726,8 +726,8 @@ int p_declare_nextparameter(char* funcName) {
 	DELETE_SEARCH(idData);
 	
 	char *id_string = (char*)malloc(sizeof(char) * strlen(token.data));
-    if(id_string == NULL)
-        return ALLOC_ERROR;
+    	if(id_string == NULL)
+		return ALLOC_ERROR;
     
 	strcpy(id_string, token.data);
 	
