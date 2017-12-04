@@ -58,7 +58,7 @@ int p_vyraz(int type){
 	psa_list *list = psa_list_init();
 	psa_item *newitem,*item,aitem[3];
 	char sign,kala[50],pom1[50],pom2[50];
-	int column,error,start = 1,n=1,len;
+	int column,error,start = 1,n=1;
 	loaded_token = true;
 //qprintf("\n*****START_PSA*****\n\n");
 	tRetData *var;
@@ -110,6 +110,7 @@ int p_vyraz(int type){
 		// $ == $ OK konec whilu
 		if(sign == '-'){
 			psa_item *final = psa_list_top(list);
+
 			// ocekavany datovy typ
 			switch(type){
 				case INTEGER: type = INT_NUM; break;
@@ -200,24 +201,25 @@ int p_vyraz(int type){
 							// urceni hodnoty
 							if(token.name == INT_NUM){
 								newitem->data_type = token.name;
-							 	newitem->value.i = give_me_int(token.data);
+							 	//newitem->value.i = give_me_int(token.data);
 							}
 							else if(token.name == DOUBLE_NUM){
 								newitem->data_type = token.name;
-							 	newitem->value.d = give_me_double(token.data);
+							 	//newitem->value.d = give_me_double(token.data);
 							}
 							else if(token.name == STR){
 								newitem->data_type = token.name;
-								len = strlen(token.data);
+								/*len = strlen(token.data);
 
 								if((newitem->value.string = malloc(len+1)) == NULL){
 									return ALLOC_ERROR;
 								}
 								memcpy(newitem->value.string,token.data,len +1);
+								*/
 							}
 							else if(token.name == BL){
 								newitem->data_type = token.name;
-							 	newitem->value.i = give_me_int(token.data);
+							 	//newitem->value.i = give_me_int(token.data);
 							}
 							else if(token.name == ID){
 								// kdyz narazim na promenou, zkontroluji zda je deklaravona
@@ -239,14 +241,14 @@ int p_vyraz(int type){
 									sprintf(kala,"$kala%d",n);
 									strcpy(newitem->name,kala);
 									printf("defvar Lf@%s\n",token.data);
-									printf("move Tf@$kala%d Lf@%s\n",n,token.data);
+									printf("move Tf@%s Lf@%s\n",kala,token.data);
 									n++;
 								
-								switch(var->type){
-										case INTEGER: newitem->data_type = INT_NUM; break;
-										case DOUBLE: newitem->data_type = DOUBLE_NUM; break;
-										case STRING: newitem->data_type = STR; break;
-										case BOOLEAN_: newitem->data_type = BL; break;
+									switch(var->type){
+											case INTEGER: newitem->data_type = INT_NUM; break;
+											case DOUBLE: newitem->data_type = DOUBLE_NUM; break;
+											case STRING: newitem->data_type = STR; break;
+											case BOOLEAN_: newitem->data_type = BL; break;
 									}	
 							}	
 
@@ -255,9 +257,9 @@ int p_vyraz(int type){
 										sprintf(kala,"$kala%d",n);
 										strcpy(newitem->name,kala);
 										switch(token.name){
-											case INT_NUM: printf("move Tf@$kala%d int@%d\n",n,give_me_int(token.data));break;
-											case DOUBLE_NUM: printf("move Tf@$kala%d float@%g\n",n,give_me_double(token.data));break;
-											case STR: printf("move Tf@$kala%d string@%s\n",n,token.data);break;
+											case INT_NUM: printf("move Tf@%s int@%d\n",kala,give_me_int(token.data));break;
+											case DOUBLE_NUM: printf("move Tf@%s float@%g\n",kala,give_me_double(token.data));break;
+											case STR: printf("move Tf@%s string@%s\n",kala,token.data);break;
 										}
 										n++;
 							}					
@@ -291,48 +293,49 @@ int p_vyraz(int type){
 									// urceni hodnoty vytvareneho noveho itemu, ktery vlozime na seznam
 									if(token.name == INT_NUM){
 										newitem->data_type = token.name;
-									 	newitem->value.i = give_me_int(token.data);
+									 	//newitem->value.i = give_me_int(token.data);
 									}
 									else if(token.name == DOUBLE_NUM){
 										newitem->data_type = token.name;
-									 	newitem->value.d = give_me_double(token.data);
+									 	//newitem->value.d = give_me_double(token.data);
 									}
 									else if(token.name == STR){
 									 	newitem->data_type = token.name;
-										len = strlen(token.data);
+										/*len = strlen(token.data);
 
 										if((newitem->value.string = malloc(len+1)) == NULL){
 											return ALLOC_ERROR;
 										}
 										memcpy(newitem->value.string,token.data,len +1);
+										*/
 									}
 									else if(token.name == ID){
 									// kdyz narazim na promenou, zkontroluji zda je deklaravona
-									if((var = SEARCH(token.data,ptrht)) == NULL){
-									// promena neni deklarovana
-							//printf("Var %s not declared\n",token.data);
-										psa_list_delete(list);
-										return SEM_ERROR;
-									}
-										
-									printf("defvar Tf@$kala%d\n",n);
-									sprintf(kala,"$kala%d",n);
-									strcpy(newitem->name,kala);
-									printf("defvar Lf@%s\n",token.data);
-									printf("move Tf@$kala%d Lf@%s\n",n,token.data);
-									n++;
-									// kontrola zda je to funkce -> ERROR
-									if(var->funkce == true){
-										psa_list_delete(list);
-										return SEM_ERROR;
-									}
-								
-									switch(var->type){
-										case INTEGER: newitem->data_type = INT_NUM; break;
-										case DOUBLE: newitem->data_type = DOUBLE_NUM; break;
-										case STRING: newitem->data_type = STR; break;
-										case BOOLEAN_: newitem->data_type = BL; break;
+										if((var = SEARCH(token.data,ptrht)) == NULL){
+										// promena neni deklarovana
+						//printf("Var %s not declared\n",token.data);
+											psa_list_delete(list);
+											return SEM_ERROR;
 										}
+										// kontrola zda je to funkce -> ERROR
+										if(var->funkce == true){
+											psa_list_delete(list);
+											return SEM_ERROR;
+										}
+
+										printf("defvar Tf@$kala%d\n",n);
+										sprintf(kala,"$kala%d",n);
+										strcpy(newitem->name,kala);
+										printf("defvar Lf@%s\n",token.data);
+										printf("move Tf@%s Lf@%s\n",kala,token.data);
+										n++;
+									
+										switch(var->type){
+											case INTEGER: newitem->data_type = INT_NUM; break;
+											case DOUBLE: newitem->data_type = DOUBLE_NUM; break;
+											case STRING: newitem->data_type = STR; break;
+											case BOOLEAN_: newitem->data_type = BL; break;
+											}
 									}
 
 									if(token.name < 15 && token.name > 10){
@@ -340,9 +343,9 @@ int p_vyraz(int type){
 										sprintf(kala,"$kala%d",n);
 										strcpy(newitem->name,kala);
 										switch(token.name){
-											case INT_NUM: printf("move Tf@$kala%d int@%d\n",n,give_me_int(token.data));break;
-											case DOUBLE_NUM: printf("move Tf@$kala%d float@%g\n",n,give_me_double(token.data));break;
-											case STR: printf("move Tf@$kala%d string@%s\n",n,token.data);break;
+											case INT_NUM: printf("move Tf@%s int@%d\n",kala,give_me_int(token.data));break;
+											case DOUBLE_NUM: printf("move Tf@%s float@%g\n",kala,give_me_double(token.data));break;
+											case STR: printf("move Tf@$%s string@%s\n",kala,token.data);break;
 										}
 										n++;
 									}
@@ -376,7 +379,6 @@ int p_vyraz(int type){
 		 			 	// ulozim si
 		 			 	aitem[i].oper = item->oper;
 		 			 	aitem[i].data_type = item->data_type;
-		 			 	aitem[i].value = item->value;
 		 			 	strcpy(aitem[i].name,item->name);
 
 		 			 	item = item->lptr;
@@ -408,13 +410,13 @@ int p_vyraz(int type){
 		 			 	item = psa_create_item();
 		 			 	if(aitem[0].oper == OP_ID){
 		 			 		item->data_type = aitem[0].data_type;
+		 			 		strcpy(item->name,aitem[0].name);
 		 			 	}
 		 			 	else{
 		 			 		item->data_type = aitem[1].data_type;
+		 			 		strcpy(item->name,aitem[1].name);
 		 			 	}
 
-		 			 	strcpy(item->name,aitem[0].name);
-						
 						// vytvoreni OP_E
 					    item->oper = OP_E;
 					    // vlozeni OP_E do seznamu
@@ -426,6 +428,7 @@ int p_vyraz(int type){
 		 			 else if((aitem[0].oper == OP_E)&&((aitem[1].oper < 11)||(aitem[1].oper == 16))&&(aitem[2].oper == OP_E)){
 //qprintf("VYHODNOCENI PRAVIDLA E->E operator E\n");	
 						item = psa_create_item();
+
 		 			 	// URCENI VYSLEDNEHO DATOVEHO TYPU
 		 			 	// pokud je operator porovnavaci vraci BOOL
 		 			 	if(aitem[1].oper > 3 && aitem[1].oper < 10){
@@ -441,7 +444,7 @@ int p_vyraz(int type){
 		 			 		}
 		 			 	}
 
-		 			 	// pokud nejsou stejne datove typya operandu, prevedeme
+		 			 	// DATOVE TYPY NEJSOU STEJNE
 		 			 	if(aitem[0].data_type != aitem[2].data_type){
 		 			 		if(aitem[0].data_type == BL || aitem[2].data_type == BL){
 		 			 		psa_list_delete(list);
@@ -467,6 +470,23 @@ int p_vyraz(int type){
 		 			 			psa_list_delete(list);
 		 			 			return SEM_TYPE_ERROR;
 		 			 		}
+
+		 			 		printf("defvar Tf@$kala%d\n",n);
+							sprintf(kala,"$kala%d",n);
+							strcpy(item->name,kala);
+			 			 	switch(aitem[1].oper){
+				 		 		case OP_MUL: printf("mul Tf@%s Tf@%s Tf@%s\n",kala,aitem[0].name,aitem[2].name);break;
+				 		 		case OP_DIV: printf("div Tf@%s Tf@%s Tf@%s\n",kala,aitem[0].name,aitem[2].name);break;
+				 		 		case OP_ADD: printf("add Tf@%s Tf@%s Tf@%s\n",kala,aitem[0].name,aitem[2].name);break;
+						 		case OP_MINUS: printf("sub Tf@%s Tf@%s Tf@%s\n",kala,aitem[0].name,aitem[2].name);break;
+			 			 		case OP_LESSER: printf("lt Tf@%s Tf@%s Tf@%s\n",kala,aitem[0].name,aitem[2].name);break;
+			 			 		case OP_LESSEREQUAL: printf("lt Tf@%s Tf@%s Tf@%s\n",kala,aitem[0].name,aitem[2].name);break;
+			 			 		case OP_GREATER: printf("gt Tf@%s Tf@%s Tf@%s\n",kala,aitem[0].name,aitem[2].name);break;
+				 		 		case OP_GREATEREQUAL: printf("gt Tf@%sTf@%s Tf@%s\n",kala,aitem[0].name,aitem[2].name);break;
+						 		case OP_EQUAL: printf("eq Tf@%s Tf@%s Tf@%s\n",kala,aitem[0].name,aitem[2].name);break;
+			 			 		case OP_NOTEQUAL: printf("sub Tf@%sTf@%s Tf@%s\n",kala,aitem[0].name,aitem[2].name);break;
+			 			 	}
+		 			 		n++;
 		 			 	}
 		 			 	// DATOVE TYPY JSOU STEJNE
 		 			 	else{
@@ -474,6 +494,7 @@ int p_vyraz(int type){
 							sprintf(kala,"$kala%d",n);
 							strcpy(item->name,kala);
 
+							// DVA STRINGY
 		 			 		if(aitem[0].data_type == STR){
 		 			 			switch(aitem[1].oper){
 				 			 		case OP_ADD: printf("concat Tf@%s Tf@%s Tf@%s\n",kala,aitem[0].name,aitem[2].name);break;
@@ -487,6 +508,7 @@ int p_vyraz(int type){
 										sprintf(pom2,"$kala%d",n);
 										strcpy(item->name,pom2);
 										printf("or Tf@%s Tf@%s Tf@%s\n",pom2,kala,pom1);
+										strcpy(item->name,pom2);
 				 			 		}break;
 				 			 		case OP_GREATER: printf("gt Tf@%s Tf@%s Tf@%s\n",kala,aitem[0].name,aitem[2].name);break;
 				 			 		case OP_GREATEREQUAL: {
@@ -498,6 +520,7 @@ int p_vyraz(int type){
 										sprintf(pom2,"$kala%d",n);
 										strcpy(item->name,pom2);
 										printf("or Tf@%s Tf@%s Tf@%s\n",pom2,kala,pom1);
+										strcpy(item->name,pom2);
 				 			 		}break;
 				 			 		case OP_EQUAL: printf("eq Tf@%s Tf@%s Tf@%s\n",kala,aitem[0].name,aitem[2].name);break;
 				 			 		case OP_NOTEQUAL:{
@@ -506,21 +529,25 @@ int p_vyraz(int type){
 										sprintf(pom1,"$kala%d",n);
 										strcpy(item->name,pom1);
 										printf("not Tf@%s Tf@%s\n",pom1,kala);
+										strcpy(item->name,pom1);
 				 			 		}break;
 				 			 		default: return SEM_TYPE_ERROR;break;
 				 			 	}
+	
 		 			 		}
+		 			 		// DVA STEJNE DAT TYPY
 		 			 		else{
-			 			 		switch(aitem[1].oper){
-				 			 		case OP_MUL: printf("mul Tf@%s Tf@%s Tf@%s\n",kala,aitem[0].name,aitem[2].name);break;
-				 			 		case OP_DIV: printf("div Tf@%s Tf@%s Tf@%s\n",kala,aitem[0].name,aitem[2].name);break;
-				 			 		case OP_ADD: printf("add Tf@%s Tf@%s Tf@%s\n",kala,aitem[0].name,aitem[2].name);break;
-				 			 		case OP_MINUS: printf("sub Tf@%s Tf@%s Tf@%s\n",kala,aitem[0].name,aitem[2].name);break;
+		 			 	
+				 			 	switch(aitem[1].oper){
+					 		 		case OP_MUL: printf("mul Tf@%s Tf@%s Tf@%s\n",kala,aitem[0].name,aitem[2].name);break;
+					 		 		case OP_DIV: printf("div Tf@%s Tf@%s Tf@%s\n",kala,aitem[0].name,aitem[2].name);break;
+					 		 		case OP_ADD: printf("add Tf@%s Tf@%s Tf@%s\n",kala,aitem[0].name,aitem[2].name);break;
+							 		case OP_MINUS: printf("sub Tf@%s Tf@%s Tf@%s\n",kala,aitem[0].name,aitem[2].name);break;
 				 			 		case OP_LESSER: printf("lt Tf@%s Tf@%s Tf@%s\n",kala,aitem[0].name,aitem[2].name);break;
 				 			 		case OP_LESSEREQUAL: printf("lt Tf@%s Tf@%s Tf@%s\n",kala,aitem[0].name,aitem[2].name);break;
 				 			 		case OP_GREATER: printf("gt Tf@%s Tf@%s Tf@%s\n",kala,aitem[0].name,aitem[2].name);break;
-				 			 		case OP_GREATEREQUAL: printf("gt Tf@%sTf@%s Tf@%s\n",kala,aitem[0].name,aitem[2].name);break;
-				 			 		case OP_EQUAL: printf("eq Tf@%s Tf@%s Tf@%s\n",kala,aitem[0].name,aitem[2].name);break;
+					 		 		case OP_GREATEREQUAL: printf("gt Tf@%sTf@%s Tf@%s\n",kala,aitem[0].name,aitem[2].name);break;
+							 		case OP_EQUAL: printf("eq Tf@%s Tf@%s Tf@%s\n",kala,aitem[0].name,aitem[2].name);break;
 				 			 		case OP_NOTEQUAL: printf("sub Tf@%sTf@%s Tf@%s\n",kala,aitem[0].name,aitem[2].name);break;
 				 			 	}
 		 			 		}

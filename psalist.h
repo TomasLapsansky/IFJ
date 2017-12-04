@@ -24,12 +24,12 @@ enum oper{
 typedef struct psa_item{
 	char name[50];
 	int data_type; //11-INT 12-DOUBLE 13-STRING 14-BL
-	union{
+	/*union{
 		int i;
 		double d;
 		char *string;
 		void *ptr;
-	}value;
+	}value;*/
 
 	int oper;
 	struct psa_item *lptr;
