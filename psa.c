@@ -149,7 +149,10 @@ int p_vyraz(int type){
 			}else if(type == BL){
 				//printf("*****PSA_COMPLETE******\n\n");
 				//convert na bool
-				printf("move Tf@$return Tf@%s\n",final->name);
+				printf("defvar Tf@$kala%d\n",n);
+				sprintf(kala,"$kala%d",n);
+				printf("eq Tf@%s Tf@%s int@0\n",kala,final->name);
+				printf("not Tf@$return Tf@%s\n",kala);
 				printf("\n#End PSA\n");
 				psa_list_delete(list);
 				return OK;
@@ -201,25 +204,16 @@ int p_vyraz(int type){
 							// urceni hodnoty
 							if(token.name == INT_NUM){
 								newitem->data_type = token.name;
-							 	//newitem->value.i = give_me_int(token.data);
 							}
 							else if(token.name == DOUBLE_NUM){
 								newitem->data_type = token.name;
-							 	//newitem->value.d = give_me_double(token.data);
 							}
 							else if(token.name == STR){
 								newitem->data_type = token.name;
-								/*len = strlen(token.data);
-
-								if((newitem->value.string = malloc(len+1)) == NULL){
-									return ALLOC_ERROR;
-								}
-								memcpy(newitem->value.string,token.data,len +1);
-								*/
+	
 							}
 							else if(token.name == BL){
 								newitem->data_type = token.name;
-							 	//newitem->value.i = give_me_int(token.data);
 							}
 							else if(token.name == ID){
 								// kdyz narazim na promenou, zkontroluji zda je deklaravona
@@ -293,27 +287,18 @@ int p_vyraz(int type){
 									// urceni hodnoty vytvareneho noveho itemu, ktery vlozime na seznam
 									if(token.name == INT_NUM){
 										newitem->data_type = token.name;
-									 	//newitem->value.i = give_me_int(token.data);
 									}
 									else if(token.name == DOUBLE_NUM){
 										newitem->data_type = token.name;
-									 	//newitem->value.d = give_me_double(token.data);
 									}
 									else if(token.name == STR){
 									 	newitem->data_type = token.name;
-										/*len = strlen(token.data);
-
-										if((newitem->value.string = malloc(len+1)) == NULL){
-											return ALLOC_ERROR;
-										}
-										memcpy(newitem->value.string,token.data,len +1);
-										*/
 									}
 									else if(token.name == ID){
 									// kdyz narazim na promenou, zkontroluji zda je deklaravona
 										if((var = SEARCH(token.data,ptrht)) == NULL){
 										// promena neni deklarovana
-						//printf("Var %s not declared\n",token.data);
+//printf("Var %s not declared\n",token.data);
 											psa_list_delete(list);
 											return SEM_ERROR;
 										}

@@ -314,18 +314,6 @@ int Get_Token(TOKEN *t){
 						}break;
 			// stav int
 			case int_:
-						if(next_d){
-								if(isdigit(c)){
-									if((pom = Add_Char(t,c)) == ALLOC_ERROR){
-											return ALLOC_ERROR;
-										}
-									next_d = false;
-								}
-								else{
-									return LEX_A_ERROR;
-								}
-						}
-						else{
 							if(isdigit(c)){
 								if((pom = Add_Char(t,c)) == ALLOC_ERROR){
 										return ALLOC_ERROR;
@@ -358,7 +346,7 @@ int Get_Token(TOKEN *t){
 								t->name = INT_NUM;
 								return OK;
 							}
-						}break;
+						break;
 			case exp_:{
 						if(isdigit(c)){
 							if((pom = Add_Char(t,c)) == ALLOC_ERROR){
