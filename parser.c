@@ -21,8 +21,8 @@ bool loaded_token = false;
 int id(tRetData **ins_id, TOKEN *ins_token, tHTable* use_ptrht) {
 	
     if((ins_token->name == LENGTH) || (ins_token->name == SUBSTR) || (ins_token->name == ASC) || (ins_token->name == CHR)) {    //prednostna podmienka pre vstavane funkcie
-        *ins_id = SEARCH(ins_token->data, use_ptrht);   //pri vstavanych funkciach nie je potrebne overovat ich pritomnost
-        return F_ID;
+	*ins_id = SEARCH(ins_token->data, use_ptrht);   //pri vstavanych funkciach nie je potrebne overovat ich pritomnost
+	return F_ID;
     } else if(ins_token->name == ID) {
 		*ins_id = SEARCH(ins_token->data, use_ptrht);
 		
@@ -43,6 +43,8 @@ int id(tRetData **ins_id, TOKEN *ins_token, tHTable* use_ptrht) {
 
 //main
 int parser(void) {
+    
+    printf(".IFJcode17\n");    //potrebna hlavicka
     
     //Vkladania vstavanych funkcii pre syntakticku a sematicku analyzu
     
@@ -199,9 +201,10 @@ int declare(TOKEN idToken) {
     return OK;
 }
 
-//<p_declare>		ε
-//<p_declare>		Declare Function ID (<p_parameter> As <p_type> "EOL" <p_declare>
-//<p_declare>		Function ID (<p_parameter> As <p_type> "EOL" <p_body> <p_declare>
+//<p_define>		ε
+//<p_define>		Declare Function ID (<p_declareparameter> As <p_type> EOL <p_define>
+//<p_define>        Function ID (<p_declareparameter> As <p_type> EOL <p_body> End Function <p_define>
+//<p_define>        Function ID (<p_parameter> As <p_type> EOL <p_body> End Function <p_define>
 int p_define(void) {
 	
 	tRetData *idData = NULL;//pre korektnost prekladu
@@ -239,7 +242,7 @@ int p_define(void) {
 			if((error = INSERT_F(idToken.data, ptrht)) != OK)
                 return error;
 			
-            if((error = declare(idToken)) != OK) {
+            if((error = declare(idToken)) != OK) {      //Declare Function ID(<p_declare_parameter>) As <p_type> EOL
                 return error;
             }
             
@@ -455,10 +458,10 @@ int p_type(void) {
 //<p_scope>		Scope EOL <p_body> End Scope EOF
 int p_scope(void) {
 	if(token.name != SCOPE)	//Scope
-		return SYN_A_ERROR;
+        return SYN_A_ERROR;
     
-    if((error = declare_define()) != OK)    //overenie definicie a deklaracie vsetkych funkcii
-        return error;
+	if((error = declare_define()) != OK)    //overenie definicie a deklaracie vsetkych funkcii
+		return error;
      
 	if((error = Get_Token(&token)) != OK)
 		return error;	//gettoken
@@ -468,6 +471,10 @@ int p_scope(void) {
 	
 	if((error = Get_Token(&token)) != OK)
 		return error;	//gettoken
+    
+    printf("label main\n");
+    printf("createframe\n");
+    printf("pushframe");
 	
 	if((error = p_body(0)) != OK) {	//Scope <p_body>
 		return error;
@@ -482,6 +489,9 @@ int p_scope(void) {
 	if(token.name != SCOPE)		//Scope <p_body> End Scope
 		return SYN_A_ERROR;
 	
+    printf("popframe\n");
+    printf("return\n")
+    
 	if((error = Get_Token(&token)) != OK)
 		return error;	//gettoken
 	
@@ -490,11 +500,9 @@ int p_scope(void) {
 			return error;	//gettoken
 	}
 	
-	
-	
 	if(token.name != EOF_)		//Scope <p_body> End Scope EOL EOF
 		return SYN_A_ERROR;
-	
+    
 	return OK;
 }
 
@@ -652,8 +660,8 @@ int p_declare_parameter(char* funcName) {
 	DELETE_SEARCH(idData);
 	
 	char *id_string = (char*)malloc(sizeof(char) * strlen(token.data));
-    if(id_string == NULL)
-        return ALLOC_ERROR;
+	if(id_string == NULL)
+		return ALLOC_ERROR;
     
 	strcpy(id_string, token.data);
 	
@@ -718,8 +726,8 @@ int p_declare_nextparameter(char* funcName) {
 	DELETE_SEARCH(idData);
 	
 	char *id_string = (char*)malloc(sizeof(char) * strlen(token.data));
-    if(id_string == NULL)
-        return ALLOC_ERROR;
+    	if(id_string == NULL)
+		return ALLOC_ERROR;
     
 	strcpy(id_string, token.data);
 	
@@ -899,9 +907,9 @@ int p_vnextparameter(tRetData *funcData, int *pocet_parametrov) {
 //<p_prikaz>			ID = <p_priradenie>
 //<p_prikaz>			Input ID
 //<p_prikaz>			Print <p_print>
-//<p_prikaz>			If (<p_vyraz>) Then EOL <p_body> Else EOL <p_body> End If
-//<p_prikaz>			Do While (<p_vyraz>) EOL <p_body> Loop
-//<p_prikaz>			Return <vyraz>
+//<p_prikaz>			If <p_vyraz> Then EOL <p_body> Else EOL <p_body> End If
+//<p_prikaz>			Do While <p_vyraz> EOL <p_body> Loop
+//<p_prikaz>			Return <p_vyraz>
 int p_prikaz(int return_type) {
 	
 	/*
