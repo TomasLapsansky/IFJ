@@ -41,7 +41,7 @@ int main(void) {
 	}
 
 /* *********** KONTROLA LEXIKALNI ANALYZY **************** */
-/*	
+/*
 int pom;
 while((pom = Get_Token(&token)) != EOF){
 		if(pom == LEX_A_ERROR){

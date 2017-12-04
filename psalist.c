@@ -104,6 +104,7 @@ psa_item *psa_create_item(){
 	item->oper = OP_EXP;
 	item->lptr = NULL;
 	item->rptr = NULL;
+	strcpy(item->name," ");
 	return item;
 }
 

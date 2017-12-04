@@ -249,13 +249,6 @@ int Get_Token(TOKEN *t){
 											return OK;
 											break;
 
-							/*	case '/' : if((pom = Add_Char(t,c)) == ALLOC_ERROR){
-												return ALLOC_ERROR;
-											}
-											t->name = DIVISION;
-											return OK;
-											break;
-							*/
 								case 92: if((pom = Add_Char(t,c)) == ALLOC_ERROR){
 												return ALLOC_ERROR;
 											}
@@ -274,20 +267,6 @@ int Get_Token(TOKEN *t){
 												return ALLOC_ERROR;
 											}
 											t->name = RIGHTPAREN;
-											return OK;
-											break;
-
-								case '{' : if((pom = Add_Char(t,c)) == ALLOC_ERROR){
-												return ALLOC_ERROR;
-											}
-											t->name = LEFTBRACE;
-											return OK;
-											break;
-
-								case '}' : if((pom = Add_Char(t,c)) == ALLOC_ERROR){
-												return ALLOC_ERROR;
-											}
-											t->name = RIGHTBRACE;
 											return OK;
 											break;
 
@@ -320,9 +299,9 @@ int Get_Token(TOKEN *t){
 								state = id;
 						}
 						else{
-							if(c != EOF){
+
 							loadedc = c;
-							}
+							
 							if((pom = KeywordCheck(t->data)) != 0){
 								t->name = pom;
 								return OK;
