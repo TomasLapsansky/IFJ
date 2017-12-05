@@ -133,7 +133,7 @@ int p_vyraz(int type){
 				printf("\n#End PSA\n");
 				psa_list_delete(list);
 				return OK;
-			}else if(final->data_type == DOUBLE_NUM && type == INT_NUM){
+			}else if((final->data_type == DOUBLE_NUM)&&(type == INT_NUM)){
 			//printf("*****PSA_COMPLETE******\n\n");
 				//convert na int
 				printf("defvar Tf@$kala%d\n",n);
@@ -257,7 +257,7 @@ int p_vyraz(int type){
 										switch(token.name){
 											case INT_NUM: printf("move Tf@%s int@%d\n",kala,give_me_int(token.data));break;
 											case DOUBLE_NUM: printf("move Tf@%s float@%g\n",kala,give_me_double(token.data));break;
-											case STR: printf("move Tf@%s string@%s\n",kala,token.data);break;
+											case STR: printf("move Tf@$%s string@",kala);to_string(token);printf("\n");break;
 										}
 										n++;
 							}					
@@ -326,7 +326,7 @@ int p_vyraz(int type){
 										switch(token.name){
 											case INT_NUM: printf("move Tf@%s int@%d\n",kala,give_me_int(token.data));break;
 											case DOUBLE_NUM: printf("move Tf@%s float@%g\n",kala,give_me_double(token.data));break;
-											case STR: printf("move Tf@$%s string@%s\n",kala,token.data);break;
+											case STR: printf("move Tf@$%s string@",kala);to_string(token);printf("\n");break;
 										}
 										n++;
 									}
@@ -514,6 +514,7 @@ int p_vyraz(int type){
 				 			 			n++;
 				 			 			printf("defvar Tf@$kala%d\n",n);
 										sprintf(pom1,"$kala%d",n);
+
 										printf("not Tf@%s Tf@%s\n",pom1,kala);
 										strcpy(item->name,pom1);
 				 			 		}break;
