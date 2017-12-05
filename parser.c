@@ -1084,7 +1084,7 @@ int p_prikaz(int return_type) {
 			if((error = Get_Token(&token)) != OK)
 				break;	//gettoken
 			
-			printf("jumoifeg body%d vyraz%d bool@false\n", body_index, body_index);
+			printf("jumpifeq body%d LF@vyraz%d bool@false\n", body_index, body_index);
 			
 			printf("\n#IF TRUE BODY\n");
 			if((error = p_body(return_type)) != OK) {	//If <p_vyraz> Then EOL <p_body>
@@ -1150,15 +1150,17 @@ int p_prikaz(int return_type) {
 				break;	//gettoken
 			
 			printf("\n#DO WHILE\n");
+			
+			printf("defvar LF@vyraz%d\n", body_index);
+			
 			printf("label body%d\n", body_index);
 			
 			if((error = p_vyraz(BL)) != OK)	//Do While <p_vyraz>
 				break;
 			
-			printf("defvar LF@vyraz%d\n", body_index);
 			printf("move LF@vyraz%d TF@$return\n", body_index);
 			
-			printf("jumpifeg body%d vyraz%d bool@false\n", body_index+1, body_index);
+			printf("jumpifeq body%d LF@vyraz%d bool@false\n", body_index+1, body_index);
 			
 			loaded_token = false;
 			
