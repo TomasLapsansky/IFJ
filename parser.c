@@ -1092,7 +1092,7 @@ int p_prikaz(int return_type) {
 			
 			local_body_index = body_index;
 			
-			body_index++;
+			body_index += 2;
 			
 			printf("\n#IF TRUE BODY\n");
 			if((error = p_body(return_type)) != OK) {	//If <p_vyraz> Then EOL <p_body>
