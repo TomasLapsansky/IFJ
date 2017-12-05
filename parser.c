@@ -15,6 +15,8 @@ extern tHTable* ptrht;		//HASH table
 extern tHTable* global_ptrht;   //odkaz na globalnu TS - pouziva sa pri volani funkcii
 extern tStack *s;
 
+int body_index = 0;
+
 bool loaded_token = false;
 
 //spracovanie ID		TODO
@@ -122,7 +124,9 @@ int parser(void) {
     
     free(nazov_f);
     free(par);
-    
+	
+	gener_fce();		//pridanie vstavanych funckii do vystupu
+	
 	line = 1;
 	return p_start();
 }
@@ -242,7 +246,7 @@ int p_define(void) {
 			if((error = INSERT_F(idToken.data, ptrht)) != OK)
                 return error;
 			
-            if((error = declare(idToken)) != OK) {      //Declare Function ID(<p_declare_parameter>) As <p_type> EOL
+            if((error = declare(idToken, false)) != OK) {      //Declare Function ID(<p_declare_parameter>) As <p_type> EOL
                 return error;
             }
             
@@ -339,7 +343,7 @@ int p_define(void) {
                 if((error = INSERT_F(idToken.data, ptrht)) != OK)
                     return error;
                 
-                if((error = declare(idToken)) != OK) {
+                if((error = declare(idToken, true)) != OK) {
                     return error;
                 }
                 
@@ -363,7 +367,11 @@ int p_define(void) {
 			//implementovany zasobnik kvoli moznemu viacnasobnemu znoreniu
 			stackPush(s, ptrht);
 			ptrht = idData->LocalTS;
-            
+			
+			printf("label <%s>\n", idData->navesti);
+			printf("pushframe\n");
+			printf("LF@return\n");
+			
 			if((error = p_body(idData->type)) != OK) {		//Function ID(<p_parameter>) As <p_type> EOL <p_body>
                 DELETE_SEARCH(idData);
 				return error;
@@ -377,6 +385,9 @@ int p_define(void) {
             
 			if(token.name != END)			//Function ID(<p_parameter>) As <p_type> EOL <p_body> End
 				return SYN_A_ERROR;
+			
+			printf("popframe\n");
+			printf("return\n");
 			
 			if((error = Get_Token(&token)) != OK)
 				return error;//gettoken
@@ -490,7 +501,7 @@ int p_scope(void) {
 		return SYN_A_ERROR;
 	
     printf("popframe\n");
-    printf("return\n")
+	printf("return\n");
     
 	if((error = Get_Token(&token)) != OK)
 		return error;	//gettoken
@@ -967,6 +978,14 @@ int p_prikaz(int return_type) {
 			if((error = INSERT_DIM(token.name, idToken.data, ptrht)) != OK)
                 return error;
 			
+			printf("dim %s as ", idToken.data);
+			if(token.name == INT_NUM)
+				printf("integer\n");
+			else if(token.name == DOUBLE_NUM)
+				printf("double\n");
+			else if(token.name == STR)
+				printf("string\n");
+			
 			Clear_Token(&idToken);
 			break;
 		case(INPUT):					//Input
@@ -985,6 +1004,14 @@ int p_prikaz(int return_type) {
 				DELETE_SEARCH(idData);
 				break;
 			}
+			
+			printf("read %s ", token.data);
+			if(token.name == INT_NUM)
+				printf("integer\n");
+			else if(token.name == DOUBLE_NUM)
+				printf("double\n");
+			else if(token.name == STR)
+				printf("string\n");
 			
 			error = OK;
 			
@@ -1006,6 +1033,9 @@ int p_prikaz(int return_type) {
 			if((error = p_vyraz(BL)) != OK)	//If <p_vyraz>
 				break;
 			
+			printf("defvar LF@vyraz%d\n", body_index);
+			printf("move LF@vyraz%d TF@$return\n", body_index);
+			
 			loaded_token = false;
 			
 			if(token.name != THEN) {		//If <p_vyraz> Then
@@ -1024,9 +1054,16 @@ int p_prikaz(int return_type) {
 			if((error = Get_Token(&token)) != OK)
 				break;	//gettoken
 			
+			printf("jumoifeg body%d vyraz%d bool@false\n", body_index, body_index);
+			
 			if((error = p_body(return_type)) != OK) {	//If <p_vyraz> Then EOL <p_body>
 				break;
 			}
+			
+			body_index++;
+			
+			printf("jump body%d\n", body_index);
+			printf("label body%d\n", body_index-1);
 			
 			if(token.name != ELSE) {		//If <p_vyraz> Then EOL <p_body> Else
 				error = SYN_A_ERROR;
@@ -1047,6 +1084,10 @@ int p_prikaz(int return_type) {
 			if((error = p_body(return_type)) != OK) {	//If <p_vyraz> Then EOL <p_body> Else EOL <p_body>
 				break;
 			}
+			
+			printf("label body%d\n", body_index);
+			
+			body_index++;
 			
 			if(token.name != END) {			//If <p_vyraz> Then EOL <p_body> Else EOL <p_body> End
 				error = SYN_A_ERROR;
@@ -1075,8 +1116,15 @@ int p_prikaz(int return_type) {
 			if((error = Get_Token(&token)) != OK)
 				break;	//gettoken
 			
+			printf("label body%d\n", body_index);
+			
 			if((error = p_vyraz(BL)) != OK)	//Do While <p_vyraz>
 				break;
+			
+			printf("defvar LF@vyraz%d\n", body_index);
+			printf("move LF@vyraz%d TF@$return\n", body_index);
+			
+			printf("jumpifeg body%d vyraz%d bool@false\n", body_index+1, body_index);
 			
 			loaded_token = false;
 			
@@ -1091,6 +1139,10 @@ int p_prikaz(int return_type) {
 			if((error = p_body(return_type)) != OK) {	//Do While <p_vyraz> EOL <p_body>
 				break;
 			}
+			
+			printf("jump body%d\n", body_index);
+			body_index++;
+			printf("label body%d\n", body_index);
 			
 			if(token.name != LOOP) {
 				error = SYN_A_ERROR;
@@ -1110,6 +1162,8 @@ int p_prikaz(int return_type) {
 			
 			if((error = p_vyraz(return_type)) != OK)	//Return <p_vyraz>
 				break;
+			
+			printf("move LF@$return TF@$return\n", body_index);
             
 			break;
 		default:
@@ -1139,7 +1193,7 @@ int p_prikaz(int return_type) {
 				break;	//gettoken
 			}
 				
-			if((error = p_priradenie(idData->type)) != OK) {	//ID = <p_priradenie>
+			if((error = p_priradenie(idData->type, idData->navesti)) != OK) {	//ID = <p_priradenie>
 				break;
 			}
 			
@@ -1152,12 +1206,12 @@ int p_prikaz(int return_type) {
 
 //<p_priradenie>		F_ID(<p_vparameter>
 //<p_priradenie>		<p_vyraz>
-int p_priradenie(int type) {
+int p_priradenie(int type, char *name) {
 	
 	tRetData *idData = NULL;
 	if((error = id(&idData, &token, global_ptrht)) != F_ID) {
 		
-		if((error = p_vyraz(type)) != OK) {		//<p_vyraz>
+		if((error = p_vyraz(idData->type)) != OK) {		//<p_vyraz>
 			DELETE_SEARCH(idData);
 			return error;
 		}
@@ -1206,6 +1260,9 @@ int p_print(void) {
 			return error;
 	}
 	
+	//string convert
+	printf("write string@%s\n", token.data);
+	
 	if(!loaded_token) {		//vola sa, ak prikaz nebol vyrazom, teda nie je nacitany novy token
 		if((error = Get_Token(&token)) != OK)
 			return error;	//gettoken
@@ -1236,6 +1293,9 @@ int p_nextprint(void) {
 		if((error = p_vyraz(PRINT_VAR)) != OK)	//<p_vyraz>
 			return error;
 	}
+	
+	//string convert
+	printf("write string@%s\n", token.data);
 	
 	if(!loaded_token) {		//vola sa, ak prikaz nebol vyrazom, teda nie je nacitany novy token
 		if((error = Get_Token(&token)) != OK)
