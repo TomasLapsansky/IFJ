@@ -483,33 +483,37 @@ int p_vyraz(int type){
 				 			 		case OP_LESSER: printf("lt Tf@%s Tf@%s Tf@%s\n",kala,aitem[2].name,aitem[0].name);break;
 				 			 		case OP_LESSEREQUAL:{
 				 			 			printf("lt Tf@%s Tf@%s Tf@%s\n",kala,aitem[2].name,aitem[0].name);
+				 			 			n++;
 				 			 			printf("defvar Tf@$kala%d\n",n);
 										sprintf(pom1,"$kala%d",n);
+										n++;
 										printf("eq Tf@%s Tf@%s Tf@%s\n",pom1,aitem[2].name,aitem[0].name);
 										printf("defvar Tf@$kala%d\n",n);
 										sprintf(pom2,"$kala%d",n);
-										strcpy(item->name,pom2);
+										
 										printf("or Tf@%s Tf@%s Tf@%s\n",pom2,kala,pom1);
 										strcpy(item->name,pom2);
 				 			 		}break;
 				 			 		case OP_GREATER: printf("gt Tf@%s Tf@%s Tf@%s\n",kala,aitem[2].name,aitem[0].name);break;
 				 			 		case OP_GREATEREQUAL: {
 				 			 			printf("gt Tf@%s Tf@%s Tf@%s\n",kala,aitem[2].name,aitem[0].name);
+				 			 			n++;
 				 			 			printf("defvar Tf@$kala%d\n",n);
 										sprintf(pom1,"$kala%d",n);
+										n++;
 										printf("eq Tf@%s Tf@%s Tf@%s\n",pom1,aitem[2].name,aitem[0].name);
 										printf("defvar Tf@$kala%d\n",n);
 										sprintf(pom2,"$kala%d",n);
-										strcpy(item->name,pom2);
+										
 										printf("or Tf@%s Tf@%s Tf@%s\n",pom2,kala,pom1);
 										strcpy(item->name,pom2);
 				 			 		}break;
 				 			 		case OP_EQUAL: printf("eq Tf@%s Tf@%s Tf@%s\n",kala,aitem[2].name,aitem[0].name);break;
 				 			 		case OP_NOTEQUAL:{
 				 			 			printf("eq Tf@%s Tf@%s Tf@%s\n",kala,aitem[2].name,aitem[0].name);
+				 			 			n++;
 				 			 			printf("defvar Tf@$kala%d\n",n);
 										sprintf(pom1,"$kala%d",n);
-										strcpy(item->name,pom1);
 										printf("not Tf@%s Tf@%s\n",pom1,kala);
 										strcpy(item->name,pom1);
 				 			 		}break;
@@ -534,7 +538,7 @@ int p_vyraz(int type){
 													n++;
 													printf("defvar Tf@$kala%d\n",n);
 													sprintf(kala,"$kala%d",n);
-													n++;
+												
 													strcpy(item->name,kala);
 					 		 					}
 
@@ -563,7 +567,7 @@ int p_vyraz(int type){
 													n++;
 													printf("defvar Tf@$kala%d\n",n);
 													sprintf(kala,"$kala%d",n);
-													n++;
+													
 													printf("div Tf@%s Tf@%s Tf@%s\n",kala,aitem[2].name,aitem[0].name);
  													printf("float2int Tf@%s Tf@%s\n",kala,kala);
 													strcpy(item->name,kala);
