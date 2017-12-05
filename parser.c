@@ -501,7 +501,11 @@ int p_scope(void) {
 		return SYN_A_ERROR;
 	
     printf("popframe\n");
+<<<<<<< HEAD
 	printf("return\n");
+=======
+    printf("return\n");
+>>>>>>> 936edf58782dfac4485593ad3b0fd7e60121c441
     
 	if((error = Get_Token(&token)) != OK)
 		return error;	//gettoken

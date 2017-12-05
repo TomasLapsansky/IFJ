@@ -508,11 +508,11 @@ vstup=code21.txt
 
 
 A=$?
-if [  $A = 1 ]
+if [  $A = 0 ]
 then
-echo -e ${GREEN}OK  - ${vstup} - zaporny double -5.5e10 =1${NC}
+echo -e ${GREEN}OK  - ${vstup} - double 5.5e10 =0${NC}
 else
-echo -e ${RED}FAIL  - ${vstup} - zaporny double -5.5e10 !=1 =$A ${NC}
+echo -e ${RED}FAIL  - ${vstup} - double 5.5e10 !=0 =$A ${NC}
 fi
 
 vstup=code22.txt
@@ -547,11 +547,11 @@ vstup=code24.txt
 
 
 A=$?
-if [  $A = 1 ]
+if [  $A = 2 ]
 then
-echo -e ${GREEN}OK  - ${vstup} - 5e+10e =1${NC}
+echo -e ${GREEN}OK  - ${vstup} - 5e+10e =2${NC}
 else
-echo -e ${RED}FAIL  - ${vstup} - 5e+10e !=1 =$A ${NC}
+echo -e ${RED}FAIL  - ${vstup} - 5e+10e !=2 =$A ${NC}
 fi
 
 vstup=code25.txt
@@ -560,11 +560,11 @@ vstup=code25.txt
 
 
 A=$?
-if [  $A = 1 ]
+if [  $A = 2 ]
 then
-echo -e ${GREEN}OK  - ${vstup} - zaporne cislo, int =1${NC}
+echo -e ${GREEN}OK  - ${vstup} - zaporne cislo, int =2${NC}
 else
-echo -e ${RED}FAIL  - ${vstup} - zaporne cislo, int !=1 =$A ${NC}
+echo -e ${RED}FAIL  - ${vstup} - zaporne cislo, int !=2 =$A ${NC}
 fi
 
 
