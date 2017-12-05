@@ -1188,7 +1188,7 @@ int p_prikaz(int return_type) {
 			
 			printf("jump body%d\n", local_body_index);
 			body_index++;
-			printf("label body%d\n", local_body_index++);
+			printf("label body%d\n", local_body_index+1);
 			
 			if(token.name != LOOP) {
 				error = SYN_A_ERROR;
