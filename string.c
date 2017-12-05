@@ -2,7 +2,7 @@
  * @Name IFJ17 String convert
  * @author Tomas Lapsansky (xlapsa00)
  * @file string.c
- * @date 2.12.2017
+ * @date 5.12.2017
  */
 
 #include "string.h"

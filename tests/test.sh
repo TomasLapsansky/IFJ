@@ -1,5 +1,12 @@
 #!/bin/bash
 
+###################
+# @Name IFJ17 Testovaci script
+# @author Tomas Lapsansky (xlapsa00)
+# @file test.sh
+# @date 1.12.2017
+###################
+
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 NC='\033[0m'
