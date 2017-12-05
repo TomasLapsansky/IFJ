@@ -1,3 +1,10 @@
+/**
+ * @Name IFJ17 Struktury
+ * @author Marek Kalabza (xkalab09)
+ * @file structs.c
+ * @date 14.10.2017
+ */
+
 #ifndef STRUCTS
 #define STRUCTS
 

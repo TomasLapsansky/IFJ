@@ -1,3 +1,9 @@
+/**
+ * @Name IFJ17 Precedencni syntatkicka analyza
+ * @author Marek Kalabza (xkalab09)
+ * @file psa.c
+ * @date 5.11.2017
+ */
 #include "psa.h"
 
 extern TOKEN token;
@@ -470,6 +476,7 @@ int p_vyraz(int type){
 				 		 		case OP_GREATEREQUAL: printf("gt Tf@%sTf@%s Tf@%s\n",kala,aitem[0].name,aitem[2].name);break;
 						 		case OP_EQUAL: printf("eq Tf@%s Tf@%s Tf@%s\n",kala,aitem[0].name,aitem[2].name);break;
 			 			 		case OP_NOTEQUAL: printf("sub Tf@%sTf@%s Tf@%s\n",kala,aitem[0].name,aitem[2].name);break;
+			 			 		default: return SEM_TYPE_ERROR;
 			 			 	}
 		 			 		n++;
 		 			 	}
@@ -525,7 +532,25 @@ int p_vyraz(int type){
 		 			 	
 				 			 	switch(aitem[1].oper){
 					 		 		case OP_MUL: printf("mul Tf@%s Tf@%s Tf@%s\n",kala,aitem[0].name,aitem[2].name);break;
-					 		 		case OP_DIV: printf("div Tf@%s Tf@%s Tf@%s\n",kala,aitem[0].name,aitem[2].name);break;
+					 		 		case OP_DIV:{
+					 		 					if(aitem[0].data_type == INT){
+													printf("int2float Tf@%s Tf@%s\n",kala,aitem[0].name);
+													strcpy(aitem[0].name,kala);
+													n++;
+													printf("defvar Tf@$kala%d\n",n);
+													sprintf(kala,"$kala%d",n);
+													printf("int2float Tf@%s Tf@%s\n",kala,aitem[2].name);
+													strcpy(aitem[2].name,kala);
+													n++;
+													printf("defvar Tf@$kala%d\n",n);
+													sprintf(kala,"$kala%d",n);
+													n++;
+													strcpy(item->name,kala);
+					 		 					}
+
+					 		 					printf("div Tf@%s Tf@%s Tf@%s\n",kala,aitem[0].name,aitem[2].name);
+					 		 					item->data_type = DOUBLE_NUM;
+					 		 					}break;
 					 		 		case OP_ADD: printf("add Tf@%s Tf@%s Tf@%s\n",kala,aitem[0].name,aitem[2].name);break;
 							 		case OP_MINUS: printf("sub Tf@%s Tf@%s Tf@%s\n",kala,aitem[0].name,aitem[2].name);break;
 				 			 		case OP_LESSER: printf("lt Tf@%s Tf@%s Tf@%s\n",kala,aitem[0].name,aitem[2].name);break;
@@ -534,6 +559,26 @@ int p_vyraz(int type){
 					 		 		case OP_GREATEREQUAL: printf("gt Tf@%sTf@%s Tf@%s\n",kala,aitem[0].name,aitem[2].name);break;
 							 		case OP_EQUAL: printf("eq Tf@%s Tf@%s Tf@%s\n",kala,aitem[0].name,aitem[2].name);break;
 				 			 		case OP_NOTEQUAL: printf("sub Tf@%sTf@%s Tf@%s\n",kala,aitem[0].name,aitem[2].name);break;
+				 			 		case OP_DIV_INT:{
+				 			 						if(aitem[0].data_type == DOUBLE_NUM){
+				 			 							return SEM_TYPE_ERROR;
+				 			 						}
+				 			 						printf("int2float Tf@%s Tf@%s\n",kala,aitem[0].name);
+													strcpy(aitem[0].name,kala);
+													n++;
+													printf("defvar Tf@$kala%d\n",n);
+													sprintf(kala,"$kala%d",n);
+													printf("int2float Tf@%s Tf@%s\n",kala,aitem[2].name);
+													strcpy(aitem[2].name,kala);
+													n++;
+													printf("defvar Tf@$kala%d\n",n);
+													sprintf(kala,"$kala%d",n);
+													n++;
+													printf("div Tf@%s Tf@%s Tf@%s\n",kala,aitem[0].name,aitem[2].name);
+ 													printf("float2int Tf@%s Tf@%s\n",kala,kala);
+													strcpy(item->name,kala);
+					 		 						item->data_type = INT;
+				 			 						}break;
 				 			 	}
 		 			 		}
 		 			 	}

@@ -1,3 +1,9 @@
+/**
+ * @Name IFJ17 Precedencni syntatkicka analyza - seznam funkce
+ * @author Marek Kalabza (xkalab09)
+ * @file psalist.c
+ * @date 5.11.2017
+ */
 #include "psalist.h"
 #include "structs.h"
 

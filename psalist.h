@@ -1,3 +1,9 @@
+/**
+ * @Name IFJ17 Precedencni syntatkicka analyza - seznam
+ * @author Marek Kalabza (xkalab09)
+ * @file psalist.h
+ * @date 5.11.2017
+ */
 #ifndef PSAlist
 #define PSAlist
 

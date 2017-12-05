@@ -1,3 +1,10 @@
+/**
+ * @Name IFJ17 Lexikalni analyza
+ * @author Marek Kalabza (xkalab09)
+ * @file scanner.h
+ * @date 14.10.2017
+ */
+
 #ifndef SCANNER
 #define SCANNER
 

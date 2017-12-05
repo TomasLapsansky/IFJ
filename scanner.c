@@ -1,3 +1,9 @@
+/**
+ * @Name IFJ17 Lexikalni analyza
+ * @author Marek Kalabza (xkalab09)
+ * @file scanner.c
+ * @date 14.10.2017
+ */
 #include "scanner.h"
 
 static int eol;
@@ -293,6 +299,7 @@ int Get_Token(TOKEN *t){
 			// stav identifikator
 			case id: 
 						if((isdigit(c) || isalpha(c) || c == '_') && c != EOF){
+							c = tolower(c);
 							if((pom = Add_Char(t,c)) == ALLOC_ERROR){
 									return ALLOC_ERROR;
 								}
@@ -502,6 +509,9 @@ int Get_Token(TOKEN *t){
 								return ALLOC_ERROR;
 								}
 							state = ddd;	
+						}
+						else{
+							return LEX_A_ERROR;
 						}break;
 
 			case ddd:
