@@ -371,7 +371,7 @@ int p_define(void) {
 			printf("\n#%s\n\n", idData->navesti);
 			printf("label %s\n", idData->navesti);
 			printf("pushframe\n");
-			printf("LF@return\n");
+			//printf("LF@return\n");
 			
 			if((error = p_body(idData->type)) != OK) {		//Function ID(<p_parameter>) As <p_type> EOL <p_body>
                 DELETE_SEARCH(idData);
@@ -797,7 +797,7 @@ int p_vparameter(tRetData *funcData, int *pocet_parametrov) {
 		return OK;
 	
 	printf("createframe\n");
-	printf("defvar TF@par%d\n", *pocet_parametrov);
+	printf("defvar TF@%s\n", funcData->nazvy[*pocet_parametrov]);
 	
     if(p_type() == OK) {    //pri vstupovani presnych vyrazov, nie premennych
         
@@ -810,10 +810,10 @@ int p_vparameter(tRetData *funcData, int *pocet_parametrov) {
              (token.name == DOUBLE_NUM && funcData->typy[*pocet_parametrov] == INTEGER)))
             return SEM_TYPE_ERROR;
 		
-		printf("move TF@par%d ", *pocet_parametrov);
+		printf("move TF@%s ", funcData->nazvy[*pocet_parametrov]);
 		
 		if(token.name == INT_NUM || token.name == INTEGER)
-			printf("integer\n");
+			printf("int\n");
 		else if(token.name == DOUBLE_NUM || token.name == DOUBLE)
 			printf("double\n");
 		else if(token.name == STR || token.name == STRING)
@@ -874,6 +874,8 @@ int p_vparameter(tRetData *funcData, int *pocet_parametrov) {
 //<p_vnextparameter>	ID, <p_vnextparameter>
 int p_vnextparameter(tRetData *funcData, int *pocet_parametrov) {
 	
+	printf("defvar TF@%s\n", funcData->nazvy[*pocet_parametrov]);
+	
     if(p_type() == OK) {    //pri vstupovani presnych vyrazov, nie premennych
         
         //najhnusnejsia vec v mojom zivote, ktoru som urobil, aby sme nemuseli prerabat projekt kvoli roznym typom v tokene a TS - jej kopia, original je dole + typova konverzia int double
@@ -885,10 +887,10 @@ int p_vnextparameter(tRetData *funcData, int *pocet_parametrov) {
              (token.name == DOUBLE_NUM && funcData->typy[*pocet_parametrov] == INTEGER)))
             return SEM_TYPE_ERROR;
 		
-		printf("move TF@par%d ", *pocet_parametrov);
+		printf("move TF@%s ", funcData->nazvy[*pocet_parametrov]);
 		
 		if(token.name == INT_NUM || token.name == INTEGER)
-			printf("integer\n");
+			printf("int\n");
 		else if(token.name == DOUBLE_NUM || token.name == DOUBLE)
 			printf("double\n");
 		else if(token.name == STR || token.name == STRING)
@@ -963,7 +965,9 @@ int p_prikaz(int return_type) {
 	tRetData *idData = NULL;
 	error = OK;
 	TOKEN idToken;
-    
+	
+	int local_body_index = body_index;
+	
 	switch(token.name) {
 		case(DIM):							//Dim
 			
@@ -1034,12 +1038,12 @@ int p_prikaz(int return_type) {
 			}
 			
 			printf("\n#INPUT\n");
-			printf("read %s ", token.data);
-			if(token.name == INT_NUM || token.name == INTEGER)
-				printf("integer\n");
-			else if(token.name == DOUBLE_NUM || token.name == DOUBLE)
+			printf("read LF@%s ", token.data);
+			if(idData->type == INTEGER)
+				printf("int\n");
+			else if(idData->type == DOUBLE)
 				printf("double\n");
-			else if(token.name == STR || token.name == STRING)
+			else if(idData->type == STRING)
 				printf("string\n");
 			
 			error = OK;
@@ -1086,15 +1090,18 @@ int p_prikaz(int return_type) {
 			
 			printf("jumpifeq body%d LF@vyraz%d bool@false\n", body_index, body_index);
 			
+			local_body_index = body_index;
+			
+			body_index += 2;
+			
 			printf("\n#IF TRUE BODY\n");
 			if((error = p_body(return_type)) != OK) {	//If <p_vyraz> Then EOL <p_body>
 				break;
 			}
 			
-			body_index++;
-			
-			printf("jump body%d\n", body_index);
-			printf("label body%d\n", body_index-1);
+			printf("jump body%d\n", local_body_index + 1);
+			printf("label body%d\n", local_body_index);
+			local_body_index++;
 			
 			if(token.name != ELSE) {		//If <p_vyraz> Then EOL <p_body> Else
 				error = SYN_A_ERROR;
@@ -1118,7 +1125,7 @@ int p_prikaz(int return_type) {
 				break;
 			}
 			
-			printf("label body%d\n", body_index);
+			printf("label body%d\n", local_body_index);
 			
 			body_index++;
 			
@@ -1155,6 +1162,8 @@ int p_prikaz(int return_type) {
 			
 			printf("label body%d\n", body_index);
 			
+			local_body_index = body_index;
+			
 			if((error = p_vyraz(BL)) != OK)	//Do While <p_vyraz>
 				break;
 			
@@ -1172,14 +1181,15 @@ int p_prikaz(int return_type) {
 			if((error = Get_Token(&token)) != OK)
 				break;	//gettoken
 			
+			body_index++;
+			
 			printf("\n#WHILE BODY\n");
 			if((error = p_body(return_type)) != OK) {	//Do While <p_vyraz> EOL <p_body>
 				break;
 			}
 			
-			printf("jump body%d\n", body_index);
-			body_index++;
-			printf("label body%d\n", body_index);
+			printf("jump body%d\n", local_body_index);
+			printf("label body%d\n", local_body_index+1);
 			
 			if(token.name != LOOP) {
 				error = SYN_A_ERROR;
@@ -1201,6 +1211,7 @@ int p_prikaz(int return_type) {
 				break;
 			
 			printf("\n#FUNCTION RETURN\n");
+			printf("defvar LF@$return\n");
 			printf("move LF@$return TF@$return\n");
             
 			break;
