@@ -810,10 +810,10 @@ int p_vparameter(tRetData *funcData, int *pocet_parametrov) {
              (token.name == DOUBLE_NUM && funcData->typy[*pocet_parametrov] == INTEGER)))
             return SEM_TYPE_ERROR;
 		
-		printf("move TF@par%d ", *pocet_parametrov);
+		printf("move TF@%s ", funcData->nazvy[*pocet_parametrov]);
 		
 		if(token.name == INT_NUM || token.name == INTEGER)
-			printf("integer\n");
+			printf("int\n");
 		else if(token.name == DOUBLE_NUM || token.name == DOUBLE)
 			printf("double\n");
 		else if(token.name == STR || token.name == STRING)
@@ -887,10 +887,10 @@ int p_vnextparameter(tRetData *funcData, int *pocet_parametrov) {
              (token.name == DOUBLE_NUM && funcData->typy[*pocet_parametrov] == INTEGER)))
             return SEM_TYPE_ERROR;
 		
-		printf("move TF@par%d ", *pocet_parametrov);
+		printf("move TF@%s ", funcData->nazvy[*pocet_parametrov]);
 		
 		if(token.name == INT_NUM || token.name == INTEGER)
-			printf("integer\n");
+			printf("int\n");
 		else if(token.name == DOUBLE_NUM || token.name == DOUBLE)
 			printf("double\n");
 		else if(token.name == STR || token.name == STRING)
@@ -1038,12 +1038,12 @@ int p_prikaz(int return_type) {
 			}
 			
 			printf("\n#INPUT\n");
-			printf("read %s ", token.data);
-			if(token.name == INT_NUM || token.name == INTEGER)
-				printf("integer\n");
-			else if(token.name == DOUBLE_NUM || token.name == DOUBLE)
+			printf("read LF@%s ", token.data);
+			if(idData->type == INTEGER)
+				printf("int\n");
+			else if(idData->type == DOUBLE)
 				printf("double\n");
-			else if(token.name == STR || token.name == STRING)
+			else if(idData->type == STRING)
 				printf("string\n");
 			
 			error = OK;
@@ -1092,12 +1092,12 @@ int p_prikaz(int return_type) {
 			
 			local_body_index = body_index;
 			
+			body_index++;
+			
 			printf("\n#IF TRUE BODY\n");
 			if((error = p_body(return_type)) != OK) {	//If <p_vyraz> Then EOL <p_body>
 				break;
 			}
-			
-			body_index++;
 			
 			printf("jump body%d\n", local_body_index + 1);
 			printf("label body%d\n", local_body_index);
