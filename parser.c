@@ -46,7 +46,7 @@ int id(tRetData **ins_id, TOKEN *ins_token, tHTable* use_ptrht) {
 //main
 int parser(void) {
     
-    printf(".IFJcode17\n");    //potrebna hlavicka
+    printf(".IFJcode17\n\n");    //potrebna hlavicka
     
     //Vkladania vstavanych funkcii pre syntakticku a sematicku analyzu
     
@@ -368,7 +368,8 @@ int p_define(void) {
 			stackPush(s, ptrht);
 			ptrht = idData->LocalTS;
 			
-			printf("label <%s>\n", idData->navesti);
+			printf("\n#%s\n\n", idData->navesti);
+			printf("label %s\n", idData->navesti);
 			printf("pushframe\n");
 			printf("LF@return\n");
 			
@@ -388,6 +389,7 @@ int p_define(void) {
 			
 			printf("popframe\n");
 			printf("return\n");
+			printf("\n\n#END FUNCTION\n\n");
 			
 			if((error = Get_Token(&token)) != OK)
 				return error;//gettoken
@@ -482,7 +484,8 @@ int p_scope(void) {
 	
 	if((error = Get_Token(&token)) != OK)
 		return error;	//gettoken
-    
+	
+	printf("\n#MAIN\n\n");
     printf("label main\n");
     printf("createframe\n");
     printf("pushframe\n");
@@ -501,7 +504,7 @@ int p_scope(void) {
 		return SYN_A_ERROR;
 	
     printf("popframe\n");
-	printf("return\n");
+	//printf("return\n");
     
 	if((error = Get_Token(&token)) != OK)
 		return error;	//gettoken
@@ -1008,13 +1011,8 @@ int p_prikaz(int return_type) {
                 return error;
 			
 			//printf("%d\n\n", token.name);
-			printf("dim %s as ", idToken.data);
-			if(token.name == INT_NUM || token.name == INTEGER)
-				printf("integer\n");
-			else if(token.name == DOUBLE_NUM || token.name == DOUBLE)
-				printf("double\n");
-			else if(token.name == STR || token.name == STRING)
-				printf("string\n");
+			printf("\n#DIM\n");
+			printf("defvar LF@%s\n", idToken.data);
 			
 			Clear_Token(&idToken);
 			break;
@@ -1035,6 +1033,7 @@ int p_prikaz(int return_type) {
 				break;
 			}
 			
+			printf("\n#INPUT\n");
 			printf("read %s ", token.data);
 			if(token.name == INT_NUM || token.name == INTEGER)
 				printf("integer\n");
@@ -1063,6 +1062,7 @@ int p_prikaz(int return_type) {
 			if((error = p_vyraz(BL)) != OK)	//If <p_vyraz>
 				break;
 			
+			printf("\n#IF STATEMENT\n");
 			printf("defvar LF@vyraz%d\n", body_index);
 			printf("move LF@vyraz%d TF@$return\n", body_index);
 			
@@ -1086,6 +1086,7 @@ int p_prikaz(int return_type) {
 			
 			printf("jumoifeg body%d vyraz%d bool@false\n", body_index, body_index);
 			
+			printf("\n#IF TRUE BODY\n");
 			if((error = p_body(return_type)) != OK) {	//If <p_vyraz> Then EOL <p_body>
 				break;
 			}
@@ -1110,6 +1111,8 @@ int p_prikaz(int return_type) {
 			
 			if((error = Get_Token(&token)) != OK)
 				break;	//gettoken
+			
+			printf("\n#IF FALSE BODY\n");
 			
 			if((error = p_body(return_type)) != OK) {	//If <p_vyraz> Then EOL <p_body> Else EOL <p_body>
 				break;
@@ -1146,6 +1149,7 @@ int p_prikaz(int return_type) {
 			if((error = Get_Token(&token)) != OK)
 				break;	//gettoken
 			
+			printf("\n#DO WHILE\n");
 			printf("label body%d\n", body_index);
 			
 			if((error = p_vyraz(BL)) != OK)	//Do While <p_vyraz>
@@ -1166,6 +1170,7 @@ int p_prikaz(int return_type) {
 			if((error = Get_Token(&token)) != OK)
 				break;	//gettoken
 			
+			printf("\n#WHILE BODY\n");
 			if((error = p_body(return_type)) != OK) {	//Do While <p_vyraz> EOL <p_body>
 				break;
 			}
@@ -1193,6 +1198,7 @@ int p_prikaz(int return_type) {
 			if((error = p_vyraz(return_type)) != OK)	//Return <p_vyraz>
 				break;
 			
+			printf("\n#FUNCTION RETURN\n");
 			printf("move LF@$return TF@$return\n");
             
 			break;
@@ -1222,7 +1228,8 @@ int p_prikaz(int return_type) {
 			if((error = Get_Token(&token)) != OK) {
 				break;	//gettoken
 			}
-				
+			
+			printf("\n#ID MOV\n");
 			if((error = p_priradenie(idData->type, idData->navesti)) != OK) {	//ID = <p_priradenie>
 				break;
 			}
@@ -1281,7 +1288,7 @@ int p_priradenie(int type, char *name) {
 	}
 	
 	printf("call %s\n", idData->navesti);
-	printf("move LF@%s TF@$return", name);
+	printf("move LF@%s TF@$return\n", name);
 	
 	DELETE_SEARCH(idData);
 	return OK;
@@ -1291,6 +1298,7 @@ int p_priradenie(int type, char *name) {
 //<p_print>			<p_string>; <p_nextprint>
 int p_print(void) {
 	
+	printf("\n#PRINT\n");
 	if(token.name != STR) {			//String
 		if((error = p_vyraz(PRINT_VAR)) != OK)	//<p_vyraz>
 			return error;
@@ -1324,7 +1332,9 @@ int p_nextprint(void) {
 		loaded_token = true;
 		return OK;
 	}
-		
+	
+	printf("\n#PRINT\n");
+	
 	if(token.name != STRING) {			//String
 		if((error = p_vyraz(PRINT_VAR)) != OK)	//<p_vyraz>
 			return error;
