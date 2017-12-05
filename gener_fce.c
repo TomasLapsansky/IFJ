@@ -2,6 +2,7 @@
 
 void gener_fce()
 {
+	printf("jump main \n");
 	printf("#-----Zacatek vestavenych funkci------ \n\n");
 	printf("#telo funkce lenght() \n");
 	printf("label lenght \n");
