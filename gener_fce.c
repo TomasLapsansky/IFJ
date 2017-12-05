@@ -52,7 +52,7 @@ void gener_fce()
 	printf("defvar Lf@pomoc \n");
 	printf("defvar Lf@retez \n");
 	printf("defvar Lf@bool \n");
-	printf("move  Lf@$retez string@ \n");
+	printf("move  Lf@retez string@ \n");
 	printf("defvar Lf@index \n");
 	printf("move lf@index Lf@i \n");
 	printf("sub lf@index lf@index int@1 \n");
@@ -92,7 +92,7 @@ void gener_fce()
 	printf("jump $substr_while_start$ \n");
 	printf("label $substr_while_end$ \n");
 	printf("label $substr_end$ \n");
-	printf("move Lf@$return Lf@$retez\n");
+	printf("move Lf@$return Lf@retez\n");
 	printf("popframe \n");
 	printf("return \n\n");
 	printf("#-----Konec vestavenych funkci------ \n\n");
