@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 void gener_fce()
 {
 	printf("#-----Zacatek vestavenych funkci------ \n\n");

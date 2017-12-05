@@ -14,6 +14,8 @@
 int declare(TOKEN idToken);
 int declare_define(void);
 
+void gener_fce(void);
+
 //KA pre syntakticku analyzu
 int parser(void);
 
@@ -34,6 +36,6 @@ int p_vparameter(tRetData *funcData, int *pocet_parametrov);
 int p_vnextparameter(tRetData *funcData, int *pocet_parametrov);
 
 int p_prikaz(int return_type);
-int p_priradenie(int type);
+int p_priradenie(int type, char *name);
 int p_print(void);
 int p_nextprint(void);

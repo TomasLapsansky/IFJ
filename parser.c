@@ -246,7 +246,7 @@ int p_define(void) {
 			if((error = INSERT_F(idToken.data, ptrht)) != OK)
                 return error;
 			
-            if((error = declare(idToken, false)) != OK) {      //Declare Function ID(<p_declare_parameter>) As <p_type> EOL
+            if((error = declare(idToken)) != OK) {      //Declare Function ID(<p_declare_parameter>) As <p_type> EOL
                 return error;
             }
             
@@ -343,7 +343,7 @@ int p_define(void) {
                 if((error = INSERT_F(idToken.data, ptrht)) != OK)
                     return error;
                 
-                if((error = declare(idToken, true)) != OK) {
+                if((error = declare(idToken)) != OK) {
                     return error;
                 }
                 
@@ -485,7 +485,7 @@ int p_scope(void) {
     
     printf("label main\n");
     printf("createframe\n");
-    printf("pushframe");
+    printf("pushframe\n");
 	
 	if((error = p_body(0)) != OK) {	//Scope <p_body>
 		return error;
@@ -501,11 +501,7 @@ int p_scope(void) {
 		return SYN_A_ERROR;
 	
     printf("popframe\n");
-<<<<<<< HEAD
 	printf("return\n");
-=======
-    printf("return\n");
->>>>>>> 936edf58782dfac4485593ad3b0fd7e60121c441
     
 	if((error = Get_Token(&token)) != OK)
 		return error;	//gettoken
@@ -797,6 +793,9 @@ int p_vparameter(tRetData *funcData, int *pocet_parametrov) {
 	if(token.name == RIGHTPAREN)	//ε)
 		return OK;
 	
+	printf("createframe\n");
+	printf("defvar TF@par%d\n", *pocet_parametrov);
+	
     if(p_type() == OK) {    //pri vstupovani presnych vyrazov, nie premennych
         
         //najhnusnejsia vec v mojom zivote, ktoru som urobil, aby sme nemuseli prerabat projekt kvoli roznym typom v tokene a TS - jej kopia, original je dole + typova konverzia int double
@@ -807,6 +806,17 @@ int p_vparameter(tRetData *funcData, int *pocet_parametrov) {
              (token.name == INT_NUM && funcData->typy[*pocet_parametrov] == DOUBLE) ||
              (token.name == DOUBLE_NUM && funcData->typy[*pocet_parametrov] == INTEGER)))
             return SEM_TYPE_ERROR;
+		
+		printf("move TF@par%d ", *pocet_parametrov);
+		
+		if(token.name == INT_NUM || token.name == INTEGER)
+			printf("integer\n");
+		else if(token.name == DOUBLE_NUM || token.name == DOUBLE)
+			printf("double\n");
+		else if(token.name == STR || token.name == STRING)
+			printf("string\n");
+		
+		printf("@%s\n", token.data);
         
     } else {
         tRetData *idData = NULL;
@@ -830,6 +840,8 @@ int p_vparameter(tRetData *funcData, int *pocet_parametrov) {
                 return SEM_TYPE_ERROR;
             }
         }
+		
+		printf("move TF@par%d LF@%s\n", *pocet_parametrov, token.data);
         
         DELETE_SEARCH(idData);
 	
@@ -869,6 +881,17 @@ int p_vnextparameter(tRetData *funcData, int *pocet_parametrov) {
              (token.name == INT_NUM && funcData->typy[*pocet_parametrov] == DOUBLE) ||
              (token.name == DOUBLE_NUM && funcData->typy[*pocet_parametrov] == INTEGER)))
             return SEM_TYPE_ERROR;
+		
+		printf("move TF@par%d ", *pocet_parametrov);
+		
+		if(token.name == INT_NUM || token.name == INTEGER)
+			printf("integer\n");
+		else if(token.name == DOUBLE_NUM || token.name == DOUBLE)
+			printf("double\n");
+		else if(token.name == STR || token.name == STRING)
+			printf("string\n");
+		
+		printf("@%s\n", token.data);
         
     } else {
         tRetData *idData = NULL;
@@ -892,6 +915,8 @@ int p_vnextparameter(tRetData *funcData, int *pocet_parametrov) {
                 return SEM_TYPE_ERROR;
             }
         }
+		
+		printf("move TF@par%d LF@%s\n", *pocet_parametrov, token.data);
         
         DELETE_SEARCH(idData);
         
@@ -982,12 +1007,13 @@ int p_prikaz(int return_type) {
 			if((error = INSERT_DIM(token.name, idToken.data, ptrht)) != OK)
                 return error;
 			
+			//printf("%d\n\n", token.name);
 			printf("dim %s as ", idToken.data);
-			if(token.name == INT_NUM)
+			if(token.name == INT_NUM || token.name == INTEGER)
 				printf("integer\n");
-			else if(token.name == DOUBLE_NUM)
+			else if(token.name == DOUBLE_NUM || token.name == DOUBLE)
 				printf("double\n");
-			else if(token.name == STR)
+			else if(token.name == STR || token.name == STRING)
 				printf("string\n");
 			
 			Clear_Token(&idToken);
@@ -1010,11 +1036,11 @@ int p_prikaz(int return_type) {
 			}
 			
 			printf("read %s ", token.data);
-			if(token.name == INT_NUM)
+			if(token.name == INT_NUM || token.name == INTEGER)
 				printf("integer\n");
-			else if(token.name == DOUBLE_NUM)
+			else if(token.name == DOUBLE_NUM || token.name == DOUBLE)
 				printf("double\n");
-			else if(token.name == STR)
+			else if(token.name == STR || token.name == STRING)
 				printf("string\n");
 			
 			error = OK;
@@ -1167,7 +1193,7 @@ int p_prikaz(int return_type) {
 			if((error = p_vyraz(return_type)) != OK)	//Return <p_vyraz>
 				break;
 			
-			printf("move LF@$return TF@$return\n", body_index);
+			printf("move LF@$return TF@$return\n");
             
 			break;
 		default:
@@ -1215,10 +1241,13 @@ int p_priradenie(int type, char *name) {
 	tRetData *idData = NULL;
 	if((error = id(&idData, &token, global_ptrht)) != F_ID) {
 		
-		if((error = p_vyraz(idData->type)) != OK) {		//<p_vyraz>
+		if((error = p_vyraz(type)) != OK) {		//<p_vyraz>
 			DELETE_SEARCH(idData);
 			return error;
 		}
+		
+		printf("move LF@%s TF@$return\n", name);
+		body_index++;
 		
 		DELETE_SEARCH(idData);
 		return OK;
@@ -1250,6 +1279,9 @@ int p_priradenie(int type, char *name) {
 		DELETE_SEARCH(idData);
 		return SEM_ERROR;
 	}
+	
+	printf("call %s\n", idData->navesti);
+	printf("move LF@%s TF@$return", name);
 	
 	DELETE_SEARCH(idData);
 	return OK;
