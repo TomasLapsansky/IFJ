@@ -239,7 +239,6 @@ int p_vyraz(int type){
 									printf("defvar Tf@$kala%d\n",n);
 									sprintf(kala,"$kala%d",n);
 									strcpy(newitem->name,kala);
-									printf("defvar Lf@%s\n",token.data);
 									printf("move Tf@%s Lf@%s\n",kala,token.data);
 									n++;
 								
@@ -309,7 +308,6 @@ int p_vyraz(int type){
 										printf("defvar Tf@$kala%d\n",n);
 										sprintf(kala,"$kala%d",n);
 										strcpy(newitem->name,kala);
-										printf("defvar Lf@%s\n",token.data);
 										printf("move Tf@%s Lf@%s\n",kala,token.data);
 										n++;
 									
