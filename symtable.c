@@ -189,7 +189,7 @@ int INSERT_DIM(int type,char* nazov_dim,tHTable* tabulka)
 	tData dato;
 	dato.first=NULL;
 	dato.funkce=false;
-	dato.navesti=NULL;
+	dato.navesti=pamet;
 	dato.pocet_par=0;
 	dato.type=type;
 	dato.definovana=false;
