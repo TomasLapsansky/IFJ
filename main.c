@@ -1,3 +1,10 @@
+/**
+ * @Name IFJ17 Main pre prekladac
+ * @author Tomas Lapsansky (xlapsa00)
+ * @file main.c
+ * @date 5.12.2017
+ */
+
 #include "scanner.h"
 #include "parser.h"
 #include "symtable.h"
