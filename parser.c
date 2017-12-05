@@ -371,7 +371,7 @@ int p_define(void) {
 			printf("\n#%s\n\n", idData->navesti);
 			printf("label %s\n", idData->navesti);
 			printf("pushframe\n");
-			printf("LF@return\n");
+			//printf("LF@return\n");
 			
 			if((error = p_body(idData->type)) != OK) {		//Function ID(<p_parameter>) As <p_type> EOL <p_body>
                 DELETE_SEARCH(idData);
