@@ -48,10 +48,10 @@ void gener_fce()
 	printf("label substr \n");
 	printf("pushframe \n");
 	printf("defvar Lf@$return\n");
-	printf("defvar Lf@$delka \n");
-	printf("defvar Lf@$pomoc \n");
-	printf("defvar Lf@$retez \n");
-	printf("defvar Lf@$bool \n");
+	printf("defvar Lf@delka \n");
+	printf("defvar Lf@pomoc \n");
+	printf("defvar Lf@retez \n");
+	printf("defvar Lf@bool \n");
 	printf("move  Lf@$retez string@ \n");
 	printf("defvar Lf@index \n");
 	printf("move lf@index Lf@i \n");
