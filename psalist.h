@@ -22,9 +22,9 @@ enum oper{
 	OP_RPARENT,     // )	11
 	OP_ID,    		// i    12
 	OP_END,     	// $    13
-	OP_E,  			// E    14
-	OP_EXP,   	 	// < znak 15
-	OP_DIV_INT, 	// celo ciselne deleni 16
+	OP_DIV_INT, 	// celo ciselne deleni 14
+	OP_E,  			// E    15
+	OP_EXP,   	 	// < znak 16
 };
 
 typedef struct psa_item{

@@ -11,22 +11,23 @@ extern tHTable* ptrht;
 extern bool loaded_token;
 
 // tabulka precedencni tabulky
-static char prec_tab[14][14] = {
-/*|        | * | / | + | - | < | > |<= |>= | = | <>| ( | ) |id | $ |      */
-/*| * |*/  {'>','>','>','>','>','>','>','>',' ','>','<','>','<','>'},
-/*| / |*/  {'>','<','>','>','>','>','>','>',' ','>','<','>','<','>'},
-/*| + |*/  {'<','<','>','>','>','>','>','>',' ','>','<','>','<','>'},
-/*| - |*/  {'<','<','>','>','>','>','>','>',' ','>','<','>','<','>'},
-/*| < |*/  {'<','<','<','<',' ',' ',' ',' ',' ',' ','<','>','<','>'},
-/*| > |*/  {'<','<','<','<',' ',' ',' ',' ',' ',' ','<','>','<','>'},
-/*| <= |*/ {'<','<','<','<',' ',' ',' ',' ',' ',' ','<','>','<','>'},
-/*| >= |*/ {'<','<','<','<',' ',' ',' ',' ',' ',' ','<','>','<','>'},
-/*|  = |*/ {'<','<','<','<',' ',' ',' ',' ',' ',' ','<','>','<','>'},
-/*| <> |*/ {'<','<','<','<',' ',' ',' ',' ',' ',' ','<','>','<','>'},
-/*| (  |*/ {'<','<','<','<','<','<','<','<','<','<','<','<','<','>'},
-/*| )  |*/ {'>','>','>','>','>','>','>','>',' ','>',' ','>',' ','>'},
-/*| id |*/ {'>','>','>','>','>','>','>','>','>','>',' ','>',' ','>'},
-/*| $  |*/ {'<','<','<','<','<','<','<','<','<','<','<',' ','<','-'},
+static char prec_tab[15][15] = {
+/*|        | * | / | + | - | < | > |<= |>= | = | <>| ( | ) |id | $ | \      */
+/*| * |*/  {'>','>','>','>','>','>','>','>',' ','>','<','>','<','>','>'},
+/*| / |*/  {'>','<','>','>','>','>','>','>',' ','>','<','>','<','>','<'},
+/*| + |*/  {'<','<','>','>','>','>','>','>',' ','>','<','>','<','>','<'},
+/*| - |*/  {'<','<','>','>','>','>','>','>',' ','>','<','>','<','>','<'},
+/*| < |*/  {'<','<','<','<',' ',' ',' ',' ',' ',' ','<','>','<','>','<'},
+/*| > |*/  {'<','<','<','<',' ',' ',' ',' ',' ',' ','<','>','<','>','<'},
+/*| <= |*/ {'<','<','<','<',' ',' ',' ',' ',' ',' ','<','>','<','>','<'},
+/*| >= |*/ {'<','<','<','<',' ',' ',' ',' ',' ',' ','<','>','<','>','<'},
+/*|  = |*/ {'<','<','<','<',' ',' ',' ',' ',' ',' ','<','>','<','>','<'},
+/*| <> |*/ {'<','<','<','<',' ',' ',' ',' ',' ',' ','<','>','<','>','<'},
+/*| (  |*/ {'<','<','<','<','<','<','<','<','<','<','<','<','<','>','<'},
+/*| )  |*/ {'>','>','>','>','>','>','>','>',' ','>',' ','>',' ','>','>'},
+/*| id |*/ {'>','>','>','>','>','>','>','>','>','>',' ','>',' ','>','>'},
+/*| $  |*/ {'<','<','<','<','<','<','<','<','<','<','<',' ','<','-','<'},
+/*| \  |*/ {'>','<','>','>','>','>','>','>',' ','>','<','>','<','>','<'},
 };
 
 // na zaklade token name, se urci cislo sloupce pro vyhledani, zda se ma provadet operace REDUCE/SEDUCE
@@ -34,7 +35,7 @@ int num_of_prec_table(TOKEN t){
 	switch(t.name){
 		case TIMES: return 0;break;
 		case DIVISION: return 1;break;
-		case DIVISION_INT: return 1;break;
+		case DIVISION_INT: return 14;break;
 		case PLUS: return 2;break;
 		case MINUS: return 3;break;
 		case LESSER: return 4;break;
@@ -55,7 +56,7 @@ int num_of_prec_table(TOKEN t){
 		case SEMICOLON: 
 		case ELSE: return 13;break;
 		// chyba SA, nic jineho nemuze byt ve vyrazu
-		default: return -1; break;
+		default: return SYN_A_ERROR; break;
 
 	}
 }
@@ -101,17 +102,17 @@ int p_vyraz(int type){
 		}
 
 //qprintf("__________________\n\n");
-//qpsa_list_show(list);
+//psa_list_show(list);
 		 // urceni operace, na zaklade precedencni tabulky
 		item = psa_search_term(list);
 
 //qprintf("VSTUP: %d\n\n",column);
 		sign = prec_tab[item->oper][column];	
-//qprintf("VYHODNOCENI PREC_TAB\n");
-//qprintf("==========\n");
-//qprintf("::::| %d|\n",column);
-//qprintf(" %d | %c |\n",item->oper,sign);
-//qprintf("==========\n\n");
+//printf("VYHODNOCENI PREC_TAB\n");
+//printf("==========\n");
+//printf("::::| %d|\n",column);
+//printf(" %d | %c |\n",item->oper,sign);
+//printf("==========\n\n");
 
 		// $ == $ OK konec whilu
 		if(sign == '-'){
@@ -203,9 +204,7 @@ int p_vyraz(int type){
 		 					// vytvoreni itemu pro nacteny token
 		 					newitem = psa_create_item();
 
-							if(token.name == DIVISION_INT){
-								newitem->oper = OP_DIV;
-							}else newitem->oper = column;
+							newitem->oper = column;
 
 							// urceni hodnoty
 							if(token.name == INT_NUM){
@@ -279,15 +278,8 @@ int p_vyraz(int type){
 				 					// vytvoreni itemu pro nacteny token
 				 					newitem = psa_create_item();
 				
-									// OPER
-									if(token.name == DIVISION_INT){
-										// ma stejne precedencni hodnoty jako DIV, 
-										// zajisteni spravne operace pri volani instrukce
-										newitem->oper = OP_DIV;
-									}
-									else{
-										newitem->oper = column;
-									}
+									// OPER									
+									newitem->oper = column;
 
 									// DATA_TYPE
 									// urceni hodnoty vytvareneho noveho itemu, ktery vlozime na seznam
@@ -416,7 +408,7 @@ int p_vyraz(int type){
 		 			 }
 		 			 
 /*        --------- E operator E ----------			*/ 
-		 			 else if((aitem[0].oper == OP_E)&&((aitem[1].oper < 11)||(aitem[1].oper == 16))&&(aitem[2].oper == OP_E)){
+		 			 else if((aitem[0].oper == OP_E)&&(aitem[1].oper < 15)&&(aitem[2].oper == OP_E)){
 //qprintf("VYHODNOCENI PRAVIDLA E->E operator E\n");	
 						item = psa_create_item();
 
