@@ -810,16 +810,30 @@ int p_vparameter(tRetData *funcData, int *pocet_parametrov) {
              (token.name == DOUBLE_NUM && funcData->typy[*pocet_parametrov] == INTEGER)))
             return SEM_TYPE_ERROR;
 		
-		printf("move TF@%s ", funcData->nazvy[*pocet_parametrov]);
+		else {
+			
+			printf("move TF@%s ", funcData->nazvy[*pocet_parametrov]);
+			
+			if(token.name == INT_NUM || token.name == INTEGER)
+				printf("int");
+			else if(token.name == DOUBLE_NUM || token.name == DOUBLE)
+				printf("double");
+			else if(token.name == STR || token.name == STRING)
+				printf("string");
+			
+			printf("@%s\n", token.data);
+			
+		}
 		
-		if(token.name == INT_NUM || token.name == INTEGER)
-			printf("int\n");
-		else if(token.name == DOUBLE_NUM || token.name == DOUBLE)
-			printf("double\n");
-		else if(token.name == STR || token.name == STRING)
-			printf("string\n");
-		
-		printf("@%s\n", token.data);
+		if(token.name == INT_NUM && funcData->typy[*pocet_parametrov] == DOUBLE) {
+			
+			printf("int2float TF@%s TF@%s\n", funcData->nazvy[*pocet_parametrov], funcData->nazvy[*pocet_parametrov]);
+			
+		} else if(token.name == DOUBLE_NUM && funcData->typy[*pocet_parametrov] == INTEGER) {
+			
+			printf("float2r2eint TF@%s TF@%s\n", funcData->nazvy[*pocet_parametrov], funcData->nazvy[*pocet_parametrov]);
+			
+		}
         
     } else {
         tRetData *idData = NULL;
@@ -845,7 +859,18 @@ int p_vparameter(tRetData *funcData, int *pocet_parametrov) {
         }
 		
 		printf("move TF@%s LF@%s\n", funcData->nazvy[*pocet_parametrov], token.data);
-        
+		
+		//pretypovanie vo vystupnom kode
+		if(idData->type == INTEGER && funcData->typy[*pocet_parametrov] == DOUBLE) {
+			
+			printf("int2float TF@%s TF@%s\n", funcData->nazvy[*pocet_parametrov], funcData->nazvy[*pocet_parametrov]);
+			
+		} else if(idData->type == DOUBLE && funcData->typy[*pocet_parametrov] == INTEGER) {
+			
+			printf("float2r2eint TF@%s TF@%s\n", funcData->nazvy[*pocet_parametrov], funcData->nazvy[*pocet_parametrov]);
+			
+		}
+		
         DELETE_SEARCH(idData);
 	
     }
@@ -876,75 +901,100 @@ int p_vnextparameter(tRetData *funcData, int *pocet_parametrov) {
 	
 	printf("defvar TF@%s\n", funcData->nazvy[*pocet_parametrov]);
 	
-    if(p_type() == OK) {    //pri vstupovani presnych vyrazov, nie premennych
-        
-        //najhnusnejsia vec v mojom zivote, ktoru som urobil, aby sme nemuseli prerabat projekt kvoli roznym typom v tokene a TS - jej kopia, original je dole + typova konverzia int double
-        if(!((token.name == INT_NUM && funcData->typy[*pocet_parametrov] == INTEGER) ||
-             (token.name == DOUBLE_NUM && funcData->typy[*pocet_parametrov] == DOUBLE) ||
-             (token.name == STR && funcData->typy[*pocet_parametrov] == STRING) ||
-             (token.name == BL && funcData->typy[*pocet_parametrov] == BOOLEAN_) ||
-             (token.name == INT_NUM && funcData->typy[*pocet_parametrov] == DOUBLE) ||
-             (token.name == DOUBLE_NUM && funcData->typy[*pocet_parametrov] == INTEGER)))
-            return SEM_TYPE_ERROR;
+	if(p_type() == OK) {    //pri vstupovani presnych vyrazov, nie premennych
 		
-		printf("move TF@%s ", funcData->nazvy[*pocet_parametrov]);
+		//najhnusnejsia vec v mojom zivote, ktoru som urobil, aby sme nemuseli prerabat projekt kvoli roznym typom v tokene a TS - jej kopia, original je dole + typova konverzia int double
+		if(!((token.name == INT_NUM && funcData->typy[*pocet_parametrov] == INTEGER) ||
+			 (token.name == DOUBLE_NUM && funcData->typy[*pocet_parametrov] == DOUBLE) ||
+			 (token.name == STR && funcData->typy[*pocet_parametrov] == STRING) ||
+			 (token.name == BL && funcData->typy[*pocet_parametrov] == BOOLEAN_) ||
+			 (token.name == INT_NUM && funcData->typy[*pocet_parametrov] == DOUBLE) ||
+			 (token.name == DOUBLE_NUM && funcData->typy[*pocet_parametrov] == INTEGER)))
+			return SEM_TYPE_ERROR;
 		
-		if(token.name == INT_NUM || token.name == INTEGER)
-			printf("int\n");
-		else if(token.name == DOUBLE_NUM || token.name == DOUBLE)
-			printf("double\n");
-		else if(token.name == STR || token.name == STRING)
-			printf("string\n");
+		else {
+			
+			printf("move TF@%s ", funcData->nazvy[*pocet_parametrov]);
+			
+			if(token.name == INT_NUM || token.name == INTEGER)
+				printf("int");
+			else if(token.name == DOUBLE_NUM || token.name == DOUBLE)
+				printf("double");
+			else if(token.name == STR || token.name == STRING)
+				printf("string");
+			
+			printf("@%s\n", token.data);
+			
+		}
 		
-		printf("@%s\n", token.data);
-        
-    } else {
-        tRetData *idData = NULL;
-        if((error = id(&idData, &token, ptrht)) != DIM_ID) {    //ID
-            int ret;
-            
-            if(error == NON_ID)
-                ret = SYN_A_ERROR;
-            else //if(error == F_ID)
-                ret = SEM_TYPE_ERROR;
-            
-            DELETE_SEARCH(idData);
-            return ret;
-        }
-        
-        //Semanticke overovanie vstupneho parametra == Data type
-        if(idData->type != funcData->typy[*pocet_parametrov]) {
-            if(!((idData->type == INTEGER && funcData->typy[*pocet_parametrov] == DOUBLE) || (idData->type == DOUBLE && funcData->typy[*pocet_parametrov] == INTEGER))) {
-                //typova konverzia int double
-                DELETE_SEARCH(idData);
-                return SEM_TYPE_ERROR;
-            }
-        }
+		if(token.name == INT_NUM && funcData->typy[*pocet_parametrov] == DOUBLE) {
+			
+			printf("int2float TF@%s TF@%s\n", funcData->nazvy[*pocet_parametrov], funcData->nazvy[*pocet_parametrov]);
+			
+		} else if(token.name == DOUBLE_NUM && funcData->typy[*pocet_parametrov] == INTEGER) {
+			
+			printf("float2r2eint TF@%s TF@%s\n", funcData->nazvy[*pocet_parametrov], funcData->nazvy[*pocet_parametrov]);
+			
+		}
+		
+	} else {
+		tRetData *idData = NULL;
+		if((error = id(&idData, &token, ptrht)) != DIM_ID) {	//ID
+			int ret;
+			
+			if(error == NON_ID)
+				ret = SYN_A_ERROR;
+			else //if(error == F_ID)
+				ret = SEM_TYPE_ERROR;
+			
+			DELETE_SEARCH(idData);
+			return ret;
+		}
+		
+		//Semanticke overovanie vstupneho parametra == Data type
+		if(idData->type != funcData->typy[*pocet_parametrov]) {
+			if(!((idData->type == INTEGER && funcData->typy[*pocet_parametrov] == DOUBLE) || (idData->type == DOUBLE && funcData->typy[*pocet_parametrov] == INTEGER))) {
+				//typova konverzia int double
+				DELETE_SEARCH(idData);
+				return SEM_TYPE_ERROR;
+			}
+		}
 		
 		printf("move TF@%s LF@%s\n", funcData->nazvy[*pocet_parametrov], token.data);
-        
-        DELETE_SEARCH(idData);
-        
-    }
-    
-    //inkrement poctu parametrov po korektnom prejdeni
-    (*pocet_parametrov)++;
-    
-    if((error = Get_Token(&token)) != OK)
-        return error;    //gettoken
-    
-    switch(token.name) {
-        case(RIGHTPAREN):            //ID)
-            return OK;
-        case(COMMA):                //ID, <p_nextparameter>
-            
-            if((error = Get_Token(&token)) != OK)
-                return error;    //gettoken
-            
-            return p_vnextparameter(funcData, pocet_parametrov);
-        default:
-            return SYN_A_ERROR;
-    }
+		
+		//pretypovanie vo vystupnom kode
+		if(idData->type == INTEGER && funcData->typy[*pocet_parametrov] == DOUBLE) {
+			
+			printf("int2float TF@%s TF@%s\n", funcData->nazvy[*pocet_parametrov], funcData->nazvy[*pocet_parametrov]);
+			
+		} else if(idData->type == DOUBLE && funcData->typy[*pocet_parametrov] == INTEGER) {
+			
+			printf("float2r2eint TF@%s TF@%s\n", funcData->nazvy[*pocet_parametrov], funcData->nazvy[*pocet_parametrov]);
+			
+		}
+		
+		DELETE_SEARCH(idData);
+		
+	}
+	
+	//inkrement poctu parametrov po korektnom prejdeni
+	(*pocet_parametrov)++;
+	
+	if((error = Get_Token(&token)) != OK)
+		return error;	//gettoken
+	
+	switch(token.name) {
+		case(RIGHTPAREN):			//ID)
+			return OK;
+		case(COMMA):				//ID, <p_nextparameter>
+			
+			if((error = Get_Token(&token)) != OK)
+				return error;	//gettoken
+			
+			return p_vnextparameter(funcData, pocet_parametrov);
+		default:
+			return SYN_A_ERROR;
+	}
 }
 
 //<p_prikaz>			ε
@@ -1017,6 +1067,14 @@ int p_prikaz(int return_type) {
 			//printf("%d\n\n", token.name);
 			printf("\n#DIM\n");
 			printf("defvar LF@%s\n", idToken.data);
+			
+			if(token.name == INTEGER) {
+				printf("move LF@%s int@0\n", idToken.data);
+			} else if(token.name == DOUBLE) {
+				printf("move LF@%s double@0.0\n", idToken.data);
+			} else if(token.name == STRING) {
+				printf("move LF@%s string@\n", idToken.data);
+			}
 			
 			Clear_Token(&idToken);
 			break;
