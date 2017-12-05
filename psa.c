@@ -133,7 +133,7 @@ int p_vyraz(int type){
 				printf("\n#End PSA\n");
 				psa_list_delete(list);
 				return OK;
-			}else if(final->data_type == DOUBLE_NUM && type == INT_NUM){
+			}else if((final->data_type == DOUBLE_NUM)&&(type == INT_NUM)){
 			//printf("*****PSA_COMPLETE******\n\n");
 				//convert na int
 				printf("defvar Tf@$kala%d\n",n);
@@ -257,7 +257,7 @@ int p_vyraz(int type){
 										switch(token.name){
 											case INT_NUM: printf("move Tf@%s int@%d\n",kala,give_me_int(token.data));break;
 											case DOUBLE_NUM: printf("move Tf@%s float@%g\n",kala,give_me_double(token.data));break;
-											case STR: printf("move Tf@%s string@%s\n",kala,token.data);break;
+											case STR: printf("move Tf@$%s string@",kala);to_string(token);printf("\n");break;
 										}
 										n++;
 							}					
@@ -326,7 +326,7 @@ int p_vyraz(int type){
 										switch(token.name){
 											case INT_NUM: printf("move Tf@%s int@%d\n",kala,give_me_int(token.data));break;
 											case DOUBLE_NUM: printf("move Tf@%s float@%g\n",kala,give_me_double(token.data));break;
-											case STR: printf("move Tf@$%s string@%s\n",kala,token.data);break;
+											case STR: printf("move Tf@$%s string@",kala);to_string(token);printf("\n");break;
 										}
 										n++;
 									}
@@ -456,16 +456,16 @@ int p_vyraz(int type){
 							sprintf(kala,"$kala%d",n);
 							strcpy(item->name,kala);
 			 			 	switch(aitem[1].oper){
-				 		 		case OP_MUL: printf("mul Tf@%s Tf@%s Tf@%s\n",kala,aitem[0].name,aitem[2].name);break;
-				 		 		case OP_DIV: printf("div Tf@%s Tf@%s Tf@%s\n",kala,aitem[0].name,aitem[2].name);break;
-				 		 		case OP_ADD: printf("add Tf@%s Tf@%s Tf@%s\n",kala,aitem[0].name,aitem[2].name);break;
-						 		case OP_MINUS: printf("sub Tf@%s Tf@%s Tf@%s\n",kala,aitem[0].name,aitem[2].name);break;
-			 			 		case OP_LESSER: printf("lt Tf@%s Tf@%s Tf@%s\n",kala,aitem[0].name,aitem[2].name);break;
-			 			 		case OP_LESSEREQUAL: printf("lt Tf@%s Tf@%s Tf@%s\n",kala,aitem[0].name,aitem[2].name);break;
-			 			 		case OP_GREATER: printf("gt Tf@%s Tf@%s Tf@%s\n",kala,aitem[0].name,aitem[2].name);break;
-				 		 		case OP_GREATEREQUAL: printf("gt Tf@%sTf@%s Tf@%s\n",kala,aitem[0].name,aitem[2].name);break;
-						 		case OP_EQUAL: printf("eq Tf@%s Tf@%s Tf@%s\n",kala,aitem[0].name,aitem[2].name);break;
-			 			 		case OP_NOTEQUAL: printf("sub Tf@%sTf@%s Tf@%s\n",kala,aitem[0].name,aitem[2].name);break;
+				 		 		case OP_MUL: printf("mul Tf@%s Tf@%s Tf@%s\n",kala,aitem[2].name,aitem[0].name);break;
+				 		 		case OP_DIV: printf("div Tf@%s Tf@%s Tf@%s\n",kala,aitem[2].name,aitem[0].name);break;
+				 		 		case OP_ADD: printf("add Tf@%s Tf@%s Tf@%s\n",kala,aitem[2].name,aitem[0].name);break;
+						 		case OP_MINUS: printf("sub Tf@%s Tf@%s Tf@%s\n",kala,aitem[2].name,aitem[0].name);break;
+			 			 		case OP_LESSER: printf("lt Tf@%s Tf@%s Tf@%s\n",kala,aitem[2].name,aitem[0].name);break;
+			 			 		case OP_LESSEREQUAL: printf("lt Tf@%s Tf@%s Tf@%s\n",kala,aitem[2].name,aitem[0].name);break;
+			 			 		case OP_GREATER: printf("gt Tf@%s Tf@%s Tf@%s\n",kala,aitem[2].name,aitem[0].name);break;
+				 		 		case OP_GREATEREQUAL: printf("gt Tf@%sTf@%s Tf@%s\n",kala,aitem[2].name,aitem[0].name);break;
+						 		case OP_EQUAL: printf("eq Tf@%s Tf@%s Tf@%s\n",kala,aitem[2].name,aitem[0].name);break;
+			 			 		case OP_NOTEQUAL: printf("sub Tf@%sTf@%s Tf@%s\n",kala,aitem[2].name,aitem[0].name);break;
 			 			 		default: return SEM_TYPE_ERROR;
 			 			 	}
 		 			 		n++;
@@ -479,37 +479,42 @@ int p_vyraz(int type){
 							// DVA STRINGY
 		 			 		if(aitem[0].data_type == STR){
 		 			 			switch(aitem[1].oper){
-				 			 		case OP_ADD: printf("concat Tf@%s Tf@%s Tf@%s\n",kala,aitem[0].name,aitem[2].name);break;
-				 			 		case OP_LESSER: printf("lt Tf@%s Tf@%s Tf@%s\n",kala,aitem[0].name,aitem[2].name);break;
+				 			 		case OP_ADD: printf("concat Tf@%s Tf@%s Tf@%s\n",kala,aitem[2].name,aitem[0].name);break;
+				 			 		case OP_LESSER: printf("lt Tf@%s Tf@%s Tf@%s\n",kala,aitem[2].name,aitem[0].name);break;
 				 			 		case OP_LESSEREQUAL:{
-				 			 			printf("lt Tf@%s Tf@%s Tf@%s\n",kala,aitem[0].name,aitem[2].name);
+				 			 			printf("lt Tf@%s Tf@%s Tf@%s\n",kala,aitem[2].name,aitem[0].name);
+				 			 			n++;
 				 			 			printf("defvar Tf@$kala%d\n",n);
 										sprintf(pom1,"$kala%d",n);
-										printf("eq Tf@%s Tf@%s Tf@%s\n",pom1,aitem[0].name,aitem[2].name);
+										n++;
+										printf("eq Tf@%s Tf@%s Tf@%s\n",pom1,aitem[2].name,aitem[0].name);
 										printf("defvar Tf@$kala%d\n",n);
 										sprintf(pom2,"$kala%d",n);
-										strcpy(item->name,pom2);
+										
 										printf("or Tf@%s Tf@%s Tf@%s\n",pom2,kala,pom1);
 										strcpy(item->name,pom2);
 				 			 		}break;
-				 			 		case OP_GREATER: printf("gt Tf@%s Tf@%s Tf@%s\n",kala,aitem[0].name,aitem[2].name);break;
+				 			 		case OP_GREATER: printf("gt Tf@%s Tf@%s Tf@%s\n",kala,aitem[2].name,aitem[0].name);break;
 				 			 		case OP_GREATEREQUAL: {
-				 			 			printf("gt Tf@%s Tf@%s Tf@%s\n",kala,aitem[0].name,aitem[2].name);
+				 			 			printf("gt Tf@%s Tf@%s Tf@%s\n",kala,aitem[2].name,aitem[0].name);
+				 			 			n++;
 				 			 			printf("defvar Tf@$kala%d\n",n);
 										sprintf(pom1,"$kala%d",n);
-										printf("eq Tf@%s Tf@%s Tf@%s\n",pom1,aitem[0].name,aitem[2].name);
+										n++;
+										printf("eq Tf@%s Tf@%s Tf@%s\n",pom1,aitem[2].name,aitem[0].name);
 										printf("defvar Tf@$kala%d\n",n);
 										sprintf(pom2,"$kala%d",n);
-										strcpy(item->name,pom2);
+										
 										printf("or Tf@%s Tf@%s Tf@%s\n",pom2,kala,pom1);
 										strcpy(item->name,pom2);
 				 			 		}break;
-				 			 		case OP_EQUAL: printf("eq Tf@%s Tf@%s Tf@%s\n",kala,aitem[0].name,aitem[2].name);break;
+				 			 		case OP_EQUAL: printf("eq Tf@%s Tf@%s Tf@%s\n",kala,aitem[2].name,aitem[0].name);break;
 				 			 		case OP_NOTEQUAL:{
-				 			 			printf("eq Tf@%s Tf@%s Tf@%s\n",kala,aitem[0].name,aitem[2].name);
+				 			 			printf("eq Tf@%s Tf@%s Tf@%s\n",kala,aitem[2].name,aitem[0].name);
+				 			 			n++;
 				 			 			printf("defvar Tf@$kala%d\n",n);
 										sprintf(pom1,"$kala%d",n);
-										strcpy(item->name,pom1);
+
 										printf("not Tf@%s Tf@%s\n",pom1,kala);
 										strcpy(item->name,pom1);
 				 			 		}break;
@@ -521,50 +526,50 @@ int p_vyraz(int type){
 		 			 		else{
 		 			 	
 				 			 	switch(aitem[1].oper){
-					 		 		case OP_MUL: printf("mul Tf@%s Tf@%s Tf@%s\n",kala,aitem[0].name,aitem[2].name);break;
+					 		 		case OP_MUL: printf("mul Tf@%s Tf@%s Tf@%s\n",kala,aitem[2].name,aitem[0].name);break;
 					 		 		case OP_DIV:{
 					 		 					if(aitem[0].data_type == INT_NUM){
+													printf("int2float Tf@%s Tf@%s\n",kala,aitem[2].name);
+													strcpy(aitem[2].name,kala);
+													n++;
+													printf("defvar Tf@$kala%d\n",n);
+													sprintf(kala,"$kala%d",n);
 													printf("int2float Tf@%s Tf@%s\n",kala,aitem[0].name);
 													strcpy(aitem[0].name,kala);
 													n++;
 													printf("defvar Tf@$kala%d\n",n);
 													sprintf(kala,"$kala%d",n);
-													printf("int2float Tf@%s Tf@%s\n",kala,aitem[2].name);
-													strcpy(aitem[2].name,kala);
-													n++;
-													printf("defvar Tf@$kala%d\n",n);
-													sprintf(kala,"$kala%d",n);
-													n++;
+												
 													strcpy(item->name,kala);
 					 		 					}
 
-					 		 					printf("div Tf@%s Tf@%s Tf@%s\n",kala,aitem[0].name,aitem[2].name);
+					 		 					printf("div Tf@%s Tf@%s Tf@%s\n",kala,aitem[2].name,aitem[0].name);
 					 		 					item->data_type = DOUBLE_NUM;
 					 		 					}break;
-					 		 		case OP_ADD: printf("add Tf@%s Tf@%s Tf@%s\n",kala,aitem[0].name,aitem[2].name);break;
-							 		case OP_MINUS: printf("sub Tf@%s Tf@%s Tf@%s\n",kala,aitem[0].name,aitem[2].name);break;
-				 			 		case OP_LESSER: printf("lt Tf@%s Tf@%s Tf@%s\n",kala,aitem[0].name,aitem[2].name);break;
-				 			 		case OP_LESSEREQUAL: printf("lt Tf@%s Tf@%s Tf@%s\n",kala,aitem[0].name,aitem[2].name);break;
-				 			 		case OP_GREATER: printf("gt Tf@%s Tf@%s Tf@%s\n",kala,aitem[0].name,aitem[2].name);break;
-					 		 		case OP_GREATEREQUAL: printf("gt Tf@%sTf@%s Tf@%s\n",kala,aitem[0].name,aitem[2].name);break;
-							 		case OP_EQUAL: printf("eq Tf@%s Tf@%s Tf@%s\n",kala,aitem[0].name,aitem[2].name);break;
-				 			 		case OP_NOTEQUAL: printf("sub Tf@%sTf@%s Tf@%s\n",kala,aitem[0].name,aitem[2].name);break;
+					 		 		case OP_ADD: printf("add Tf@%s Tf@%s Tf@%s\n",kala,aitem[2].name,aitem[0].name);break;
+							 		case OP_MINUS: printf("sub Tf@%s Tf@%s Tf@%s\n",kala,aitem[2].name,aitem[0].name);break;
+				 			 		case OP_LESSER: printf("lt Tf@%s Tf@%s Tf@%s\n",kala,aitem[2].name,aitem[0].name);break;
+				 			 		case OP_LESSEREQUAL: printf("lt Tf@%s Tf@%s Tf@%s\n",kala,aitem[2].name,aitem[0].name);break;
+				 			 		case OP_GREATER: printf("gt Tf@%s Tf@%s Tf@%s\n",kala,aitem[2].name,aitem[0].name);break;
+					 		 		case OP_GREATEREQUAL: printf("gt Tf@%sTf@%s Tf@%s\n",kala,aitem[2].name,aitem[0].name);break;
+							 		case OP_EQUAL: printf("eq Tf@%s Tf@%s Tf@%s\n",kala,aitem[2].name,aitem[0].name);break;
+				 			 		case OP_NOTEQUAL: printf("sub Tf@%sTf@%s Tf@%s\n",kala,aitem[2].name,aitem[0].name);break;
 				 			 		case OP_DIV_INT:{
 				 			 						if(aitem[0].data_type == DOUBLE_NUM){
 				 			 							return SEM_TYPE_ERROR;
 				 			 						}
-				 			 						printf("int2float Tf@%s Tf@%s\n",kala,aitem[0].name);
-													strcpy(aitem[0].name,kala);
-													n++;
-													printf("defvar Tf@$kala%d\n",n);
-													sprintf(kala,"$kala%d",n);
-													printf("int2float Tf@%s Tf@%s\n",kala,aitem[2].name);
+				 			 						printf("int2float Tf@%s Tf@%s\n",kala,aitem[2].name);
 													strcpy(aitem[2].name,kala);
 													n++;
 													printf("defvar Tf@$kala%d\n",n);
 													sprintf(kala,"$kala%d",n);
+													printf("int2float Tf@%s Tf@%s\n",kala,aitem[0].name);
+													strcpy(aitem[0].name,kala);
 													n++;
-													printf("div Tf@%s Tf@%s Tf@%s\n",kala,aitem[0].name,aitem[2].name);
+													printf("defvar Tf@$kala%d\n",n);
+													sprintf(kala,"$kala%d",n);
+													
+													printf("div Tf@%s Tf@%s Tf@%s\n",kala,aitem[2].name,aitem[0].name);
  													printf("float2int Tf@%s Tf@%s\n",kala,kala);
 													strcpy(item->name,kala);
 					 		 						item->data_type = INT_NUM;
