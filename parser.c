@@ -1151,13 +1151,14 @@ int p_prikaz(int return_type) {
 			
 			printf("\n#DO WHILE\n");
 			
+			printf("defvar LF@vyraz%d\n", body_index);
+			
+			printf("label body%d\n", body_index);
+			
 			if((error = p_vyraz(BL)) != OK)	//Do While <p_vyraz>
 				break;
 			
-			printf("defvar LF@vyraz%d\n", body_index);
 			printf("move LF@vyraz%d TF@$return\n", body_index);
-			
-			printf("label body%d\n", body_index);
 			
 			printf("jumpifeq body%d LF@vyraz%d bool@false\n", body_index+1, body_index);
 			
