@@ -1302,10 +1302,12 @@ int p_print(void) {
 	if(token.name != STR) {			//String
 		if((error = p_vyraz(PRINT_VAR)) != OK)	//<p_vyraz>
 			return error;
+	} else {
+		//string convert
+		printf("write string@");
+		toString(token);
+		printf("\n");
 	}
-	
-	//string convert
-	printf("write string@%s\n", token.data);
 	
 	if(!loaded_token) {		//vola sa, ak prikaz nebol vyrazom, teda nie je nacitany novy token
 		if((error = Get_Token(&token)) != OK)
@@ -1338,10 +1340,12 @@ int p_nextprint(void) {
 	if(token.name != STRING) {			//String
 		if((error = p_vyraz(PRINT_VAR)) != OK)	//<p_vyraz>
 			return error;
+	} else {
+		//string convert
+		printf("write string@");
+		toString(token);
+		printf("\n");
 	}
-	
-	//string convert
-	printf("write string@%s\n", token.data);
 	
 	if(!loaded_token) {		//vola sa, ak prikaz nebol vyrazom, teda nie je nacitany novy token
 		if((error = Get_Token(&token)) != OK)
