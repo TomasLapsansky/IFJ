@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include <string.h>
 
-void toString(TOKEN token) {
+void to_string(TOKEN token) {
 	
 	for(unsigned long i = 0; i < strlen(token.data); i++) {
 		if((token.data[i] >= 48 && token.data[i] <= 57) || (token.data[i] >= 65 && token.data[i] <= 90) || (token.data[i] >= 97 && token.data[i] <= 122))

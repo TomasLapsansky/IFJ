@@ -7,4 +7,4 @@
 
 #include "scanner.h"
 
-void toString(TOKEN token);
+void to_string(TOKEN token);

@@ -10,6 +10,7 @@
 #include "symtable.h"
 #include "psa.h" 
 #include "tstack.h"
+#include "string.h"
 
 int declare(TOKEN idToken);
 int declare_define(void);

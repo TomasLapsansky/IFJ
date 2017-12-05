@@ -844,7 +844,7 @@ int p_vparameter(tRetData *funcData, int *pocet_parametrov) {
             }
         }
 		
-		printf("move TF@par%d LF@%s\n", *pocet_parametrov, token.data);
+		printf("move TF@%s LF@%s\n", funcData->nazvy[*pocet_parametrov], token.data);
         
         DELETE_SEARCH(idData);
 	
@@ -919,7 +919,7 @@ int p_vnextparameter(tRetData *funcData, int *pocet_parametrov) {
             }
         }
 		
-		printf("move TF@par%d LF@%s\n", *pocet_parametrov, token.data);
+		printf("move TF@%s LF@%s\n", funcData->nazvy[*pocet_parametrov], token.data);
         
         DELETE_SEARCH(idData);
         
@@ -1305,7 +1305,7 @@ int p_print(void) {
 	} else {
 		//string convert
 		printf("write string@");
-		toString(token);
+		to_string(token);
 		printf("\n");
 	}
 	
@@ -1343,7 +1343,7 @@ int p_nextprint(void) {
 	} else {
 		//string convert
 		printf("write string@");
-		toString(token);
+		to_string(token);
 		printf("\n");
 	}
 	
