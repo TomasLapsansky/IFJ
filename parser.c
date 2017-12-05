@@ -1181,13 +1181,14 @@ int p_prikaz(int return_type) {
 			if((error = Get_Token(&token)) != OK)
 				break;	//gettoken
 			
+			body_index++;
+			
 			printf("\n#WHILE BODY\n");
 			if((error = p_body(return_type)) != OK) {	//Do While <p_vyraz> EOL <p_body>
 				break;
 			}
 			
 			printf("jump body%d\n", local_body_index);
-			body_index++;
 			printf("label body%d\n", local_body_index+1);
 			
 			if(token.name != LOOP) {
