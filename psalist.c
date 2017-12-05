@@ -118,7 +118,7 @@ psa_item *psa_create_item(){
 psa_item *psa_search_term(psa_list *list){
 	psa_item *item = list->top;
 
-	while((item->oper > 13)&&(item->oper != 16)){
+	while(item->oper > 14){
 		item = item->lptr;
 	}
 	//printf("FIRST TERM: %d\n",item->oper);
