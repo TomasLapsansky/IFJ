@@ -102,7 +102,7 @@ int p_vyraz(int type){
 		}
 
 //qprintf("__________________\n\n");
-//psa_list_show(list);
+//qpsa_list_show(list);
 		 // urceni operace, na zaklade precedencni tabulky
 		item = psa_search_term(list);
 
@@ -591,6 +591,27 @@ int p_vyraz(int type){
 					    item->oper = OP_E;
 					    // vlozeni OP_E do seznamu
 			 		    psa_list_push(list,item);
+		 			 }
+		 			 else if((aitem[0].oper == OP_E)&&(aitem[1].oper == OP_MINUS)&&(aitem[2].oper == OP_EXP)){
+		 			 //qprintf("VYHODNOCENI PRAVIDLA i->E | E->(E)\n");
+
+		 			 	item = psa_create_item();
+		 			 	printf("defvar Tf@$kala%d\n",n);
+						sprintf(kala,"$kala%d",n);
+						n++;
+						printf("move Tf@%s float@-1.0\n",kala);
+						printf("defvar Tf@$kala%d\n",n);
+						sprintf(pom1,"$kala%d",n);
+						n++;
+						printf("mul Tf@%s Tf@%s Tf@%s\n",pom1,kala,aitem[0].name);
+		 			 	item->data_type = aitem[0].data_type;
+		 			 	strcpy(item->name,pom1);
+
+						// vytvoreni OP_E
+					    item->oper = OP_E;
+					    // vlozeni OP_E do seznamu
+			 		    psa_list_push(list,item);
+//psa_list_show(list);	
 		 			 }
 /*        ---------  ZADNE ZE ZADANYCH PRAVIDEL NEBYLO NALEZENO  ----------			*/ 		 			 
 		 			 else{
