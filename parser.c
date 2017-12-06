@@ -373,6 +373,14 @@ int p_define(void) {
 			printf("pushframe\n");
 			//printf("LF@return\n");
 			
+			printf("\ndefvar LF@$return\n");
+			if(idData->type == INTEGER)
+				printf("move LF@$return int@0\n\n");
+			else if(idData->type == DOUBLE)
+				printf("move LF@$return float@0.0\n\n");
+			else if(idData->type == STRING)
+				printf("move LF@$return string@\n\n");
+			
 			if((error = p_body(idData)) != OK) {		//Function ID(<p_parameter>) As <p_type> EOL <p_body>
                 DELETE_SEARCH(idData);
 				return error;
@@ -1272,7 +1280,7 @@ int p_prikaz(tRetData *funcData) {
 				break;
 			
 			printf("\n#FUNCTION RETURN\n");
-			printf("defvar LF@$return\n");
+			//printf("defvar LF@$return\n");
 			printf("move LF@$return TF@$return\n");
 			printf("jump end_%s\n", funcData->navesti);
             
