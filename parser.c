@@ -825,14 +825,19 @@ int p_vparameter(tRetData *funcData, int *pocet_parametrov) {
 			
 			printf("move TF@%s ", funcData->nazvy[*pocet_parametrov]);
 			
-			if(token.name == INT_NUM || token.name == INTEGER)
+			if(token.name == INT_NUM || token.name == INTEGER) {
 				printf("int");
-			else if(token.name == DOUBLE_NUM || token.name == DOUBLE)
+				printf("@%s\n", token.data);
+			} else if(token.name == DOUBLE_NUM || token.name == DOUBLE) {
 				printf("float");
-			else if(token.name == STR || token.name == STRING)
+				printf("@%s\n", token.data);
+			} else if(token.name == STR || token.name == STRING) {
 				printf("string");
+				printf("@", token.data);
+				to_string(token);
+				printf("\n");
+			}
 			
-			printf("@%s\n", token.data);
 			
 		}
 		
@@ -927,14 +932,18 @@ int p_vnextparameter(tRetData *funcData, int *pocet_parametrov) {
 			
 			printf("move TF@%s ", funcData->nazvy[*pocet_parametrov]);
 			
-			if(token.name == INT_NUM || token.name == INTEGER)
+			if(token.name == INT_NUM || token.name == INTEGER) {
 				printf("int");
-			else if(token.name == DOUBLE_NUM || token.name == DOUBLE)
+				printf("@%s\n", token.data);
+			} else if(token.name == DOUBLE_NUM || token.name == DOUBLE) {
 				printf("float");
-			else if(token.name == STR || token.name == STRING)
+				printf("@%s\n", token.data);
+			} else if(token.name == STR || token.name == STRING) {
 				printf("string");
-			
-			printf("@%s\n", token.data);
+				printf("@", token.data);
+				to_string(token);
+				printf("\n");
+			}
 			
 		}
 		
@@ -1161,7 +1170,7 @@ int p_prikaz(tRetData *funcData) {
 			
 			local_body_index = body_index;
 			
-			body_index += 2;
+			body_index += 3;
 			
 			printf("\n#IF TRUE BODY\n");
 			if((error = p_body(funcData)) != OK) {	//If <p_vyraz> Then EOL <p_body>
