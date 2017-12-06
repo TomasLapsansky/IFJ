@@ -1250,7 +1250,7 @@ int p_prikaz(tRetData *funcData) {
 			if((error = Get_Token(&token)) != OK)
 				break;	//gettoken
 			
-			body_index++;
+			body_index += 2;
 			
 			printf("\n#WHILE BODY\n");
 			if((error = p_body(funcData)) != OK) {	//Do While <p_vyraz> EOL <p_body>
