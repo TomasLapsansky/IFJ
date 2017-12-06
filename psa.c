@@ -254,6 +254,7 @@ int p_vyraz(int type){
 											case STRING: newitem->data_type = STR; break;
 											case BOOLEAN_: newitem->data_type = BL; break;
 									}	
+									DELETE_SEARCH(var);
 							}	
 
 							if(token.name < 15 && token.name > 10){
@@ -323,6 +324,7 @@ int p_vyraz(int type){
 											case STRING: newitem->data_type = STR; break;
 											case BOOLEAN_: newitem->data_type = BL; break;
 											}
+										DELETE_SEARCH(var);
 									}
 
 									if(token.name < 15 && token.name > 10){
