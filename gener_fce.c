@@ -5,7 +5,7 @@ void gener_fce()
 	printf("jump main \n");
 	printf("#-----Zacatek vestavenych funkci------ \n\n");
 	printf("#telo funkce length() \n");
-	printf("label lenght \n");
+	printf("label length \n");
 	printf("pushframe \n");
 	printf("defvar Lf@$return\n");
 	printf("strlen Lf@$return Lf@s\n");
