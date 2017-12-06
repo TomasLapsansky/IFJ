@@ -599,10 +599,22 @@ int p_vyraz(int type){
 		 			 	printf("defvar Tf@$kala%d\n",n);
 						sprintf(kala,"$kala%d",n);
 						n++;
+						
+						if(aitem[0].data_type == INT_NUM){
+						printf("move Tf@%s int@-1\n",kala);
+						printf("defvar Tf@$kala%d\n",n);
+						sprintf(pom1,"$kala%d",n);
+						n++;
+						}
+						else if(aitem[0].data_type == DOUBLE_NUM){
 						printf("move Tf@%s float@-1.0\n",kala);
 						printf("defvar Tf@$kala%d\n",n);
 						sprintf(pom1,"$kala%d",n);
 						n++;
+						}
+						else{
+							return SEM_TYPE_ERROR;
+						}
 						printf("mul Tf@%s Tf@%s Tf@%s\n",pom1,kala,aitem[0].name);
 		 			 	item->data_type = aitem[0].data_type;
 		 			 	strcpy(item->name,pom1);
