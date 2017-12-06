@@ -257,7 +257,7 @@ int p_vyraz(int type){
 										switch(token.name){
 											case INT_NUM: printf("move Tf@%s int@%d\n",kala,give_me_int(token.data));break;
 											case DOUBLE_NUM: printf("move Tf@%s float@%g\n",kala,give_me_double(token.data));break;
-											case STR: printf("move Tf@$%s string@",kala);to_string(token);printf("\n");break;
+											case STR: printf("move Tf@%s string@",kala);to_string(token);printf("\n");break;
 										}
 										n++;
 							}					
@@ -463,9 +463,9 @@ int p_vyraz(int type){
 			 			 		case OP_LESSER: printf("lt Tf@%s Tf@%s Tf@%s\n",kala,aitem[2].name,aitem[0].name);break;
 			 			 		case OP_LESSEREQUAL: printf("lt Tf@%s Tf@%s Tf@%s\n",kala,aitem[2].name,aitem[0].name);break;
 			 			 		case OP_GREATER: printf("gt Tf@%s Tf@%s Tf@%s\n",kala,aitem[2].name,aitem[0].name);break;
-				 		 		case OP_GREATEREQUAL: printf("gt Tf@%sTf@%s Tf@%s\n",kala,aitem[2].name,aitem[0].name);break;
+				 		 		case OP_GREATEREQUAL: printf("gt Tf@%s Tf@%s Tf@%s\n",kala,aitem[2].name,aitem[0].name);break;
 						 		case OP_EQUAL: printf("eq Tf@%s Tf@%s Tf@%s\n",kala,aitem[2].name,aitem[0].name);break;
-			 			 		case OP_NOTEQUAL: printf("sub Tf@%sTf@%s Tf@%s\n",kala,aitem[2].name,aitem[0].name);break;
+			 			 		case OP_NOTEQUAL: printf("sub Tf@%s Tf@%s Tf@%s\n",kala,aitem[2].name,aitem[0].name);break;
 			 			 		default: return SEM_TYPE_ERROR;
 			 			 	}
 		 			 		n++;
