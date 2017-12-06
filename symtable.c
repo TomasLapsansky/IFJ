@@ -34,7 +34,7 @@ bool htInit ( tHTable* ptrht ) {
 		(*ptrht)[i]=NULL;	//potreba ukotvit vsechny vytvorene pointery
 		i++;
 	}
-
+    
     return true;
 }
 
@@ -161,33 +161,6 @@ bool InsertParametr(tHTItem* ptrht,int typ,char* nazev)
 	return true;
 }
 
-bool InsertParametrDeclare(tHTItem* ptrht,int typ)
-{
-	int* tmp;
-	tmp=(int*)calloc((ptrht->data.pocet_declare+1),sizeof(int));
-	if(tmp==NULL)	return false;
-
-	if (ptrht->data.pole_declar==NULL)
-	{
-		tmp[0]=typ;
-		ptrht->data.pole_declar=tmp;
-		ptrht->data.pocet_declare++;
-		return true;
-	}
-	else{
-				for (int i=0;i<ptrht->data.pocet_declare;i++)
-	{
-		tmp[i]=ptrht->data.pole_declar[i];
-	}
-		tmp[ptrht->data.pocet_declare]=typ;
-		free(ptrht->data.pole_declar);
-		ptrht->data.pole_declar=tmp;
-		ptrht->data.pocet_declare++;
-		return true;
-	}
-	return true;
-}
-
 
 void Uvolnitparametry(tHTItem* ptrht)
 {
@@ -217,9 +190,7 @@ int INSERT_DIM(int type,char* nazov_dim,tHTable* tabulka)
 	dato.first=NULL;
 	dato.funkce=false;
 	dato.navesti=pamet;
-	dato.pole_declar=NULL;
 	dato.pocet_par=0;
-	dato.pocet_declare=0;
 	dato.type=type;
 	dato.definovana=false;
 	if(htInsert (tabulka,pamet,dato)==false)
@@ -244,11 +215,9 @@ int INSERT_F(char* nazov_f,tHTable* tabulka)
 
 	tData dato;
 	dato.first=NULL;
-	dato.pole_declar=NULL;
 	dato.funkce=true;
 	dato.navesti=pamet;
 	dato.pocet_par=0;
-	dato.pocet_declare=0;
 	dato.type=-1;
 	dato.definovana=false;
 	if(htInsert (tabulka,pamet,dato)==false)	return ALLOC_ERROR;
@@ -289,27 +258,6 @@ int INSERT_F_TYPE(int type,char* nazov_f,tHTable* tabulka)
 		return OK;
 	}
 }
-
-int INSERT_PAR_DEKLAR(int type,char* nazov_f,tHTable* tabulka)
-{
-	char * pamet;
-	pamet=(char*)malloc(sizeof(char)*(strlen(nazov_f)+1));
-	if(pamet==NULL)	return ALLOC_ERROR;
-	for (unsigned int i=0;i<=(strlen(nazov_f));i++)
-	{
-		pamet[i]=tolower(nazov_f[i]);
-	}
-	pamet[strlen(nazov_f)]='\0';
-
-
-	tHTItem* tmp;
-	tmp=htSearch(tabulka,pamet);
-	free(pamet);
-
-	if(InsertParametrDeclare(tmp,type)==false)	return ALLOC_ERROR;	//todo
-	return OK;
-}
-
 
 int INSERT_PAR(int type,char* nazev_par, char* nazov_f,tHTable* tabulka)
 {
@@ -398,7 +346,6 @@ tRetData* SEARCH(char* nazov,tHTable* tabulka)
 	help->navesti=tmp->data.navesti;
 	help->type=tmp->data.type;
 	help->pocet_parametru=tmp->data.pocet_par;
-	help->pocet_declare=tmp->data.pocet_declare;
 	help->LocalTS=tmp->lcht;
 	int *pole_i;
 	pole_i=(int*)calloc(help->pocet_parametru,sizeof(int));
@@ -414,20 +361,6 @@ tRetData* SEARCH(char* nazov,tHTable* tabulka)
 		pomoc=pomoc->next;
 	}
 	help->typy=pole_i;
-
-	int *pole_d;
-	pole_d=(int*)calloc(help->pocet_declare,sizeof(int));
-	if(pole_i==NULL)		{
-		//printf("chyba calloc");
-		return NULL;
-	}
-
-	for (int i=0;i<help->pocet_parametru;i++)
-	{
-		pole_d[i]=tmp->data.pole_declar[i];
-	}
-	help->typy_declare=pole_d;
-
 
 	char **pole_char;
 	pole_char=(char**)calloc((help->pocet_parametru),sizeof(char*));
@@ -453,8 +386,6 @@ void DELETE_SEARCH(tRetData* retdato)
 	free(retdato->typy);
 	retdato->typy=NULL;
 	free(retdato->nazvy);
-	free(retdato->typy_declare);
-	retdato->typy_declare=NULL;
 	retdato->nazvy=NULL;
 	free(retdato);
 	retdato=NULL;
@@ -501,7 +432,6 @@ void DELETE_TS(tHTable* ptrht)
 			tmp=prev;
 			prev=prev->ptrnext;	//posun a mazani
 			free(tmp->key);
-			free(tmp->data.pole_declar);
 			free(tmp);
 
 		}
@@ -516,7 +446,7 @@ void DELETE_TS(tHTable* ptrht)
 void htPrintTable( tHTable* ptrht ) {
     int maxlen = 0;
     int sumcnt = 0;
-
+    
     printf ("------------HASH TABLE--------------\n");
     for ( int i=0; i<HTSIZE; i++ ) {
         printf ("%i:",i);
@@ -528,12 +458,12 @@ void htPrintTable( tHTable* ptrht ) {
             ptr = ptr->ptrnext;
         }
         printf ("\n");
-
+        
         if (cnt > maxlen)
             maxlen = cnt;
         sumcnt+=cnt;
     }
-
+    
     printf ("------------------------------------\n");
     printf ("Items count %i   The longest list %i\n",sumcnt,maxlen);
     printf ("------------------------------------\n");
