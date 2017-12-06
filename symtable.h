@@ -44,6 +44,8 @@ char* navesti;	//pomocny retezec pro tvoru 3ad kodu, je stejne jako key
 bool funkce;	//pokud je to funkce=true
 bool definovana; //implicit false
 int pocet_par;
+int pocet_declare;
+int* pole_declar;
 parametry *first;	//hlavicka lin seznamu parametru
 }tData;
 
@@ -74,8 +76,10 @@ typedef struct tRetData{
 	bool funkce;							//pokud je to funkce=true prom=false
 	bool definovana;
 	int pocet_parametru;
+	int pocet_declare;
 	char *navesti;						//fce=id  prom=NULL	slouzi pro generator
 	int *typy;								//pole typu paramtru
+	int *typy_declare;
 	char **nazvy;							//pole id paramatru
 	tHTable *LocalTS;
 }tRetData;
@@ -112,7 +116,7 @@ flase -> funkce neni v TS,chyba alokace
 ALLOC_ERROR / OK / SEM_TYPE_ERROR pokud se pokusite zadat podruhe stejny parametr
 */
 int INSERT_PAR(int type,char* nazev_par, char* nazov_f,tHTable* tabulka);
-
+int INSERT_PAR_DEKLAR(int type,char* nazov_f,tHTable* tabulka);
 /*
 nastavi bool definovana na true
 true uspech / false neuspech
@@ -151,7 +155,7 @@ bool htInsert ( tHTable* ptrht, char* key, tData data );
 /* funkce pro Linearni seznam parametru fukci*/
 
 bool Searchparametr(tHTItem* ptrht,char* nazev);
-
+bool InsertParametrDeclare(tHTItem* ptrht,int typ);
 bool InsertParametr(tHTItem* ptrht,int typ,char* nazev);
 
 void Uvolnitparametry(tHTItem* ptrht);
