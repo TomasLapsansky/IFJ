@@ -193,7 +193,8 @@ int Get_Token(TOKEN *t){
 						if(eol == 1) eol = 0;
 			
 						// identifikator
-						if(isalpha(c) || c == '_'){							
+						if(isalpha(c) || c == '_'){		
+							c = tolower(c);					
 							if((pom = Add_Char(t,c)) == ALLOC_ERROR){
 								return ALLOC_ERROR;
 							}
