@@ -553,7 +553,15 @@ int p_vyraz(int type){
 				 			 		case OP_GREATER: printf("gt Tf@%s Tf@%s Tf@%s\n",kala,aitem[2].name,aitem[0].name);break;
 					 		 		case OP_GREATEREQUAL: printf("gt Tf@%sTf@%s Tf@%s\n",kala,aitem[2].name,aitem[0].name);break;
 							 		case OP_EQUAL: printf("eq Tf@%s Tf@%s Tf@%s\n",kala,aitem[2].name,aitem[0].name);break;
-				 			 		case OP_NOTEQUAL: printf("sub Tf@%sTf@%s Tf@%s\n",kala,aitem[2].name,aitem[0].name);break;
+				 			 		case OP_NOTEQUAL:{
+							 			 			printf("eq Tf@%s Tf@%s Tf@%s\n",kala,aitem[2].name,aitem[0].name);
+							 			 			n++;
+							 			 			printf("defvar Tf@$kala%d\n",n);
+													sprintf(pom1,"$kala%d",n);
+
+													printf("not Tf@%s Tf@%s\n",pom1,kala);
+													strcpy(item->name,pom1);
+													}break;
 				 			 		case OP_DIV_INT:{
 				 			 						if(aitem[0].data_type == DOUBLE_NUM){
 				 			 							return SEM_TYPE_ERROR;
