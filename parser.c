@@ -1100,7 +1100,7 @@ int p_prikaz(int return_type) {
 			if(idData->type == INTEGER)
 				printf("int\n");
 			else if(idData->type == DOUBLE)
-				printf("double\n");
+				printf("float\n");
 			else if(idData->type == STRING)
 				printf("string\n");
 			
