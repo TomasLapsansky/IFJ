@@ -833,7 +833,7 @@ int p_vparameter(tRetData *funcData, int *pocet_parametrov) {
 				printf("@%s\n", token.data);
 			} else if(token.name == STR || token.name == STRING) {
 				printf("string");
-				printf("@", token.data);
+				printf("@");
 				to_string(token);
 				printf("\n");
 			}
@@ -940,7 +940,7 @@ int p_vnextparameter(tRetData *funcData, int *pocet_parametrov) {
 				printf("@%s\n", token.data);
 			} else if(token.name == STR || token.name == STRING) {
 				printf("string");
-				printf("@", token.data);
+				printf("@");
 				to_string(token);
 				printf("\n");
 			}
