@@ -817,7 +817,7 @@ int p_vparameter(tRetData *funcData, int *pocet_parametrov) {
 			if(token.name == INT_NUM || token.name == INTEGER)
 				printf("int");
 			else if(token.name == DOUBLE_NUM || token.name == DOUBLE)
-				printf("double");
+				printf("float");
 			else if(token.name == STR || token.name == STRING)
 				printf("string");
 			
@@ -919,7 +919,7 @@ int p_vnextparameter(tRetData *funcData, int *pocet_parametrov) {
 			if(token.name == INT_NUM || token.name == INTEGER)
 				printf("int");
 			else if(token.name == DOUBLE_NUM || token.name == DOUBLE)
-				printf("double");
+				printf("float");
 			else if(token.name == STR || token.name == STRING)
 				printf("string");
 			
@@ -1071,7 +1071,7 @@ int p_prikaz(int return_type) {
 			if(token.name == INTEGER) {
 				printf("move LF@%s int@0\n", idToken.data);
 			} else if(token.name == DOUBLE) {
-				printf("move LF@%s double@0.0\n", idToken.data);
+				printf("move LF@%s float@0.0\n", idToken.data);
 			} else if(token.name == STRING) {
 				printf("move LF@%s string@\n", idToken.data);
 			}
