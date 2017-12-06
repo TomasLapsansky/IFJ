@@ -551,7 +551,7 @@ int p_vyraz(int type){
 				 			 		case OP_LESSER: printf("lt Tf@%s Tf@%s Tf@%s\n",kala,aitem[2].name,aitem[0].name);break;
 				 			 		case OP_LESSEREQUAL: printf("lt Tf@%s Tf@%s Tf@%s\n",kala,aitem[2].name,aitem[0].name);break;
 				 			 		case OP_GREATER: printf("gt Tf@%s Tf@%s Tf@%s\n",kala,aitem[2].name,aitem[0].name);break;
-					 		 		case OP_GREATEREQUAL: printf("gt Tf@%sTf@%s Tf@%s\n",kala,aitem[2].name,aitem[0].name);break;
+					 		 		case OP_GREATEREQUAL: printf("gt Tf@%s Tf@%s Tf@%s\n",kala,aitem[2].name,aitem[0].name);break;
 							 		case OP_EQUAL: printf("eq Tf@%s Tf@%s Tf@%s\n",kala,aitem[2].name,aitem[0].name);break;
 				 			 		case OP_NOTEQUAL:{
 							 			 			printf("eq Tf@%s Tf@%s Tf@%s\n",kala,aitem[2].name,aitem[0].name);
