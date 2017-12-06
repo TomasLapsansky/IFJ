@@ -22,6 +22,8 @@ void gener_fce()
 	printf("strlen Lf@delka Lf@s\n");
 	printf("LT Lf@bool Lf@i Lf@delka\n");
 	printf("jumpifeq $asc_end$ Lf@bool bool@false\n");
+	printf("LT Lf@bool Lf@i int@0\n");
+	printf("jumpifeq $asc_end$ Lf@bool bool@true\n");
 	printf("stri2int  Lf@$return Lf@s Lf@i \n");
 	printf("label $asc_end$ \n");
 	printf("popframe \n");

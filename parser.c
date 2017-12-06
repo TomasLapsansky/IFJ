@@ -373,7 +373,15 @@ int p_define(void) {
 			printf("pushframe\n");
 			//printf("LF@return\n");
 			
-			if((error = p_body(idData->type)) != OK) {		//Function ID(<p_parameter>) As <p_type> EOL <p_body>
+			printf("\ndefvar LF@$return\n");
+			if(idData->type == INTEGER)
+				printf("move LF@$return int@0\n\n");
+			else if(idData->type == DOUBLE)
+				printf("move LF@$return float@0.0\n\n");
+			else if(idData->type == STRING)
+				printf("move LF@$return string@\n\n");
+			
+			if((error = p_body(idData)) != OK) {		//Function ID(<p_parameter>) As <p_type> EOL <p_body>
                 DELETE_SEARCH(idData);
 				return error;
 			}
@@ -382,14 +390,16 @@ int p_define(void) {
 			ptrht = stackPop(s);
 			
             DEFINED(idData->navesti, ptrht);
-            DELETE_SEARCH(idData);
             
 			if(token.name != END)			//Function ID(<p_parameter>) As <p_type> EOL <p_body> End
 				return SYN_A_ERROR;
 			
+			printf("label end_%s\n", idData->navesti);
 			printf("popframe\n");
 			printf("return\n");
 			printf("\n\n#END FUNCTION\n\n");
+			
+			DELETE_SEARCH(idData);
 			
 			if((error = Get_Token(&token)) != OK)
 				return error;//gettoken
@@ -422,9 +432,9 @@ int p_define(void) {
 
 //<p_body>		ε
 //<p_body>		<p_prikaz> EOL <p_body>
-int p_body(int return_type) {
+int p_body(tRetData *funcData) {
 	
-	if((error = p_prikaz(return_type)) == E_OK) {
+	if((error = p_prikaz(funcData)) == E_OK) {
 		return OK;
 	} else if(error != OK) {
 		return error;
@@ -445,7 +455,7 @@ int p_body(int return_type) {
 	if((error = Get_Token(&token)) != OK)
 		return error;	//gettoken
 	
-	return p_body(return_type);
+	return p_body(funcData);
 	
 }
 
@@ -490,7 +500,7 @@ int p_scope(void) {
     printf("createframe\n");
     printf("pushframe\n");
 	
-	if((error = p_body(0)) != OK) {	//Scope <p_body>
+	if((error = p_body(NULL)) != OK) {	//Scope <p_body>
 		return error;
 	}
 	
@@ -815,14 +825,19 @@ int p_vparameter(tRetData *funcData, int *pocet_parametrov) {
 			
 			printf("move TF@%s ", funcData->nazvy[*pocet_parametrov]);
 			
-			if(token.name == INT_NUM || token.name == INTEGER)
+			if(token.name == INT_NUM || token.name == INTEGER) {
 				printf("int");
-			else if(token.name == DOUBLE_NUM || token.name == DOUBLE)
+				printf("@%s\n", token.data);
+			} else if(token.name == DOUBLE_NUM || token.name == DOUBLE) {
 				printf("float");
-			else if(token.name == STR || token.name == STRING)
+				printf("@%s\n", token.data);
+			} else if(token.name == STR || token.name == STRING) {
 				printf("string");
+				printf("@");
+				to_string(token);
+				printf("\n");
+			}
 			
-			printf("@%s\n", token.data);
 			
 		}
 		
@@ -917,14 +932,18 @@ int p_vnextparameter(tRetData *funcData, int *pocet_parametrov) {
 			
 			printf("move TF@%s ", funcData->nazvy[*pocet_parametrov]);
 			
-			if(token.name == INT_NUM || token.name == INTEGER)
+			if(token.name == INT_NUM || token.name == INTEGER) {
 				printf("int");
-			else if(token.name == DOUBLE_NUM || token.name == DOUBLE)
+				printf("@%s\n", token.data);
+			} else if(token.name == DOUBLE_NUM || token.name == DOUBLE) {
 				printf("float");
-			else if(token.name == STR || token.name == STRING)
+				printf("@%s\n", token.data);
+			} else if(token.name == STR || token.name == STRING) {
 				printf("string");
-			
-			printf("@%s\n", token.data);
+				printf("@");
+				to_string(token);
+				printf("\n");
+			}
 			
 		}
 		
@@ -1006,7 +1025,7 @@ int p_vnextparameter(tRetData *funcData, int *pocet_parametrov) {
 //<p_prikaz>			If <p_vyraz> Then EOL <p_body> Else EOL <p_body> End If
 //<p_prikaz>			Do While <p_vyraz> EOL <p_body> Loop
 //<p_prikaz>			Return <p_vyraz>
-int p_prikaz(int return_type) {
+int p_prikaz(tRetData *funcData) {
 	
 	/*
 	 	Uprava navratovej hodnoty error v celej funkcii
@@ -1151,10 +1170,10 @@ int p_prikaz(int return_type) {
 			
 			local_body_index = body_index;
 			
-			body_index += 2;
+			body_index += 3;
 			
 			printf("\n#IF TRUE BODY\n");
-			if((error = p_body(return_type)) != OK) {	//If <p_vyraz> Then EOL <p_body>
+			if((error = p_body(funcData)) != OK) {	//If <p_vyraz> Then EOL <p_body>
 				break;
 			}
 			
@@ -1180,7 +1199,7 @@ int p_prikaz(int return_type) {
 			
 			printf("\n#IF FALSE BODY\n");
 			
-			if((error = p_body(return_type)) != OK) {	//If <p_vyraz> Then EOL <p_body> Else EOL <p_body>
+			if((error = p_body(funcData)) != OK) {	//If <p_vyraz> Then EOL <p_body> Else EOL <p_body>
 				break;
 			}
 			
@@ -1240,10 +1259,10 @@ int p_prikaz(int return_type) {
 			if((error = Get_Token(&token)) != OK)
 				break;	//gettoken
 			
-			body_index++;
+			body_index += 2;
 			
 			printf("\n#WHILE BODY\n");
-			if((error = p_body(return_type)) != OK) {	//Do While <p_vyraz> EOL <p_body>
+			if((error = p_body(funcData)) != OK) {	//Do While <p_vyraz> EOL <p_body>
 				break;
 			}
 			
@@ -1258,7 +1277,7 @@ int p_prikaz(int return_type) {
 			break;
 		case(RETURN):					//Return
 			
-            if(return_type == 0) {  //sme v SCOPE, ten nemoze mat return
+            if(funcData == NULL) {  //sme v SCOPE, ten nemoze mat return
                 error = OTHER_SEM_ERROR;
                 break;
             }
@@ -1266,12 +1285,13 @@ int p_prikaz(int return_type) {
 			if((error = Get_Token(&token)) != OK)
 				break;	//gettoken
 			
-			if((error = p_vyraz(return_type)) != OK)	//Return <p_vyraz>
+			if((error = p_vyraz(funcData->type)) != OK)	//Return <p_vyraz>
 				break;
 			
 			printf("\n#FUNCTION RETURN\n");
-			printf("defvar LF@$return\n");
+			//printf("defvar LF@$return\n");
 			printf("move LF@$return TF@$return\n");
+			printf("jump end_%s\n", funcData->navesti);
             
 			break;
 		default:
