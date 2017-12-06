@@ -1083,8 +1083,10 @@ int p_prikaz(tRetData *funcData) {
 			}
 			
 			//Vlozenie ID do TS
-			if((error = INSERT_DIM(token.name, idToken.data, ptrht)) != OK)
+			if((error = INSERT_DIM(token.name, idToken.data, ptrht)) != OK) {
+				Clear_Token(&idToken);
                 return error;
+			}
 			
 			//printf("%d\n\n", token.name);
 			printf("\n#DIM\n");
