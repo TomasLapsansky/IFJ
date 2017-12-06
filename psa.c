@@ -77,6 +77,9 @@ int p_vyraz(int type){
 	newitem->oper = OP_END;
 	// vlozeni OP_END = & na zasobnik
 	psa_list_push(list,newitem);
+	if(start == 1 &&(token.name == THEN || token.name == EOL_ || token.name == SEMICOLON)){
+		return SYN_A_ERROR;
+	}
 //qprintf("ZASOBNIK INICIALIZACE: $\n");
 	//pre testovanie vyrazov, bude nasledovat uprava
 	while(1){
@@ -156,6 +159,9 @@ int p_vyraz(int type){
 			}else if(type == BL){
 				//printf("*****PSA_COMPLETE******\n\n");
 				//convert na bool
+				if(final->data_type == STR){
+					return SEM_TYPE_ERROR;
+				}
 				printf("defvar Tf@$kala%d\n",n);
 				sprintf(kala,"$kala%d",n);
 				printf("eq Tf@%s Tf@%s int@0\n",kala,final->name);

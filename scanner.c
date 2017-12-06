@@ -343,6 +343,16 @@ int Get_Token(TOKEN *t){
 									if((pom = Add_Char(t,c)) == ALLOC_ERROR){
 										return ALLOC_ERROR;
 									}
+									c = fgetc(stdin);
+									// musi byt cislo
+									if(isdigit(c)){
+										if((pom = Add_Char(t,c)) == ALLOC_ERROR){
+											return ALLOC_ERROR;
+										}
+									}
+									else{
+										return LEX_A_ERROR;
+									}
 									state = exp_;
 								}
 								else{
