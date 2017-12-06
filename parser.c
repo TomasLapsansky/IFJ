@@ -793,10 +793,11 @@ int p_declare_nextparameter(char* funcName) {
 //<p_vparameter>	ID, <p_vnextparameter>
 int p_vparameter(tRetData *funcData, int *pocet_parametrov) {
 	
+	printf("createframe\n");
+	
 	if(token.name == RIGHTPAREN)	//ε)
 		return OK;
 	
-	printf("createframe\n");
 	printf("defvar TF@%s\n", funcData->nazvy[*pocet_parametrov]);
 	
     if(p_type() == OK) {    //pri vstupovani presnych vyrazov, nie premennych
