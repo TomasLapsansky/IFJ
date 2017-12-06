@@ -1042,8 +1042,10 @@ int p_prikaz(tRetData *funcData) {
 		case(DIM):							//Dim
 			
 			Init_Token(&idToken);
-			if((error = Get_Token(&idToken)) != OK)	//ulozenie potencialneho id do idToken
+			if((error = Get_Token(&idToken)) != OK) {	//ulozenie potencialneho id do idToken
+				Clear_Token(&idToken);
 				break;	//gettoken
+			}
 			
 			if((error = id(&idData, &idToken, ptrht)) != UNEXIST) {	//Dim ID
 				//int ret;
