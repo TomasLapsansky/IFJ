@@ -17,3 +17,8 @@ SCOPE 0% (0/100)<br>
 Celkem bez rozšíření: 69% (1074/1546)<br>
 <br>
 Vaše hodnocení části: 11,36 bodů<br>
+<br>
+Dokumentácia: 2/5<br>
+Obhajoba: 3/5<br>
+<br>
+Celkovo: 16/25<br>
